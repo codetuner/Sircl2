@@ -1,0 +1,3 @@
+﻿@model String
+<label for="@Html.IdFor(m => m)" class="form-label">@ViewBag.Name:</label>
+<textarea id="@Html.IdFor(m => m)" name="@Html.NameFor(m => m)" data-type="html" class="form-control" rows="@ViewBag.Rows">@Html.Raw(Model?.Replace("&", "&amp;"))</textarea>

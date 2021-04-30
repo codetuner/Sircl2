@@ -1,0 +1,50 @@
+﻿@model SampleWebApplication.Models.Customers.IndexModel
+
+<a asp-action="Update" class="btn btn-primary float-right">New</a>
+
+<h2>Customers</h2>
+
+<form onchange-submit=":form" history="replace">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Town</th>
+                <th>Country</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@(item.Id)</td>
+                    <td>@(item.Name)</td>
+                    <td>@(item.Town)</td>
+                    <td>@(item.Country.Name)</td>
+                    <td>
+                        [<a asp-action="Update" asp-route-id="@(item.Id)">Update</a>]
+                        -
+                        [<a asp-action="Index" asp-controller="Invoices" asp-route-CustomerId="@(item.Id)">Invoices</a>]
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <select class="form-control" name="PageSize" style="float: right; width: 80px;">
+        <option value="5" selected="@(Model.PageSize == 5 ? "selected" : null)">5</option>
+        <option value="10" selected="@(Model.PageSize == 10 ? "selected" : null)">10</option>
+        <option value="25" selected="@(Model.PageSize == 25 ? "selected" : null)">25</option>
+    </select>
+
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <li class="page-item @(Model.Page == i ? "active" : null)"><label class="page-link"><input type="radio" name="Page" value="@i" />@i</label></li>
+        }
+    </ul>
+
+</form>

@@ -1,0 +1,29 @@
+﻿@model EditModel
+
+<fieldset class="@(Model.SupportsUserClaims ? "" : "hidden")">
+    <legend>Claims</legend>
+    @for (int i = 0; i < Model.UserClaims.Count; i++)
+    {
+        <div class="form-group">
+            <button type="submit" asp-action="RemoveClaim" asp-route-claimIndex="@i" class="btn btn-link float-end" formnovalidate>&times;</button>
+            <label>@(Model.UserClaims[i].ClaimType)</label>
+            <input type="hidden" asp-for="UserClaims[i].Id" />
+            <input type="hidden" asp-for="UserClaims[i].ClaimType" />
+            <input asp-for="UserClaims[i].ClaimValue" class="form-control" autocomplete="off" required/>
+        </div>
+        <hr />
+    }
+    <button type="submit" class="btn btn-secondary btn-sm" target="#add-claim-dlg .modal-content" asp-action="AddClaimDlgBody" formnovalidate><i class="fas fa-plus"></i> Add</button>
+</fieldset>
+
+<div id="add-claim-dlg" class="modal fade onload-showmodal onclose-restore" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div style="font-size: 3em; color: darkgray; margin: 1em;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

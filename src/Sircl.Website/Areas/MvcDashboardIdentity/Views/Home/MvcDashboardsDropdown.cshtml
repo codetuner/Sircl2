@@ -1,0 +1,14 @@
+﻿@model IEnumerable<string>
+@{
+    Layout = null;
+}
+@if (Model != null && Model.Count() > 1)
+{
+    <button id="mvcDashboardsDropdownBtn" type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+    <ul class="dropdown-menu" aria-labelledby="mvcDashboardsDropdownBtn">
+        @foreach (var item in Model)
+        {
+            <li><a class="dropdown-item" asp-action="Index" asp-controller="Home" asp-area="@item" target="_self">@item</a></li>
+        }
+    </ul>
+}

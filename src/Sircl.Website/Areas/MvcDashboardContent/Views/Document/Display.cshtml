@@ -1,0 +1,81 @@
+﻿@model DisplayModel
+@inject ContentDbContext context
+@using Sircl.Website
+
+<h1>@Model.Item.Type.Name <small class="text-muted">@(Model.Item.Name)</small></h1>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col col-md-2">
+            Name:
+        </div>
+        <div class="col col-md-10">
+            <span class="form-control-plaintext">@Model.Item.Name</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-md-2">
+            Culture:
+        </div>
+        <div class="col col-md-10">
+            <span class="form-control-plaintext">@Model.Item.Culture</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-md-2">
+            Path:
+        </div>
+        <div class="col col-md-10">
+            <span class="form-control-plaintext">@Model.Item.Path</span>
+        </div>
+    </div>
+
+    <hr />
+
+    @{
+        var lastDocTypeId = 0;
+        // Run over all property types in order of hierarchy and displayOrder:
+        foreach (var propertyType in Model.Item.Type.AllPropertyTypes(context))
+        {
+            // Get or create property for current type:
+            var property = Model.Item.Properties.SingleOrDefault(p => p.TypeId == propertyType.Id);
+            if (property == null) continue;
+            // Show document type name every first time a property of that type is shown:
+            if (propertyType.DocumentTypeId != lastDocTypeId)
+            {
+                lastDocTypeId = propertyType.DocumentTypeId;
+                <h5>Properties of @(Model.AllDocumentTypesDict[propertyType.DocumentTypeId].Name)</h5>
+            }
+            var data = property.CombinedSettings;
+            data["Name"] = propertyType.Name;
+            <div class="row">
+                <div class="col col-md-2">
+                    @propertyType.Name:
+                </div>
+                <div class="col col-md-10">
+                    @Html.DisplayFor(m => m.Item[property.Type.Name].Value, property.Type.DataType.Template, data)
+                </div>
+            </div>
+        }
+    }
+
+    <hr />
+
+    <div class="row">
+        <div class="col col-md-2">
+            Sortkey:
+        </div>
+        <div class="col col-md-10">
+            <span class="form-control-plaintext">@Model.Item.SortKey</span>
+        </div>
+    </div>
+
+</div>
+
+<p class="mt-3">
+    <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
+</p>
+

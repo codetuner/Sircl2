@@ -1,0 +1,896 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@if (!ViewBag.IsDataSeeded)
+{
+    <div class="alert alert-info">
+        <h3>Database is empty.</h3>
+        <form asp-action="SeedData" method="post">
+            <button type="submit" class="btn btn-primary btn-lg">Seed database</button>
+        </form>
+    </div>
+}
+
+<ul class="nav nav-tabs hash-routed" id="myTab" role="tablist" xxhistory="push">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#forms" role="tab" aria-controls="home" aria-selected="true">Forms</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#dialogs" role="tab" aria-controls="profile" aria-selected="false">Dialogs</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#modals" role="tab" aria-controls="profile" aria-selected="false">Modals</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#actions" role="tab" aria-controls="contact" aria-selected="false">Actions</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#checks" role="tab" aria-controls="contact" aria-selected="false">Checks</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#extra" role="tab" aria-controls="contact" aria-selected="false">Extra</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <!-- TAB FORMS -->
+    <div class="tab-pane fade show active" id="forms" role="tabpanel" aria-labelledby="home-tab">
+
+        <p>
+            Autocomplete with form:<br />
+            <form class="onchange-submit" asp-controller="Products" asp-action="AutoComplete" asp-route-listid="autoprod" method="get" target="#autoprod">
+                <input class="oninput-change" type="text" list="autoprod" name="value" autocomplete="off" />
+                <datalist id="autoprod"></datalist>
+            </form>
+        </p>
+
+        <p>
+            Autocomplete without form:<br />
+            <form class="onchange-submit" action="/Products" method="get">
+                <input class="oninput-change onchange-nosubmit" type="text" name="prod" list="autoprod2" autocomplete="off" onchange-action="@Url.Action("AutoComplete", "Products", new { age="[age]", date = "[date]" })" browser-cache="on" target="#autoprod2" />
+                <datalist id="autoprod2"></datalist>
+            </form>
+        </p>
+
+        <form id="fr1" action="/Home/IndexDelayed" method="post" enctype="multipart/form-data">
+
+            <p>
+                <input id="f1" name="f1" type="file" required />
+            </p>
+
+            <p>
+                <input id="x0" name="date" type="text" required />
+            </p>
+
+        </form>
+
+        <form id="frm2" default-submit-button="#x4" class="with-overlay" method="get" onsubmit-disable=">:input" onchange-set="IsDirty" xx-protect-message="Leave this form ?">
+
+            <p>
+                <input name="IsDirty" type="text" class="float-right" readonly />
+                <input id="x1" name="age" type="text" class="oninput-change" value="123" required autofocus />
+            </p>
+
+            <p>
+                <button id="x2" type="button" onclick="alert('hi');">Say hi</button>
+            </p>
+
+            <p>
+                <button id="x3" type="submit" formaction="/Customers" onchange-confirm-message="Sure ?" class="protect-ignore"><i class="spinner"></i>Submit</button>
+            </p>
+
+            <p>
+                <button id="x4" formaction="/Home/IndexDelayed" name="inv" value="12" target="#bs-modal-content"><i class="spinner">[]</i> Default</button>
+            </p>
+
+            <p>
+                <button id="x4" class="btn btn-primary" onload-toggleclass="btn-primary, btn-dark, alert alert-primary on < p">No formaction</button>
+            </p>
+
+            <p>
+                <button id="x5" type="button" onclick="forms[0].submit();">Submit by script</button>
+            </p>
+
+        </form>
+
+        <p>
+            <button type="button" onclick="$('#frm2').show('fast');">Show</button>
+            <button type="button" onclick="$('#frm2').hide('fast');">Hide</button>
+        </p>
+    </div>
+
+    <!-- TAB DIALOGS -->
+    <div class="tab-pane fade" id="dialogs" role="tabpanel" aria-labelledby="profile-tab">
+        @{ var toggleClassExprDlg = "alert-primary alert-light on < p"; }
+        <div id="region5">
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent" target="#dlg1" onhover-toggleclass="@toggleClassExprDlg"><i class="spinner"></i>Dialog 1</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent" target="#dlg2" onhover-toggleclass="@toggleClassExprDlg"><i class="spinner"></i>Dialog 2</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent" target="#dlg3" onhover-toggleclass="@toggleClassExprDlg"><i class="spinner"></i>Dialog 3</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent" target="#reddialog" onhover-toggleclass="@toggleClassExprDlg"><i class="spinner"></i>Reddialog</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent?target=main" target="#dlg1" onhover-toggleclass="@toggleClassExprDlg" history="push cache"><i class="spinner"></i>Dialog 1 to main</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/DialogContent?target=%23reddialog" target="#dlg1" onhover-toggleclass="@toggleClassExprDlg"><i class="spinner"></i>Dialog 1 to Reddialog</a>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- TAB MODALS -->
+    <div class="tab-pane fade" id="modals" role="tabpanel" aria-labelledby="profile-tab">
+        @{ var toggleClassExprMdl = "alert-primary alert-light on < p"; }
+        <div id="region5">
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent" target="#bsmodal1" onhover-toggleclass="@toggleClassExprMdl"><i class="spinner"></i>Modal 1</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent" target="#bsmodal2" onhover-toggleclass="@toggleClassExprMdl"><i class="spinner"></i>Modal 2</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent" target="#bsmodal3" onhover-toggleclass="@toggleClassExprMdl"><i class="spinner"></i>Modal 3</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent" target="#redmodal" onhover-toggleclass="@toggleClassExprMdl"><i class="spinner"></i>Redmodal</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent?target=main" target="#bsmodal1" onhover-toggleclass="@toggleClassExprMdl" history="push cache"><i class="spinner"></i>Modal 1 to main</a>
+            </p>
+
+            <p class="alert alert-light">
+                <a href="/Home/ModalContent?target=%23redmodal" target="#bsmodal1" onhover-toggleclass="@toggleClassExprMdl"><i class="spinner"></i>Modal 1 to Redmodal</a>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- TAB ACTIONS -->
+    <div class="tab-pane fade" id="actions" role="tabpanel" aria-labelledby="contact-tab">
+
+        <p></p>
+        <div class="row">
+            <div class="col">
+                <p>Textboxes:</p>
+            </div>
+        </div>
+        <div class="row" onfocusin-action="@Url.Action("Unformat", new {  })" onfocusout-action="@Url.Action("Format", new {  })">
+            <div class="col">
+                <input type="text" name="nameA" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new {  })" method="GET" />
+            </div>
+            <div class="col" onfocusin-action="@Url.Action("Unformat", new { fail = true })" onfocusout-action="@Url.Action("Format", new { fail = true })">
+                <input type="text" name="nameB" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" />
+            </div>
+            <div class="col">
+                <input type="text" name="nameC" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { newValue = DateTime.Now.Ticks.ToString("#,##0.00") })" method="GET" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Shared checkboxes:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                <label><input type="checkbox" name="soptA" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptA" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptA" value="3" /> Editable</label><br />
+                <label><input type="checkbox" name="soptA" value="4" disabled /> Deletable</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                <label><input type="checkbox" name="soptB" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptB" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptB" value="3" /> Editable</label><br />
+                <label><input type="checkbox" name="soptB" value="4" disabled /> Deletable</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("ActionArray", new { newValue = new string[] { "2", "3" } })" method="GET">
+                <label><input type="checkbox" name="soptC" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptC" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptC" value="3" /> Editable</label><br />
+                <label><input type="checkbox" name="soptC" value="4" disabled /> Deletable</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Shared checkboxes with initial value and individual names:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                <label><input type="checkbox" name="soptA2" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptB2" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptC2" value="3" /> Editable</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                <label><input type="checkbox" name="soptC2" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptD2" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptC2" value="3" /> Editable</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("ActionArray", new { newValue = new string[] { "2", "3" } })" method="GET">
+                <label><input type="checkbox" name="soptE2" value="1" checked /> Active</label><br />
+                <label><input type="checkbox" name="soptF2" value="2" /> Visible</label><br />
+                <label><input type="checkbox" name="soptC2" value="3" /> Editable</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Selects:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select name="selD" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                    <option value="BUTT">Butter</option>
+                    <option value="CHEE">Cheese</option>
+                    <option value="MILK">Milk</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="selE" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                    <option value="BUTT">Butter</option>
+                    <option value="CHEE">Cheese</option>
+                    <option value="MILK">Milk</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="selF" value="123" onchange-action="@Url.Action("Action", new { newValue = "MILK" })" method="GET">
+                    <option value="BUTT">Butter</option>
+                    <option value="CHEE">Cheese</option>
+                    <option value="MILK">Milk</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Selects with initial value:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select name="selA2" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                    <option value="BUTT" selected>Butter</option>
+                    <option value="CHEE">Cheese</option>
+                    <option value="MILK">Milk</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="selB2" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                    <option value="BUTT">Butter</option>
+                    <option value="CHEE" selected>Cheese</option>
+                    <option value="MILK">Milk</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="selC2" value="123" onchange-action="@Url.Action("Action", new { newValue = "MILK" })" method="GET">
+                    <option value="BUTT">Butter</option>
+                    <option value="CHEE">Cheese</option>
+                    <option value="MILK" selected>Milk</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Radio buttons (ungrouped):</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="radio" name="countryD" value="BE" onchange-action="@Url.Action("Action", new {  })" method="GET" /> Belgium</label><br />
+                <label><input type="radio" name="countryD" value="FR" onchange-action="@Url.Action("Action", new {  })" method="GET" /> France</label><br />
+                <label><input type="radio" name="countryD" value="ES" onchange-action="@Url.Action("Action", new {  })" method="GET" /> Spain</label><br />
+            </div>
+            <div class="col">
+                <label><input type="radio" name="countryE" value="BE" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" /> Belgium</label><br />
+                <label><input type="radio" name="countryE" value="FR" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" /> France</label><br />
+                <label><input type="radio" name="countryE" value="ES" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" /> Spain</label><br />
+            </div>
+            <div class="col">
+                <label><input type="radio" name="countryF" value="BE" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" /> Belgium</label><br />
+                <label><input type="radio" name="countryF" value="FR" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" /> France</label><br />
+                <label><input type="radio" name="countryF" value="ES" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" /> Spain</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Radio buttons (ungrouped) with initial value:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="radio" name="xcountryD" value="BE" onchange-action="@Url.Action("Action", new {  })" method="GET" /> Belgium</label><br />
+                <label><input type="radio" name="xcountryD" value="FR" onchange-action="@Url.Action("Action", new {  })" method="GET" /> France</label><br />
+                <label><input type="radio" name="xcountryD" value="ES" onchange-action="@Url.Action("Action", new {  })" method="GET" checked /> Spain</label><br />
+            </div>
+            <div class="col">
+                <label><input type="radio" name="xcountryE" value="BE" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" /> Belgium</label><br />
+                <label><input type="radio" name="xcountryE" value="FR" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" checked /> France</label><br />
+                <label><input type="radio" name="xcountryE" value="ES" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" /> Spain</label><br />
+            </div>
+            <div class="col">
+                <label><input type="radio" name="xcountryF" value="BE" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" checked /> Belgium</label><br />
+                <label><input type="radio" name="xcountryF" value="FR" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" /> France</label><br />
+                <label><input type="radio" name="xcountryF" value="ES" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET" /> Spain</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Grouped radio buttons:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                <label><input type="radio" name="scountryD" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="scountryD" value="FR" /> France</label><br />
+                <label><input type="radio" name="scountryD" value="ES" /> Spain</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                <label><input type="radio" name="scountryE" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="scountryE" value="FR" /> France</label><br />
+                <label><input type="radio" name="scountryE" value="ES" /> Spain</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET">
+                <label><input type="radio" name="scountryF" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="scountryF" value="FR" /> France</label><br />
+                <label><input type="radio" name="scountryF" value="ES" /> Spain</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Grouped radio buttons with initial value:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" onchange-action="@Url.Action("Action", new {  })" method="GET">
+                <label><input type="radio" name="tcountryA" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="tcountryA" value="FR" checked /> France</label><br />
+                <label><input type="radio" name="tcountryA" value="ES" /> Spain</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">
+                <label><input type="radio" name="tcountryB" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="tcountryB" value="FR" checked /> France</label><br />
+                <label><input type="radio" name="tcountryB" value="ES" /> Spain</label><br />
+            </div>
+            <div class="col" onchange-action="@Url.Action("Action", new { newValue = "ES" })" method="GET">
+                <label><input type="radio" name="tcountryC" value="BE" /> Belgium</label><br />
+                <label><input type="radio" name="tcountryC" value="FR" checked /> France</label><br />
+                <label><input type="radio" name="tcountryC" value="ES" /> Spain</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Textareas:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <textarea name="textA" onchange-action="@Url.Action("Action", new {  })" method="GET">First</textarea>
+            </div>
+            <div class="col">
+                <textarea name="textB" onchange-action="@Url.Action("Action", new { fail = true })" method="GET">Second</textarea>
+            </div>
+            <div class="col">
+                <textarea name="textC" onchange-action="@Url.Action("Action", new { newValue = DateTime.Now.ToString("HH:mm:ss") })" method="GET">Third</textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TAB CHECKS -->
+    <div class="tab-pane fade" id="checks" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="row">
+            <div class="col">
+                <p></p>
+                <p>Enable-ifchecked:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" name="c1" /></label><br />
+                <label><input type="checkbox" name="c1" /></label><br />
+                <label><input type="checkbox" name="c1" /></label><br />
+                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c1]"> If any</button>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" name="c2" checked /></label><br />
+                <label><input type="checkbox" name="c2" /></label><br />
+                <label><input type="checkbox" name="c2" /></label><br />
+                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c2]"> If any</button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c3]"> If any</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Ifchecked show/hide:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" ifchecked-show="<DIV|>DIV" /> Show</label>
+                <div>Hi, I am visible</div>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-show="<DIV|>DIV" checked /> Show</label>
+                <div>Hi, I am visible</div>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-hide="<DIV|>DIV" />Hide</label>
+                <div>Hi, I am visible</div>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-hide="<DIV|>DIV" checked /> Hide</label>
+                <div>Hi, I am visible</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Ifchecked Enable/Disable:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" ifchecked-enable="<DIV|>INPUT[type=text]" /> Enable</label>
+                <br /><input type="text" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-enable="<DIV|>INPUT[type=text]" checked /> Enable</label>
+                <br /><input type="text" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-disable="<DIV|>INPUT[type=text]" /> Disable</label>
+                <br /><input type="text" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-disable="<DIV|>INPUT[type=text]" checked /> Disable</label>
+                <br /><input type="text" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Ifchecked Check/Uncheck:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" ifchecked-check="<DIV|>INPUT.subj" /> Check</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-check="<DIV|>INPUT.subj" checked /> Check</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-uncheck="<DIV|>INPUT.subj" /> Uncheck</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-uncheck="<DIV|>INPUT.subj" checked /> Uncheck</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Ifunchecked Check/Uncheck:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" ifunchecked-check="<DIV|>INPUT.subj" /> Check</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifunchecked-check="<DIV|>INPUT.subj" checked /> Check</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifunchecked-uncheck="<DIV|>INPUT.subj" /> Uncheck</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifunchecked-uncheck="<DIV|>INPUT.subj" checked /> Uncheck</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Ifchecked/Unchecked Check/Uncheck:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" ifchecked-check="<DIV|>INPUT.subj" ifunchecked-uncheck="<DIV|>INPUT.subj" /> Follow</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-check="<DIV|>INPUT.subj" ifunchecked-uncheck="<DIV|>INPUT.subj" checked /> Follow</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-uncheck="<DIV|>INPUT.subj" ifunchecked-check="<DIV|>INPUT.subj" /> Reverse</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+            <div class="col">
+                <label><input type="checkbox" ifchecked-uncheck="<DIV|>INPUT.subj" ifunchecked-check="<DIV|>INPUT.subj" checked /> Reverse</label>
+                <br /><input class="subj" type="checkbox" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Byvalue-events:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select name="selcountry1" class="byvalue-events">
+                    <option value="">-</option>
+                    <option value="BE">Belgium</option>
+                    <option value="FR">France</option>
+                    <option value="NL">Netherlands</option>
+                </select>
+                <br />
+                <div class="ifvalueselcountry1-show ifvalueselcountry1is-hide">Hide if empty</div>
+                <br />
+                <div class="ifvalueselcountry1-hide ifvalueselcountry1is-show">Show if empty</div>
+                <br />
+                <input type="text" class="ifvalueselcountry1-enable ifvalueselcountry1is-disable" value="Disable if empty" />
+                <br />
+                <input type="text" class="ifvalueselcountry1-disable ifvalueselcountry1is-enable" value="Disable if not empty" />
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry1is-check" /> Check if empty</label>
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry1is-uncheck" checked /> Uncheck if empty</label>
+            </div>
+            <div class="col">
+                <select name="selcountry2" class="byvalue-events">
+                    <option value="">-</option>
+                    <option value="BE">Belgium</option>
+                    <option value="FR">France</option>
+                    <option value="NL">Netherlands</option>
+                </select>
+                <br />
+                <div class="ifvalueselcountry2-show ifvalueselcountry2isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvalueselcountry2-hide ifvalueselcountry2isBE-show">Show if BE</div>
+                <br />
+                <input type="text" class="ifvalueselcountry2-enable ifvalueselcountry2isBE-disable" value="Disable if BE" />
+                <br />
+                <input type="text" class="ifvalueselcountry2-disable ifvalueselcountry2isBE-enable" value="Disable if not BE" />
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry2isBE-check" /> Check if BE</label>
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry2isBE-uncheck" checked /> Uncheck if BE</label>
+            </div>
+            <div class="col">
+                <select name="selcountry3" class="byvalue-events">
+                    <option value="">-</option>
+                    <option value="BE" selected>Belgium</option>
+                    <option value="FR">France</option>
+                    <option value="NL">Netherlands</option>
+                </select>
+                <br />
+                <div class="ifvalueselcountry3-show ifvalueselcountry3isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvalueselcountry3-hide ifvalueselcountry3isBE-show">Show if BE</div>
+                <br />
+                <input type="text" class="ifvalueselcountry3-enable ifvalueselcountry3isBE-disable" value="Disable if BE" />
+                <br />
+                <input type="text" class="ifvalueselcountry3-disable ifvalueselcountry3isBE-enable" value="Disable if not BE" />
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry3isBE-check" /> Check if BE</label>
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry3isBE-uncheck" checked /> Uncheck if BE</label>
+            </div>
+            <div class="col">
+                <select name="selcountry4" class="byvalue-events" onload-select="BE">
+                    <option value="">-</option>
+                    <option value="BE">Belgium</option>
+                    <option value="FR">France</option>
+                    <option value="NL">Netherlands</option>
+                </select>
+                <br />
+                <div class="ifvalueselcountry4-show ifvalueselcountry4isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvalueselcountry4-hide ifvalueselcountry4isBE-show">Show if BE</div>
+                <br />
+                <input type="text" class="ifvalueselcountry4-enable ifvalueselcountry4isBE-disable" value="Disable if BE" />
+                <br />
+                <input type="text" class="ifvalueselcountry4-disable ifvalueselcountry4isBE-enable" value="Disable if not BE" />
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry4isBE-check" /> Check if BE</label>
+                <br />
+                <label><input type="checkbox" class="ifvalueselcountry4isBE-uncheck" checked /> Uncheck if BE</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
+                <p>Multivalued select / Checkboxes / Radios:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select name="selmulticountry1" class="byvalue-events" multiple size="6">
+                    <option value="">-</option>
+                    <option value="BE" selected>Belgium</option>
+                    <option value="FR">France</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="DE">Germany</option>
+                    <option value="ES">Spain</option>
+                </select>
+                <br />
+                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isBE-show">Show if BE</div>
+                <br />
+                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isDE-hide">Hide if DE</div>
+                <br />
+                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isDE-show">Show if DE</div>
+                <br />
+                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isFR-show ifvalueselmulticountry1isES-show">Show if FR or ES</div>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isNL-check" value="NL" />Netherlands</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isDE-check" value="DE" checked />Germany</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isES-check" value="ES" />Spain</label><br />
+                <br />
+                <div class="ifvaluemulticheckcountry1-show ifvaluemulticheckcountry1isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvaluemulticheckcountry1-hide ifvaluemulticheckcountry1isBE-show">Show if BE</div>
+                <br />
+                <div class="ifvaluemulticheckcountry1-show ifvaluemulticheckcountry1isDE-hide">Hide if DE</div>
+                <br />
+                <div class="ifvaluemulticheckcountry1-hide ifvaluemulticheckcountry1isDE-show">Show if DE</div>
+            </div>
+            <div class="col">
+                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="BE" />Belgium</label><br />
+                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="FR" />France</label><br />
+                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="DE" checked />Germany</label><br />
+                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="NL" />Netherlands</label><br />
+                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="ES" />Spain</label><br />
+                <br />
+                <div class="ifvaluemultiradiocountry1-show ifvaluemultiradiocountry1isBE-hide">Hide if BE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry1-hide ifvaluemultiradiocountry1isBE-show">Show if BE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry1-show ifvaluemultiradiocountry1isDE-hide">Hide if DE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry1-hide ifvaluemultiradiocountry1isDE-show">Show if DE</div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB EXTRA -->
+    <div class="tab-pane fade" id="extra" role="tabpanel" aria-labelledby="contact-tab">
+
+        <div id="xxx5"></div>
+        <button type="button" onclick="$('#xxx5').html('<p>Original Html</p>')">Html</button>
+        <button type="button" onclick="$('#xxx5').append('<p>One more line</p>')">Append</button>
+
+    </div>
+</div>
+
+<p>
+    <a href="http://www.google.com" download>Test download</a>
+</p>
+<p>
+    <a href="/Invoices/SetAwaiting">Test Method not allowed</a>
+</p>
+<p>
+    <a href="/NotFound">Test NotFound</a>
+</p>
+
+<!-- Dialogs -->
+
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 1</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal1">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 2</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal2">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 3</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal3">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">RED MODAL</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="redmodal" download-progress="progress">
+                <p>Please wait...</p>
+                <progress></progress>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 1</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal1">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 2</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal2">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal 3</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bsmodal3">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">RED MODAL</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="redmodal" download-progress="progress">
+                <p>Please wait...</p>
+                <progress></progress>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ifinviewport-load="/Home/Infinite?Page=1">
+    Wait for loading...
+</div>

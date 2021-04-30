@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Sircl.Website.Data.Localize.Domain">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAACAAAAAQAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Localize\Domain.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Queries" />
+      <Property Name="Keys" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Sircl.Website.Data.Localize.Key">
+    <Position X="3.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ABAiAAAAAAAAAAAAAAAAAAQCIgAAQACAAAAgAAAAAAA=</HashCode>
+      <FileName>Data\Localize\Key.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Values" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Sircl.Website.Data.Localize.Query">
+    <Position X="0.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ABACAAAAAAAAAAAAQAAAAAQAAggAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Data\Localize\Query.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sircl.Website.Data.Localize.KeyValue">
+    <Position X="6.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAQAIAAAAAAAAQAAAAAAAAAgAAEAAAA=</HashCode>
+      <FileName>Data\Localize\KeyValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

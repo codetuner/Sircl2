@@ -1,0 +1,6 @@
+﻿{
+  "Name": "Content",
+  "AreaName": "MvcDashboardContent",
+  "Icon": "<i class=\"fas fa-tachometer-alt\"></i>",
+  "Roles":  "Administrator,ContentAdministrator,ContentAuthor,ContentEditor"
+}

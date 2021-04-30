@@ -1,0 +1,129 @@
+﻿@model SampleWebApplication.Models.Invoices.UpdateModel
+@using SampleWebApplication.Data
+
+<h2>Invoice</h2>
+
+<div asp-validation-summary="All" class="alert alert-warning text-danger">Please fix following errors:</div>
+
+<form asp-action="Update" method="post">
+
+    <input asp-for="Item.Id" type="hidden" />
+    <input asp-for="Item.CustomerId" type="hidden" />
+
+    <div class="row">
+        <div class="col">
+            <label>Customer</label>
+            <div class="card">
+                <div class="card-body pt-2" href="@Url.Action("Update", "Customers", new { id = Model.Item.Id })">
+                    <b>@Model.Item.Customer.Name</b><br />
+                    @Model.Item.Customer.Address<br />
+                    @Model.Item.Customer.ZipCode @Model.Item.Customer.Town<br />
+                    @Model.Item.Customer.Country.Name<br />
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label asp-for="Item.Date"></label>
+                <input asp-for="Item.Date" type="date" class="form-control" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Item.Status"></label>
+                <select asp-for="Item.Status" class="form-control byvalue-events" asp-items="@Html.GetEnumSelectList<InvoiceStatus>()" >
+                </select>
+            </div>
+        </div>
+    </div>
+
+    @for (int i = 0; i < Model.Item.Lines.Count; i++)
+    {
+        <input asp-for="Item.Lines[i].Id" type="hidden" />
+        <input asp-for="Item.Lines[i].ProductId" type="hidden" />
+        <input asp-for="Item.Lines[i].Product.Id" type="hidden" />
+        <input asp-for="Item.Lines[i].Product.Label" type="hidden" />
+        <input asp-for="Item.Lines[i].Quantity" type="hidden" />
+        <input asp-for="Item.Lines[i].UnitPrice" type="hidden" />
+    }
+
+    <div class="xcard">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Unit price</th>
+                        <th>Quantity</th>
+                        <th>Total price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Item.Lines.Count; i++)
+                    {
+                        <tr>
+                            <td>@(Model.Item.Lines[i].Product.Label)</td>
+                            <td align="right">@(Model.Item.Lines[i].UnitPrice)</td>
+                            <td align="right">@(Model.Item.Lines[i].Quantity)</td>
+                            <td align="right">@(Model.Item.Lines[i].UnitPrice * Model.Item.Lines[i].Quantity)</td>
+                            <td align="right"><button type="submit" asp-action="RemoveLine" asp-route-index="@i" class="btn btn-light ifvalueItem.Status-hide ifvalueItem.Statusis0-show">&times;</button></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3">TOTAL</th>
+                        <td align="right"><b>@(Model.Item.Lines.Sum(l => l.Quantity * l.UnitPrice))</b></td>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-secondary btn-sm ifvalueItem.Status-hide ifvalueItem.Statusis0-show" data-toggle="modal" data-target="#add-line-modal">
+            Add...
+        </button>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Item.Comments"></label>
+        <textarea asp-for="Item.Comments" class="form-control" rows="6">
+        </textarea>
+    </div>
+
+    @if (Model.Item.Id != 0)
+    {
+        <button type="submit" asp-action="Delete" class="btn btn-danger float-right">Delete</button>
+    }
+    <button type="submit" class="btn btn-primary" data-toggle="tooltip" title="Press this to save!">Save</button>
+    <a href="history:back" class="btn btn-link">Back</a>
+
+    <div class="modal" id="add-line-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add invoice items</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label asp-for="NewLine.ProductId"></label>
+                        <select asp-for="NewLine.ProductId" class="form-control" asp-items="@(new SelectList(Model.Products, "Id", "Label"))">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewLine.Quantity"></label>
+                        <input asp-for="NewLine.Quantity" type="number" class="form-control" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" asp-action="AddLine" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>

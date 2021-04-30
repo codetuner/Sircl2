@@ -1,0 +1,11 @@
+﻿@model int
+<p>@DateTime.Now.ToString()</p>
+@for (int i = Model; i < Model + 10; i++)
+{
+    <h1>Line @i</h1>
+    <p>...</p>
+}
+
+<div ifinviewport-load="/Home/Infinite?Page=@(Model+10)">
+    Wait for loading...
+</div>

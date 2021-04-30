@@ -1,0 +1,47 @@
+﻿@model IndexModel
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h1>Roles</h1>
+
+<form class="card p-3 bg-white onchange-submit" action="@Url.Action("Index")" method="get" history="replace" sub-target="#subTarget">
+
+    <div class="d-flex justify-content-between">
+        <a href="@Url.Action("New")" class="btn btn-primary" target="#modal-lg .modal-content"><i class="spinner fas fa-plus"></i> New</a>
+        <div class="flex-grow-1"></div>
+        <div class="">
+            <input type="search" class="form-control oninput-change" asp-for="Query" style="max-width: 280px;" autocomplete="off" placeholder="Search" />
+        </div>
+    </div>
+
+    <div id="subTarget">
+        <div class="overlay" hidden></div>
+
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th class="onchange-nosubmit"><input type="checkbox" ifchecked-check="<table|>tbody input[type=checkbox]" ifunchecked-uncheck="<table|>tbody input[type=checkbox]" /></th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr href="@Url.Action("Edit", new { id = item.Id })" target="#modal-lg .modal-content">
+                            <td class="onchange-nosubmit" onclick-propagate="off"><input type="checkbox" /></td>
+                            <td>@item.Name</td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <pagesize-select asp-for="PageSize" class="form-control auto-width float-end"></pagesize-select>
+        <pagination-nav asp-for="Page" max="Model.MaxPage" />
+
+    </div>
+
+</form>

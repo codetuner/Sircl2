@@ -1,0 +1,53 @@
+﻿@model SampleWebApplication.Models.Products.IndexModel
+
+<form asp-action="Index" method="get" onchange-submit=":form" history="replace" sub-target="#variable-part">
+
+    <div class="text-right">
+        <input type="text" class="oninput-change onload-setvaluefromquery" name="Query" style="max-width: 250px;" />
+        <a asp-action="Update" class="btn btn-primary">New</a>
+    </div>
+
+    <h2>Products</h2>
+
+    <div id="variable-part">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Label</th>
+                    <th>Price</th>
+                    @*<th></th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr href="@Url.Action("Update", new { id = item.Id })" history="push cache">
+                        <td>@(item.Id)</td>
+                        <td>@(item.Label)</td>
+                        <td>@(item.UnitPrice)</td>
+                        @*<td>
+                            [<a asp-action="Update" asp-route-id="@(item.Id)" history="push cache">Update</a>]
+                        </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <select class="form-control" name="PageSize" style="float: right; width: 80px;">
+            <option value="5" selected="@(Model.PageSize == 5 ? "selected" : null)">5</option>
+            <option value="10" selected="@(Model.PageSize == 10 ? "selected" : null)">10</option>
+            <option value="25" selected="@(Model.PageSize == 25 ? "selected" : null)">25</option>
+        </select>
+
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(Model.Page == i ? "active" : null)"><label class="page-link"><input type="radio" name="Page" value="@i" />@i</label></li>
+            }
+        </ul>
+
+    </div>
+
+</form>

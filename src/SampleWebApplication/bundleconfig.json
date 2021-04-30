@@ -1,0 +1,84 @@
+[
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bootstrap4.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-bootstrap4.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bootstrap5.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-bootstrap5.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-changeactions.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-changeactions.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-contextmenu.min.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-contextmenu.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-contextmenu.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-contextmenu.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-debugging.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-debugging.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-extended.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-extended.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-fa.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-fa.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-toastr.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-toastr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bundled.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl.js",
+      "wwwroot/lib/sircl-src-new/sircl-extended.js",
+      "wwwroot/lib/sircl-src-new/sircl-changeactions.js",
+      "wwwroot/lib/sircl-src-new/sircl-contextmenu.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bundled.css",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl.css",
+      "wwwroot/lib/sircl-src-new/sircl-contextmenu.css"
+    ]
+  }
+]

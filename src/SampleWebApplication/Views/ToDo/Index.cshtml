@@ -1,0 +1,57 @@
+﻿@model ToDoListModel
+
+<form asp-action="Submit" method="post">
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>New</h3>
+                @for (int i = 0; i < Model.Items[0].Count; i++)
+                {
+                    <div class="card mb-3">
+                        <h5 class="card-title">@Model.Items[0][i].Name</h5>
+                        <div class="card-body">
+                            @Model.Items[0][i].Description
+                        </div>
+                        <input type="hidden" asp-for="Items[0][i].Name" />
+                        <input type="hidden" asp-for="Items[0][i].Description" />
+                    </div>
+                }
+                <p class="mb-3">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editToDoModal"><i class="fas fa-plus"></i> Add...</button>
+                </p>
+            </div>
+            <div class="col">
+                <h3>Busy</h3>
+            </div>
+            <div class="col">
+                <h3>Done</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="editToDoModal" class="modal onclose-restore">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add ToDo...</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="NewItem.Name">Name:</label>
+                        <input type="text" autocomplete="off" asp-for="NewItem.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewItem.Description">Description:</label>
+                        <input type="text" autocomplete="off" asp-for="NewItem.Description" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" formaction="@Url.Action("Add")">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+

@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MvcDashboardLocalize - @(ViewBag.Title)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/sircl2/sircl.css" />
+    <link rel="stylesheet" href="~/lib/sircl2/sircl-contextmenu.css" />
+    <style>
+
+        BODY {
+            background-color: #f8f8f0;
+        }
+
+        .card {
+            background-color: #fafaf8;
+        }
+
+        #body-content {
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            padding-top: 38px;
+            padding-bottom: 28px;
+        }
+
+        h2 {
+            padding-top: 36px;
+            padding-bottom: 24px;
+        }
+
+        .auto-width {
+            width: auto;
+        }
+
+        .pagination .page-item {
+            min-width: 48px;
+            text-align: right;
+        }
+
+            .pagination .page-item input[type=radio] {
+                display: none;
+            }
+
+        .overlay {
+            background: rgba(0,0,0,0.33);
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: .25rem;
+        }
+
+        .validation-summary-valid {
+            display: none;
+        }
+
+        BODY .whileloading-show {
+            display: none;
+        }
+
+        BODY .whileloading-hide {
+            display: inline-block; /* See https://stackoverflow.com/a/17403359 */
+        }
+
+        BODY.body-loading .whileloading-show {
+            display: inline-block; /* See https://stackoverflow.com/a/17403359 */
+        }
+
+        BODY.body-loading .whileloading-hide {
+            display: none;
+        }
+
+        .navbar .active {
+            background-color: dimgray;
+        }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="~/lib/sircl2/sircl.js"></script>
+    <script src="~/lib/sircl2/sircl-extended.js"></script>
+    <script src="~/lib/sircl2/sircl-changeactions.js"></script>
+    <script src="~/lib/sircl2/sircl-contextmenu.js"></script>
+    <script src="~/lib/sircl2/sircl-bootstrap5.js"></script>
+    @*<script src="~/lib/sircl2/sircl-debugging.js"></script>*@
+    <script type="text/javascript" src="//cdn.tiny.cloud/1/zmtxfbers7u7pi0pav8l4ih0v4bwyvrdlqpi5zun0r6z0jsm/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    @*<script type="text/javascript" src="//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>*@
+    <script type="text/javascript">
+
+        var appId = "MvcDashboardLocalize";
+
+        sircl.$mainTargetSelector = "#body-content";
+
+        $$("before", function () {
+            tinymce.remove("TEXTAREA[data-type='html']");
+        });
+        $$("process", function () {
+            tinymce.init({
+                selector: "TEXTAREA[data-type='html']",
+                plugins: "link code fullscreen image charmap lists table hr paste preview print",
+                _removed_from_plugins: 'imagetools',
+                toolbar: 'fullscreen | styleselect bold italic alignleft aligncenter alignright | bullist numlist outdent indent | table link image',
+                _removed_from_toolbar: 'undo redo | hr | charmap | code',
+                menubar: true,
+                paste_as_text: false,
+                convert_urls: false,
+                image_list: [],
+                charmap_append: [["0x2713", "Checkmark"], ["0x2714", "Checkmark2"], ["0x2715", "Cross"], ["0x2716", "Cross2"], ["0x2717", "Cross3"], ["0x2718", "Cross4"], ["0x200C", "ZWNJ"]],
+                //extended_valid_elements: "script[src|async|defer|type|charset]"
+            });
+        });
+
+        sircl.addRequestHandler("onError", function (req) {
+            if (req.method == "get") {
+                location.href = req.action;
+            } else {
+                alert("An error occured with the request.");
+                this.next(req);
+            }
+        });
+
+    </script>
+    @RenderSection("Scripts", required: false)
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span>
+                <i class="whileloading-show fas fa-spinner fa-spin" style="color: limegreen; margin-right: 3px;"></i>
+                <a class="navbar-brand" asp-area="MvcDashboardLocalize" asp-controller="Home" asp-action="Index">
+                    <i class="whileloading-hide fas fa-tachometer-alt"></i>&nbsp;MvcDashboardLocalize
+                </a>
+                <span class="btn-group" role="group" onload-load="@Url.Action("MvcDashboardsDropdown", "Home")"></span>
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarMainContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navBarMainContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    @if (User.IsInRole("Administrator") || User.IsInRole("LocalizeAdministrator"))
+                    {
+                        <li class="nav-item" ifroute-setactive="\/Domain(\/|$)">
+                            <a class="nav-link" asp-area="MvcDashboardLocalize" asp-controller="Domain" asp-action="Index"><i class="fas fa-book"></i> Domains</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="\/Key(\/|$)">
+                            <a class="nav-link" asp-area="MvcDashboardLocalize" asp-controller="Key" asp-action="Index"><i class="fa fa-tags"></i> Keys</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="\/Query(\/|$)">
+                            <a class="nav-link" asp-area="MvcDashboardLocalize" asp-controller="Query" asp-action="Index"><i class="fas fa-database"></i> Queries</a>
+                        </li>
+                    }
+                    <li class="nav-item" ifroute-setactive="\/Translate(\/|$)">
+                        <a class="nav-link" asp-area="MvcDashboardLocalize" asp-controller="Translate" asp-action="Index"><i class="fas fa-language"></i> Translate</a>
+                    </li>
+                </ul>
+                <form class="d-flex" action="/MvcDashboardLocalize/Document" method="get">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="Query">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" target="_self"><i class="fas fa-sign-out-alt"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+
+        <div id="body-content">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <p></p>
+
+</body>
+</html>
+

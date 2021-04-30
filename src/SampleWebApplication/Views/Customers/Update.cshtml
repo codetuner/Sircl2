@@ -1,0 +1,46 @@
+﻿@model SampleWebApplication.Models.Customers.UpdateModel
+
+<h2>@(Model.Item.Name ?? "New Customer")</h2>
+
+<div asp-validation-summary="All" class="alert alert-warning text-danger">Please fix following errors:</div>
+
+<form asp-action="Update" method="post">
+
+    <input asp-for="Item.Id" type="hidden" />
+
+    <div class="form-group">
+        <label asp-for="Item.Name"></label>
+        <input asp-for="Item.Name" type="text" class="form-control" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Item.Address"></label>
+        <input asp-for="Item.Address" type="text" class="form-control" autocomplete="off" />
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label asp-for="Item.ZipCode"></label>
+            <input asp-for="Item.ZipCode" type="text" class="form-control" autocomplete="off" />
+        </div>
+        <div class="form-group col-md-9">
+            <label asp-for="Item.Town"></label>
+            <input asp-for="Item.Town" type="text" class="form-control" autocomplete="off" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Item.CountryId"></label>
+        <select asp-for="Item.CountryId" class="form-control" asp-items="@(new SelectList(Model.Countries, "Id", "Name"))">
+        </select>
+    </div>
+
+    @if (Model.Item.Id != 0)
+    {
+        <button type="submit" asp-action="Delete" class="btn btn-danger float-right">Delete</button>
+    }
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="history:back" class="btn btn-link">Back</a>
+    <p></p>
+    <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Invoices" asp-route-CustomerId="@(Model.Item.Id)">Invoices</a>
+
+</form>

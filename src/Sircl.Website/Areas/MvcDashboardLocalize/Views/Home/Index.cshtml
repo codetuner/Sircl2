@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<div class="border bg-light p-4 rounded-lg m-3">
+    <h1 class="display-4">MvcDashboardLocalize</h1>
+    <p class="lead">Your MVC dashboard to manage website localization.</p>
+    <a class="btn btn-primary btn-lg" href="@Url.Action("GetStarted")" role="button">Get started</a>
+</div>
+
+<div class="border bg-light p-4 pb-3 rounded-lg m-3">
+    <a class="btn btn-primary btn-lg float-end" href="@Url.Action("ReloadFromSource")" role="button">Reload</a>
+    <h5>Reload localization from source</h5>
+    <p>Reloads localization keys from the source database.</p>
+</div>

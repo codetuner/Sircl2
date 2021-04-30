@@ -1,0 +1,83 @@
+﻿@model SampleWebApplication.Models.Invoices.IndexModel
+
+@if (Model.CustomerId.HasValue)
+{
+    <a asp-action="Update" asp-route-customerId="@Model.CustomerId" class="btn btn-primary float-right">New</a>
+}
+
+<h2>Invoices</h2>
+
+<form onchange-submit=":form" history="replace" action="@Url.Action("Index")">
+    <input asp-for="CustomerId" type="hidden" />
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th onchange-propagate="off"><input type="checkbox" ifchecked-check="<form|>input[name=Selection]" ifunchecked-uncheck="<form|>input[name=Selection]" /></th>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Status</th>
+                @*<th></th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+            <tr href="@Url.Action("Update", new { id = item.Id })" history="push cache">
+                <th class="onchange-nosubmit" onclick-propagate="off"><input type="checkbox" name="Selection" value="@item.Id" /></th>
+                <td>@(item.Id)</td>
+                <td>@(item.Date.ToShortDateString())</td>
+                <td>@(item.Customer.Name)</td>
+                <td>@(item.Status)</td>
+                @*<td>
+                    [<a asp-action="Update" asp-route-id="@(item.Id)">Update</a>]
+                </td>*@
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <select class="form-control" name="PageSize" style="float: right; width: 80px;">
+        <option value="5" selected="@(Model.PageSize == 5 ? "selected" : null)">5</option>
+        <option value="10" selected="@(Model.PageSize == 10 ? "selected" : null)">10</option>
+        <option value="25" selected="@(Model.PageSize == 25 ? "selected" : null)">25</option>
+    </select>
+
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <li class="page-item @(Model.Page == i ? "active" : null)"><label class="page-link"><input type="radio" name="Page" value="@i" />@i</label></li>
+        }
+    </ul>
+
+    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetAwaiting")" formmethod="post" enable-ifchecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Awaiting</button>
+    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetPaid")" formmethod="post" enable-ifchecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Paid</button>
+
+</form>
+
+<p></p>
+<p>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#onShowLoadModal">
+        Launch modal with onshowmodal-load
+    </button>
+</p>
+<div class="modal onclose-restore fade" tabindex="-1" role="dialog" id="onShowLoadModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">OnLoadShow Modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" onshowmodal-load="@Url.Action("Privacy", "Home")">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@model EditModel
+@inject ContentDbContext context
+@{
+    ViewBag.Title = Model.Item.Name ?? "new";
+}
+
+<h1>@Model.DocumentType.Name <small class="text-muted">@(Model.Item.Name ?? "new")</small></h1>
+
+<form asp-action="Save" asp-route-id="@Model.Item.Id" method="post" class="" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
+
+    <div class="overlay" hidden></div>
+
+    <input type="hidden" asp-for="Item.Id" />
+    <input type="hidden" asp-for="Item.TypeId" />
+    <input type="hidden" asp-for="HasChanges" />
+
+    <div asp-validation-summary="All" class="alert alert-danger alert-dismissible fade show mb-3">
+        <strong>Following errors have occured:</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.Name)" class="form-label">Name: *</label>
+        <input asp-for="Item.Name" type="text" class="form-control" />
+        <span asp-validation-for="Item.Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.Culture)" class="form-label">Culture:</label>
+        <input asp-for="Item.Culture" type="text" class="form-control" list="cultureList" />
+        <datalist id="cultureList">
+            @foreach (var item in Model.SupportedUICultures)
+            {
+                <option value="@item.Name">@item.DisplayName</option>
+            }
+        </datalist>
+        <span asp-validation-for="Item.Culture" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.Path)" class="form-label">Path:</label>
+        <input asp-for="Item.Path" type="text" class="form-control" list="@Html.IdFor(m => m.Item.Path)List" />
+        <datalist id="@Html.IdFor(m => m.Item.Path)List">
+            @foreach (var item in Model.PathsList)
+            {
+                <option value="@item" />
+            }
+        </datalist>
+        <span asp-validation-for="Item.Path" class="text-danger"></span>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            @{
+                var lastDocTypeId = 0;
+                var propertyIndex = 0;
+                var properties = Model.Item.Properties.ToList();
+                Model.Item.Properties.Clear();
+                // Run over all property types in order of hierarchy and displayOrder:
+                foreach (var item in Model.DocumentType.AllPropertyTypes(context))
+                {
+                    // Get or create property for current type:
+                    var property = properties.SingleOrDefault(p => p.TypeId == item.Id);
+                    if (property == null) { property = new Sircl.Website.Data.Content.Property() { TypeId = item.Id }; }
+                    property.Type = item;
+                    Model.Item.Properties.Add(property);
+                    // Show document type name every first time a property of that type is shown:
+                    if (item.DocumentTypeId != lastDocTypeId)
+                    {
+                        lastDocTypeId = item.DocumentTypeId;
+                        <h5 class="card-title">Properties of @(Model.AllDocumentTypesDict[item.DocumentTypeId].Name)</h5>
+                    }
+                    var data = property.CombinedSettings;
+                    data["Name"] = item.Name;
+                    <div class="mb-3">
+                        @Html.EditorFor(m => m.Item.Properties[propertyIndex].Value, item.DataType.Template, data)
+                        <input type="hidden" asp-for="Item.Properties[propertyIndex].Id" />
+                        <input type="hidden" asp-for="Item.Properties[propertyIndex].TypeId" />
+                        <input type="hidden" asp-for="Item.Properties[propertyIndex].Settings" />
+                    </div>
+                    propertyIndex++;
+                }
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.SortKey)" class="form-label">Sort key:</label>
+        <input asp-for="Item.SortKey" type="text" class="form-control" />
+        <span asp-validation-for="Item.SortKey" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.Notes)" class="form-label">Notes:</label>
+        <textarea asp-for="Item.Notes" class="form-control"></textarea>
+        <span asp-validation-for="Item.Notes" class="text-danger"></span>
+    </div>
+
+    <p class="mt-3">
+        <div class="float-end">
+            @if (Model.Item.Id != 0)
+            {
+                <a href="@Url.Action("Index")" target="#rightpanel" class="btn btn-secondary">Preview</a>
+                <button type="submit" class="btn btn-primary" name="andcopy" value="true"><i class="spinner fas fa-copy"></i> Save &amp; Copy</button>
+                <button type="submit" class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Item.Id" onclick-confirm="Are you sure ?"><i class="spinner fas fa-trash-alt"></i> Delete</button>
+            }
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="spinner fas fa-check"></i> Save</button>
+        <button type="submit" class="btn btn-primary" name="apply" value="true"><i class="spinner fas fa-check"></i> Apply</button>
+        <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
+    </p>
+
+</form>

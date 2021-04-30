@@ -1,0 +1,192 @@
+﻿@if (this.Context.Request.Headers["X-Sircl-Request-Type"] == "Partial")
+{
+    <script>if (typeof sircl === 'undefined') { location.reload(); }</script>
+    @:@RenderBody()
+    return;
+}
+@if (this.Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+{
+    <script>if (typeof sircl === 'undefined') { location.reload(); }</script>
+    @:@RenderBody()
+    return;
+}
+@{ 
+    var minified = false;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SampleWebApplication</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+    @if (minified)
+    {
+        <link href="~/lib/sircl-src-new/sircl-bundled.min.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/lib/sircl-src-new/sircl.css" rel="stylesheet" type="text/css" />
+        <link href="~/lib/sircl-src-new/sircl-contextmenu.css" rel="stylesheet" type="text/css" />
+    }
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SampleWebApplication</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item" ifroute-setactive="^\/($|Home(\/|$))">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="IndexDelayed">Home</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="^\/ToDo(\/|$)">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ToDo" asp-action="Index">ToDos</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="^\/Customers(\/|$)">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Customers</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="^\/Invoices(\/|$)">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Invoices" asp-action="Index">Invoices</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="^\/Products(\/|$)">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                        </li>
+                        <li class="nav-item" ifroute-setactive="^\/Privacy(\/|$)">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div id="toasts-container" class="float-right"></div>
+            </div>
+        </div>
+
+        <div class="contextmenu">
+            <div class="nav flex-column nav-pills">
+                <a class="nav-link" href="javascript:alert('Hi !')">Say hi !</a>
+                <a class="nav-link" href="javascript:document.body.contentEditable='true'; document.designMode='on'; void 0">Edit this page</a>
+            </div>
+        </div>
+
+        <div>
+            <progress class="main-download-progress float-right" hidden></progress>
+            <progress class="main-upload-progress float-left" hidden></progress><br />
+        </div>
+        <div class="progress main-upload-progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="progress main-download-progress">
+            <div class="progress-bar"></div>
+        </div>
+        <main role="main" class="pb-3 main-target with-overlay" source-url="." upload-progress=".main-upload-progress" download-progress=".main-download-progress">
+            @RenderBody()
+        </main>
+
+    </div>
+
+    <div id="confirm-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please confirm...</h5>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" name="okButton">OK</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade xx-auto-show" auto-show-delay="2" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="bs-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>Welcome!</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="back-top" class="onclick-scrolltop onscrolltop-fade">
+        <i class="fas fa-chevron-circle-up"></i>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2019 - SampleWebApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            - Last full page refresh: @DateTime.Now
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/lib/font-awesome/js/all.js"></script>
+    @if (minified)
+    {
+        <script src="~/lib/sircl-src-new/sircl-bundled.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-bootstrap4.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-fa.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-toastr.min.js"></script>
+    }
+    else
+    {
+        <script src="~/lib/sircl-src-new/sircl.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-extended.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-changeactions.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-contextmenu.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-bootstrap4.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-fa.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-toastr.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-debugging.js"></script>
+    }
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+    @*<script src="~/lib/sircl-src-new/sircl-samples-extensibility.js"></script>*@
+    <script>
+        $$(function () {
+            $("[data-bs-toggle='popover']").popover({ container: "body" });
+            $("[data-toggle='tooltip']").tooltip({ boundary: "window" });
+        });
+    </script>
+    <script>
+        sircl.addErrorHandler(function (code, message, data) {
+            alert(code + ": " + message);
+        });
+        sircl.addRequestHandler("onError", function (req) {
+            req.$finalTarget = sircl.ext.$mainTarget();
+            req.responseText = "<h1>Error " + req.status + " - " + (req.statusText || "Unexpected error") + "</h1><p>An unexpected error has occured.</p>";
+            req.succeeded = true;
+            this.next(req);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+﻿@model EditModel
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form asp-action="Save" asp-route-id="@Model.Item.Id" target="<.modal">
+            <input type="hidden" asp-for="Item.Id" />
+            <div class="modal-header">
+                <h5 class="modal-title">Domain</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label asp-for="Item.Name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" asp-for="Item.Name">
+                    <span asp-validation-for="Item.Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Item.Cultures" class="form-label">Cultures (comma-separated list):</label>
+                    <input type="text" class="form-control" asp-for="Item.Cultures">
+                    <span asp-validation-for="Item.Cultures" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary"><i class="spinner"></i> Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Item.Id" onclick-confirm="Are you sure ?">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
