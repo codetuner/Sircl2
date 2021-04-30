@@ -726,7 +726,7 @@ $(function () {
 // On initial load, if onchange-set input is true, add .form-changed class to form:
 $$(function () {
     $(this).find("FORM[onchange-set]").each(function () {
-        var $input = $(this).find("INPUT[name=" + $(this).attr("onchange-set") + "]");
+        var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
             $(this).addClass("form-changed");
         }
@@ -738,7 +738,7 @@ $(function () {
     $(document.body).on("change", "FORM[onchange-set]", function (event) {
         if ($(event.target).closest(".sircl-content-processing").length == 0) {
             $(this).addClass("form-changed");
-            var $input = $(this).find("INPUT[name=" + $(this).attr("onchange-set") + "]");
+            var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
             if ($input.length > 0) {
                 $input.val(true);
             }
