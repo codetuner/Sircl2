@@ -4,9 +4,9 @@
     <legend>Claims</legend>
     @for (int i = 0; i < Model.UserClaims.Count; i++)
     {
-        <div class="form-group">
+        <div class="mb-3">
             <button type="submit" asp-action="RemoveClaim" asp-route-claimIndex="@i" class="btn btn-link float-end" formnovalidate>&times;</button>
-            <label>@(Model.UserClaims[i].ClaimType)</label>
+            <label class="form-label">@(Model.UserClaims[i].ClaimType)</label>
             <input type="hidden" asp-for="UserClaims[i].Id" />
             <input type="hidden" asp-for="UserClaims[i].ClaimType" />
             <input asp-for="UserClaims[i].ClaimValue" class="form-control" autocomplete="off" required/>

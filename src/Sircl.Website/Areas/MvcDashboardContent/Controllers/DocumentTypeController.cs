@@ -38,7 +38,7 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
             model.Items = context.ContentDocumentTypes
                 .Include(dt => dt.Base)
                 .Where(i => i.Name.Contains(model.Query ?? ""))
-                .OrderBy(i => i.Name)
+                .OrderBy(model.Order ?? "Name ASC")
                 .Skip((model.Page - 1) * model.PageSize)
                 .Take(model.PageSize)
                 .ToArray();

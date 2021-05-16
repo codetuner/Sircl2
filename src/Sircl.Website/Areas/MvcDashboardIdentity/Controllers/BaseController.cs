@@ -17,8 +17,18 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.Controllers
             var model = new List<string>();
             foreach (var type in this.GetType().Assembly.GetTypes().Where(t => t.Name == "BaseController" && (t.Namespace?.Contains(".Areas.MvcDashboard") ?? false)))
             {
-                var nsparts = type.Namespace.Split('.');
-                model.Add(nsparts[nsparts.Length - 2]);
+                var accessible = true;
+                var aatributes = type.GetCustomAttributes(typeof(AuthorizeAttribute), false);
+                foreach (AuthorizeAttribute aatr in aatributes)
+                {
+                    if (aatr.Roles != null && !aatr.Roles.Split(',').Select(s => s.Trim()).Any(r => User.IsInRole(r))) accessible = false;
+                }
+
+                if (accessible)
+                {
+                    var nsparts = type.Namespace.Split('.');
+                    model.Add(nsparts[nsparts.Length - 2]);
+                }
             }
 
             return View(model);

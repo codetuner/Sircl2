@@ -48,7 +48,7 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
                 .Where(d => d.TypeId == model.DocumentTypeId || model.DocumentTypeId == null)
                 .Where(d => d.DeletedOnUtc == null)
                 .Where(d => d.State == model.State || model.State == null)
-                .OrderBy(i => i.Name)
+                .OrderBy(model.Order ?? "Name ASC")
                 .Skip((model.Page - 1) * model.PageSize)
                 .Take(model.PageSize)
                 .ToArray();
@@ -162,7 +162,17 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
                 .Include(d => d.Properties)
                 .SingleOrDefault(d => d.Id == id);
             if (model.Item == null) return new NotFoundResult();
+            
+            model.ItemState = model.Item.State;
 
+            return EditView(model);
+        }
+
+        [HttpPost]
+        public IActionResult Submit(int id, EditModel model)
+        {
+            ModelState.Clear();
+            model.HasChanges = true;
             return EditView(model);
         }
 
@@ -180,11 +190,13 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
                     var utcNow = DateTime.UtcNow;
                     if (entry.State == EntityState.Added)
                     {
+                        // Set created fields:
                         model.Item.CreatedOnUtc = utcNow;
                         model.Item.CreatedBy = this.HttpContext.User?.Identity?.Name;
                     }
                     else
                     {
+                        // Update modified fields but not other unmapped fields:
                         model.Item.ModifiedOnUtc = utcNow;
                         model.Item.ModifiedBy = this.HttpContext.User?.Identity?.Name;
                         entry.Property(nameof(Document.CreatedOnUtc)).IsModified = false;
@@ -195,6 +207,31 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
                         entry.Property(nameof(Document.PublishedBy)).IsModified = false;
                         entry.Property(nameof(Document.DeletedOnUtc)).IsModified = false;
                         entry.Property(nameof(Document.DeletedBy)).IsModified = false;
+
+                        if (model.RequestPublication && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentAuthor")))
+                        {
+                            model.Item.PublicationRequestedOnUtc = utcNow;
+                            model.Item.PublicationRequestedBy = this.HttpContext.User?.Identity?.Name;
+                        }
+                        else if (model.Publish && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor")))
+                        {
+                            model.Item.PublishedOnUtc = utcNow;
+                            model.Item.PublishedBy = this.HttpContext.User?.Identity?.Name;
+                        }
+                        else if (model.Unpublish && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor")))
+                        {
+                            entry.Property(nameof(Document.PublicationRequestedOnUtc)).IsModified = true;
+                            entry.Property(nameof(Document.PublicationRequestedBy)).IsModified = true;
+                            entry.Property(nameof(Document.PublishedOnUtc)).IsModified = true;
+                            entry.Property(nameof(Document.PublishedBy)).IsModified = true;
+                        }
+
+                        // Delete properties on model not on model anymore:
+                        var propertyIds = model.Item.Properties.Select(p => p.Id).ToList();
+                        foreach (var dbproperty in context.ContentProperties.Where(cp => cp.DocumentId == model.Item.Id).ToList())
+                        {
+                            if (!propertyIds.Contains(dbproperty.Id)) context.Remove(dbproperty);
+                        }
                     }
 
                     // Save changes:

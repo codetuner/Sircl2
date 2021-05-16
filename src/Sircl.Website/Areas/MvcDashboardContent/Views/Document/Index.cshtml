@@ -17,15 +17,15 @@
 
         <div class="flex-grow-1"></div>
 
-        <div class="">
+        <div>
             <select class="form-control auto-width" asp-for="State" asp-items="Model.States"><option value="">All</option></select>
         </div>
         <div>&nbsp;&nbsp;</div>
-        <div class="">
+        <div>
             <select class="form-control auto-width" asp-for="DocumentTypeId" asp-items="Model.DocumentTypes"><option value="">All</option></select>
         </div>
         <div>&nbsp;&nbsp;</div>
-        <div class="">
+        <div>
             <input type="search" class="form-control oninput-change" asp-for="Query" style="max-width: 280px;" autocomplete="off" placeholder="Search" />
         </div>
     </div>
@@ -39,12 +39,12 @@
                 <thead>
                     <tr>
                         <th class="onchange-nosubmit"><input type="checkbox" ifchecked-check="<table|>tbody input[type=checkbox]" ifunchecked-uncheck="<table|>tbody input[type=checkbox]" /></th>
-                        <th>State</th>
+                        <th asp-order="@Model.Order">State</th>
                         <th>Type</th>
-                        <th>Name</th>
-                        <th>Culture</th>
-                        <th>Path</th>
-                        <th>SortKey</th>
+                        <th asp-order="@Model.Order">Name</th>
+                        <th asp-order="@Model.Order">Culture</th>
+                        <th asp-order="@Model.Order">Path</th>
+                        <th asp-order="@Model.Order">SortKey</th>
                     </tr>
                 </thead>
                 <tbody>

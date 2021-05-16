@@ -41,70 +41,84 @@
     <!-- TAB FORMS -->
     <div class="tab-pane fade show active" id="forms" role="tabpanel" aria-labelledby="home-tab">
 
-        <p>
-            Autocomplete with form:<br />
-            <form class="onchange-submit" asp-controller="Products" asp-action="AutoComplete" asp-route-listid="autoprod" method="get" target="#autoprod">
-                <input class="oninput-change" type="text" list="autoprod" name="value" autocomplete="off" />
-                <datalist id="autoprod"></datalist>
-            </form>
-        </p>
+        <div class="card">
+            <div class="card-body">
+                <p><b>Autocomplete using form:</b></p>
+                <form class="onchange-submit" asp-controller="Products" asp-action="AutoComplete" asp-route-listid="autoprod" method="get" target="#autoprod">
+                    <input class="oninput-change" type="text" list="autoprod" name="value" autocomplete="off" />
+                    <datalist id="autoprod"></datalist>
+                </form>
+            </div>
+        </div>
 
-        <p>
-            Autocomplete without form:<br />
-            <form class="onchange-submit" action="/Products" method="get">
-                <input class="oninput-change onchange-nosubmit" type="text" name="prod" list="autoprod2" autocomplete="off" onchange-action="@Url.Action("AutoComplete", "Products", new { age="[age]", date = "[date]" })" browser-cache="on" target="#autoprod2" />
-                <datalist id="autoprod2"></datalist>
+        <div class="card">
+            <div class="card-body">
+                <p><b>Autocomplete without form:</b></p>
+                <form action="/Home/Privacy" method="get">
+                    <input class="oninput-change onchange-nosubmit" type="text" name="prod" list="autoprod2" autocomplete="off" onchange-action="@Url.Action("AutoComplete", "Products", new { age="[age]", date = "[date]" })" browser-cache="on" target="#autoprod2" />
+                    <datalist id="autoprod2"></datalist>
+                    <p>
+                        <input type="text" value="45" name="age" />
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p><b>#fr1 File upload - IndexDelayed</b></p>
+                <form id="fr1" action="/Home/IndexDelayed" method="post" enctype="multipart/form-data">
+
+                    <p>
+                        <input id="f1" name="f1" type="file" required />
+                    </p>
+
+                    <p>
+                        <input id="x0" name="date" type="text" required />
+                    </p>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p><b>#frm2 Various submit methods</b></p>
+                <form id="frm2" default-submit-button="#x4" class="with-overlay" method="get" onsubmit-disable=">:input" onchange-set="IsDirty" xx-protect-message="Leave this form ?">
+
+                    <p>
+                        <input name="IsDirty" type="text" class="float-right" readonly />
+                        <input id="x1" name="age" type="text" class="oninput-change" value="123" required autofocus />
+                    </p>
+
+                    <p>
+                        <button id="x2" type="button" onclick="alert('hi');">Say hi</button>
+                    </p>
+
+                    <p>
+                        <button id="x3" type="submit" formaction="/Customers" onclick-confirm="Sure ?" class="protect-ignore"><i class="spinner"></i>Submit / confirm / Lists customers</button>
+                    </p>
+
+                    <p>
+                        <button id="x4" formaction="/Home/Privacy" name="inv" value="12" target="#bs-modal-content"><i class="spinner">[]</i> Default-Submit / Privacy in modal</button>
+                    </p>
+
+                    <p>
+                        <button id="x5" class="btn btn-primary" onload-toggleclass="btn-primary, btn-dark, alert alert-primary on < p">No formaction</button>
+                    </p>
+
+                    <p>
+                        <button id="x6" type="button" onclick="document.getElementById('frm2').submit();">Submit by script</button>
+                    </p>
+
+                </form>
+
                 <p>
-                    <input type="text" value="45" name="age"/>
+                    <button type="button" onclick="$('#frm2').show('fast');">Show</button>
+                    <button type="button" onclick="$('#frm2').hide('fast');">Hide</button>
                 </p>
-            </form>
-        </p>
-
-        <form id="fr1" action="/Home/IndexDelayed" method="post" enctype="multipart/form-data">
-
-            <p>
-                <input id="f1" name="f1" type="file" required />
-            </p>
-
-            <p>
-                <input id="x0" name="date" type="text" required />
-            </p>
-
-        </form>
-
-        <form id="frm2" default-submit-button="#x4" class="with-overlay" method="get" onsubmit-disable=">:input" onchange-set="IsDirty" xx-protect-message="Leave this form ?">
-
-            <p>
-                <input name="IsDirty" type="text" class="float-right" readonly />
-                <input id="x1" name="age" type="text" class="oninput-change" value="123" required autofocus />
-            </p>
-
-            <p>
-                <button id="x2" type="button" onclick="alert('hi');">Say hi</button>
-            </p>
-
-            <p>
-                <button id="x3" type="submit" formaction="/Customers" onchange-confirm-message="Sure ?" class="protect-ignore"><i class="spinner"></i>Submit</button>
-            </p>
-
-            <p>
-                <button id="x4" formaction="/Home/IndexDelayed" name="inv" value="12" target="#bs-modal-content"><i class="spinner">[]</i> Default</button>
-            </p>
-
-            <p>
-                <button id="x4" class="btn btn-primary" onload-toggleclass="btn-primary, btn-dark, alert alert-primary on < p">No formaction</button>
-            </p>
-
-            <p>
-                <button id="x5" type="button" onclick="forms[0].submit();">Submit by script</button>
-            </p>
-
-        </form>
-
-        <p>
-            <button type="button" onclick="$('#frm2').show('fast');">Show</button>
-            <button type="button" onclick="$('#frm2').hide('fast');">Hide</button>
-        </p>
+            </div>
+        </div>
     </div>
 
     <!-- TAB DIALOGS -->
@@ -715,185 +729,189 @@
         <button type="button" onclick="$('#xxx5').html('<p>Original Html</p>')">Html</button>
         <button type="button" onclick="$('#xxx5').append('<p>One more line</p>')">Append</button>
 
+        <p>
+            <button type="button" ondblclick-load="/Home/Privacy" target="#xxx5">Double click for privacy</button>
+        </p>
+
     </div>
 </div>
 
-<p>
-    <a href="http://www.google.com" download>Test download</a>
-</p>
-<p>
-    <a href="/Invoices/SetAwaiting">Test Method not allowed</a>
-</p>
-<p>
-    <a href="/NotFound">Test NotFound</a>
-</p>
+        <p>
+            <a href="http://www.google.com" download>Test download</a>
+        </p>
+        <p>
+            <a href="/Invoices/SetAwaiting">Test Method not allowed</a>
+        </p>
+        <p>
+            <a href="/NotFound">Test NotFound</a>
+        </p>
 
-<!-- Dialogs -->
+        <!-- Dialogs -->
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 1</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal1">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 1</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal1">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 2</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal2">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 2</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal2">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 3</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal3">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 3</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal3">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">RED MODAL</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="redmodal" download-progress="progress">
-                <p>Please wait...</p>
-                <progress></progress>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">RED MODAL</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="redmodal" download-progress="progress">
+                        <p>Please wait...</p>
+                        <progress></progress>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Modals -->
+        <!-- Modals -->
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 1</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal1">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 1</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal1">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 2</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal2">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 2</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal2">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal 3</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="bsmodal3">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal 3</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="bsmodal3">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">RED MODAL</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="redmodal" download-progress="progress">
-                <p>Please wait...</p>
-                <progress></progress>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">RED MODAL</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="redmodal" download-progress="progress">
+                        <p>Please wait...</p>
+                        <progress></progress>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div ifinviewport-load="/Home/Infinite?Page=1">
-    Wait for loading...
-</div>
+        <div ifinviewport-load="/Home/Infinite?Page=1">
+            Wait for loading...
+        </div>

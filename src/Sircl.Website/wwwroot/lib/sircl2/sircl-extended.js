@@ -141,25 +141,25 @@ $(function () {
         });
     });
 
-    // <* onclick-check="selector"> On click checks matching checkbox inputs.
+    // <* onclick-check="selector"> On click checks matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-check]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = true;
             $(this).change();
         });
     });
 
-    // <* onclick-uncheck="selector"> On click unchecks matching checkbox inputs.
+    // <* onclick-uncheck="selector"> On click unchecks matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-uncheck]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = false;
             $(this).change();
         });
     });
 
-    // <* onclick-togglecheck="selector"> On click changes the checked/unchecked state of matching checkbox inputs.
+    // <* onclick-togglecheck="selector"> On click changes the checked/unchecked state of matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-togglecheck]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = !this.checked;
             $(this).change();
         });
@@ -661,8 +661,6 @@ $(function () {
         }
     });
 });
-
-
 
 //#endregion
 

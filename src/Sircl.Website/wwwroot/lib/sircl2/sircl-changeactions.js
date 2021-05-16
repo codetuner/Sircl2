@@ -312,3 +312,36 @@ sircl.addChangeActionHandler("beforeSend", function (req) {
 sircl.addChangeActionHandler("afterSend", function (req) {
     req.$scope.removeClass("action-pending");
 });
+
+/**
+ * Confirm dialogs
+ */
+$(function () {
+    $(document.body).children().on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
+        var confirmMessage = $(this).attr("onchange-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+                $this.prop("checked", !$this.prop("checked"));
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+    $(document.body).children().on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
+        var confirmMessage = $(this).attr("onchange-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+                $(this).val(this._previousActionValue);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+});
+
+$$(function () {
+    $(this).find("INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]").each(function () {
+        this._previousActionValue = $(this).val();
+    });
+});
+

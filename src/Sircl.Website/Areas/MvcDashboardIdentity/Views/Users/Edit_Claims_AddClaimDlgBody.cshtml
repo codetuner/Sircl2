@@ -5,12 +5,12 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <div class="form-group">
-        <label asp-for="NewClaim.ClaimType"></label>
+    <div class="mb-3">
+        <label asp-for="NewClaim.ClaimType" class="form-label"></label>
         <input asp-for="NewClaim.ClaimType" class="form-control" autocomplete="on" list="claimtypeslist" autofocus />
     </div>
-    <div class="form-group">
-        <label asp-for="NewClaim.ClaimValue"></label>
+    <div class="mb-3">
+        <label asp-for="NewClaim.ClaimValue" class="form-label"></label>
         <input asp-for="NewClaim.ClaimValue" class="form-control" autocomplete="off" />
     </div>
     <datalist id="claimtypeslist">

@@ -42,9 +42,11 @@ namespace Sircl.Website
 
             // region Content:
 
-            services.AddDbContext<Data.Content.ContentDbContext>(options =>
+            services.AddDbContext<Data.Content.ContentDbContext>(options => {
+                //options.LogTo(Startup.WriteDebug);
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             // endregion
 
@@ -112,6 +114,11 @@ namespace Sircl.Website
                     pattern: "{**path}",
                     defaults: new { controller = "Content", action = "Render" });
             });
+        }
+
+        public static void WriteDebug(string msg)
+        {
+            System.Diagnostics.Debug.WriteLine(msg);
         }
     }
 }

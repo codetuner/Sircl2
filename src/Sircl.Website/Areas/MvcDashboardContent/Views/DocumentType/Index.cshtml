@@ -24,8 +24,8 @@
                 <thead>
                     <tr>
                         <th class="onchange-nosubmit"><input type="checkbox" ifchecked-check="<table|>tbody input[type=checkbox]" ifunchecked-uncheck="<table|>tbody input[type=checkbox]" /></th>
-                        <th>Name</th>
-                        <th>View</th>
+                        <th asp-order="@Model.Order">Name</th>
+                        <th asp-order="@Model.Order" field-name="ViewName">View</th>
                         <th>Base</th>
                     </tr>
                 </thead>

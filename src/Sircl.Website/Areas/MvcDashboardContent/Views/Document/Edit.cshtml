@@ -6,12 +6,12 @@
 
 <h1>@Model.DocumentType.Name <small class="text-muted">@(Model.Item.Name ?? "new")</small></h1>
 
-<form asp-action="Save" asp-route-id="@Model.Item.Id" method="post" class="" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
+<form asp-action="Submit" asp-route-id="@Model.Item.Id" method="post" class="" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
 
     <div class="overlay" hidden></div>
 
     <input type="hidden" asp-for="Item.Id" />
-    <input type="hidden" asp-for="Item.TypeId" />
+    <input type="hidden" asp-for="ItemState" />
     <input type="hidden" asp-for="HasChanges" />
 
     <div asp-validation-summary="All" class="alert alert-danger alert-dismissible fade show mb-3">
@@ -23,6 +23,11 @@
         <label for="@Html.IdFor(m => m.Item.Name)" class="form-label">Name: *</label>
         <input asp-for="Item.Name" type="text" class="form-control" />
         <span asp-validation-for="Item.Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.Name)" class="form-label">Document Type: *</label>
+        <select class="form-control onchange-submit" asp-for="Item.TypeId" asp-items="Model.DocumentTypesInHierarchy" onchange-confirm="Properties may be lost. Continue anyway ?"></select>
     </div>
 
     <div class="mb-3">
@@ -96,17 +101,31 @@
         <span asp-validation-for="Item.Notes" class="text-danger"></span>
     </div>
 
+    <div class="mb-3 form-check">
+        @if (Model.Item.Id != 0 && Model.ItemState == "New" && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentAuthor")))
+        {
+            <label class="form-check-label"><input class="form-check-input" asp-for="RequestPublication" /> Request publication on save</label>
+        }
+        else if (Model.Item.Id != 0 && Model.ItemState == "To publish" && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor")))
+        {
+            <label class="form-check-label"><input class="form-check-input" asp-for="Publish" /> Publish on save</label>
+        }
+        else if (Model.Item.Id != 0 && Model.ItemState == "Published" && (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor")))
+        {
+            <label class="form-check-label"><input class="form-check-input" asp-for="Unpublish" /> Unpublish on save</label>
+        }
+    </div>
+
     <p class="mt-3">
         <div class="float-end">
             @if (Model.Item.Id != 0)
             {
-                <a href="@Url.Action("Index")" target="#rightpanel" class="btn btn-secondary">Preview</a>
-                <button type="submit" class="btn btn-primary" name="andcopy" value="true"><i class="spinner fas fa-copy"></i> Save &amp; Copy</button>
-                <button type="submit" class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Item.Id" onclick-confirm="Are you sure ?"><i class="spinner fas fa-trash-alt"></i> Delete</button>
+                <button type="submit" asp-action="Save" asp-route-id="@Model.Item.Id" class="btn btn-primary" name="andcopy" value="true"><i class="spinner fas fa-copy"></i> Save &amp; Copy</button>
+                <button type="submit" asp-action="Delete" asp-route-id="@Model.Item.Id" class="btn btn-danger" onclick-confirm="Are you sure ?"><i class="spinner fas fa-trash-alt"></i> Delete</button>
             }
         </div>
-        <button type="submit" class="btn btn-primary"><i class="spinner fas fa-check"></i> Save</button>
-        <button type="submit" class="btn btn-primary" name="apply" value="true"><i class="spinner fas fa-check"></i> Apply</button>
+        <button type="submit" asp-action="Save" asp-route-id="@Model.Item.Id" class="btn btn-primary"><i class="spinner fas fa-check"></i> Save</button>
+        <button type="submit" asp-action="Save" asp-route-id="@Model.Item.Id" class="btn btn-primary" name="apply" value="true"><i class="spinner fas fa-check"></i> Apply</button>
         <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
     </p>
 

@@ -133,12 +133,18 @@ namespace Sircl.Website.Data.Content
         /// [NotMapped] Returns the property with the given name.
         /// Requires the Properties collection to be loaded.
         /// </summary>
+        /// <remarks>
+        /// If no property is found with that name, one is created with an empty type definition.
+        /// This to cover the case where a document is created and later on property types are added
+        /// to its document type or one of its base types.
+        /// </remarks>
         [NotMapped]
         public Property this[string name]
         {
             get
             {
-                return this.Properties.FirstOrDefault(p => p.Type.Name == name);
+                return this.Properties.FirstOrDefault(p => p.Type.Name == name)
+                    ?? new Property() { Document = this, Type = new PropertyType() { Name = name } };
             }
         }
 

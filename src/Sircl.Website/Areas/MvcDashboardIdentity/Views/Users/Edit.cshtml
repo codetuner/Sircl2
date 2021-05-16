@@ -5,7 +5,7 @@
 
 <h1>User</h1>
 
-<form class="" asp-action="Save" asp-route-id="@Model.Item?.Id" method="post" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
+<form asp-action="Save" asp-route-id="@Model.Item?.Id" method="post" class="" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
 
     <div class="overlay" hidden></div>
 
@@ -23,28 +23,28 @@
         <div class="col-md">
             <fieldset>
                 <legend>Contact</legend>
-                <div class="form-group">
-                    <label asp-for="Item.UserName"></label>
+                <div class="mb-3">
+                    <label asp-for="Item.UserName" class="form-label"></label>
                     <input asp-for="Item.UserName" class="form-control" autocomplete="off" autofocus required pattern="[0-9|A-Z|a-z|@@|.]+" />
                     <span asp-validation-for="Item.UserName"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Item.Email"></label>
+                <div class="mb-3">
+                    <label asp-for="Item.Email" class="form-label"></label>
                     <input asp-for="Item.Email" class="form-control" autocomplete="off" ifhasvalue-enable="#@Html.IdFor(m => m.Item.EmailConfirmed)" />
                 </div>
 
-                <div class="form-group form-check">
+                <div class="mb-3 form-check">
                     <input asp-for="Item.EmailConfirmed" type="checkbox" class="form-check-input">
                     <label asp-for="Item.EmailConfirmed" class="form-check-label"></label>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Item.PhoneNumber"></label>
+                <div class="mb-3">
+                    <label asp-for="Item.PhoneNumber" class="form-label"></label>
                     <input asp-for="Item.PhoneNumber" class="form-control" autocomplete="off" ifhasvalue-enable="#@Html.IdFor(m => m.Item.PhoneNumberConfirmed)" />
                 </div>
 
-                <div class="form-group form-check">
+                <div class="mb-3 form-check">
                     <input asp-for="Item.PhoneNumberConfirmed" type="checkbox" class="form-check-input">
                     <label asp-for="Item.PhoneNumberConfirmed" class="form-check-label"></label>
                 </div>
@@ -53,18 +53,18 @@
 
             <fieldset>
                 <legend>Security</legend>
-                <div class="form-group form-check">
+                <div class="mb-3 form-check">
                     <input asp-for="Item.TwoFactorEnabled" type="checkbox" class="form-check-input">
                     <label asp-for="Item.TwoFactorEnabled" class="form-check-label"></label>
                 </div>
 
-                <div class="form-group form-check">
+                <div class="mb-3 form-check">
                     <input asp-for="Item.LockoutEnabled" type="checkbox" class="form-check-input" ifchecked-show="#lockoutend-group">
                     <label asp-for="Item.LockoutEnabled" class="form-check-label"></label>
                 </div>
 
-                <div class="form-group" id="lockoutend-group">
-                    <label asp-for="Item.LockoutEnd"></label>
+                <div class="mb-3" id="lockoutend-group">
+                    <label asp-for="Item.LockoutEnd" class="form-label"></label>
                     <input asp-for="Item.LockoutEnd" class="form-control" type="datetime" />
                 </div>
             </fieldset>
@@ -75,7 +75,7 @@
                 <legend>Roles</legend>
                 @foreach (var item in Model.Roles.OrderBy(r => r.Name))
                 {
-                    <div class="form-group form-check">
+                    <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="@(Html.IdFor(m=> m.UserRoleNames))_@(item.Id)" name="@Html.NameFor(m => m.UserRoleNames)" value="@(item.Name)" checked="@(Model.UserRoleNames.Contains(item.Name) ? "checked" : null)">
                         <label class="form-check-label" for="@(Html.IdFor(m=> m.UserRoleNames))_@(item.Id)">@item.Name</label>
                     </div>

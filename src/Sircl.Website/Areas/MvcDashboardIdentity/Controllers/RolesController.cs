@@ -38,7 +38,7 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.Controllers
                 .Count();
             model.MaxPage = (count + model.PageSize - 1) / model.PageSize;
             model.Items = query
-                .OrderBy(d => d.NormalizedName)
+                .OrderBy(model.Order ?? "NormalizedName ASC")
                 .Skip((model.Page - 1) * model.PageSize)
                 .Take(model.PageSize)
                 .ToArray();

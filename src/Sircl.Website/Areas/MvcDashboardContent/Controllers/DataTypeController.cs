@@ -35,7 +35,7 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
             model.MaxPage = (count + model.PageSize - 1) / model.PageSize;
             model.Items = context.ContentDataTypes
                 .Where(i => i.Name.Contains(model.Query ?? ""))
-                .OrderBy(i => i.Name)
+                .OrderBy(model.Order ?? "Name ASC")
                 .Skip((model.Page - 1) * model.PageSize)
                 .Take(model.PageSize)
                 .ToArray();

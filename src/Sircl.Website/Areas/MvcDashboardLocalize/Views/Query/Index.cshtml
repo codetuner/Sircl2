@@ -7,12 +7,14 @@
 
 <form class="card p-3 bg-white onchange-submit" action="@Url.Action("Index")" method="get" history="replace" sub-target="#subTarget">
 
-    <input type="hidden" asp-for="DomainId" />
-
     <div class="d-flex justify-content-between">
         <a href="@Url.Action("New", new { domainId = Model.DomainId })" class="btn btn-primary"><i class="spinner fas fa-plus"></i> New</a>
         <div class="flex-grow-1"></div>
-        <div class="">
+        <div>
+            <select class="form-control auto-width" asp-for="DomainId" asp-items="Model.Domains"><option value="">All</option></select>
+        </div>
+        <div>&nbsp;&nbsp;</div>
+        <div>
             <input type="search" class="form-control oninput-change" asp-for="Query" style="max-width: 280px;" autocomplete="off" placeholder="Search" />
         </div>
     </div>
@@ -27,8 +29,8 @@
                     <tr>
                         <th class="onchange-nosubmit"><input type="checkbox" ifchecked-check="<table|>tbody input[type=checkbox]" ifunchecked-uncheck="<table|>tbody input[type=checkbox]" /></th>
                         <th>Domain</th>
-                        <th>Name</th>
-                        <th>Connection</th>
+                        <th asp-order="@Model.Order">Name</th>
+                        <th asp-order="@Model.Order" field-name="ConnectionName">Connection</th>
                     </tr>
                 </thead>
                 <tbody>

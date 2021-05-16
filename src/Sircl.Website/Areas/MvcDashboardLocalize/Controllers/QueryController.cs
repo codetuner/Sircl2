@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sircl.Website.Areas.MvcDashboardLocalize.Models.Query;
 using Sircl.Website.Data.Localize;
@@ -38,10 +39,14 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                 .Include(i => i.Domain)
                 .Where(i => i.DomainId == model.DomainId || model.DomainId == null)
                 .Where(i => i.Name.Contains(model.Query ?? ""))
-                .OrderBy(i => i.Name)
+                .OrderBy(model.Order ?? "Name ASC")
                 .Skip((model.Page - 1) * model.PageSize)
                 .Take(model.PageSize)
                 .ToArray();
+            model.Domains = context.LocalizeDomains
+                .OrderBy(d => d.Name)
+                .Select(d => new SelectListItem() { Value = d.Id.ToString(), Text = d.Name, Selected = (model.DomainId == d.Id) })
+                .ToList();
 
             return View("Index", model);
         }

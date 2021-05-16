@@ -67,6 +67,13 @@ $$(function () {
 // Click event-actions:
 ///////////////////////
 
+// onclick-load is an alias for href:
+sircl.addContentReadyHandler("enrich", function () {
+    $(this).find("[onclick-load]").each(function () {
+        $(this).attr("href", $(this).attr("onclick-load"));
+    });
+});
+
 $(function () {
 
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.
@@ -141,29 +148,122 @@ $(function () {
         });
     });
 
-    // <* onclick-check="selector"> On click checks matching checkbox inputs.
+    // <* onclick-check="selector"> On click checks matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-check]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = true;
             $(this).change();
         });
     });
 
-    // <* onclick-uncheck="selector"> On click unchecks matching checkbox inputs.
+    // <* onclick-uncheck="selector"> On click unchecks matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-uncheck]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = false;
             $(this).change();
         });
     });
 
-    // <* onclick-togglecheck="selector"> On click changes the checked/unchecked state of matching checkbox inputs.
+    // <* onclick-togglecheck="selector"> On click changes the checked/unchecked state of matching checkbox or radio inputs.
     $(document.body).on("click", "[onclick-togglecheck]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = !this.checked;
             $(this).change();
         });
     });
+});
+
+// Dblclick event-actions:
+//////////////////////////
+
+$(function () {
+
+    // <* ondblclick-load="url"> On doubleclick, calls the given URL.
+    $(document.body).on("dblclick", "*[ondblclick-load]", function (event) {
+        var href = this.getAttribute("ondblclick-load");
+        if (href === "null" || href === "") {
+            // Ignore
+        } else if (href === "history:back") {
+            window.history.back();
+        } else if (href === "history:back-uncached") {
+            sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
+            window.history.back();
+        } else if (href === "history:refresh") {
+            location.reload();
+        } else if (href.indexOf("alert:") === 0) {
+            sircl.ext.alert($(this), href.substr(6), null, true);
+        } else if (href.indexOf("javascript:") === 0) {
+            var nonce = this.getAttribute("nonce");
+            if (nonce) {
+                jQuery.globalEval(href.substr(11), { nonce: nonce });
+            } else {
+                jQuery.globalEval(href.substr(11));
+            }
+        } else if (href.indexOf("#") === 0) {
+            window.location.hash = href;
+        } else {
+            var target = this.getAttribute("target");
+            if ((target == null && !sircl.singlePageMode) || (target != null && sircl.ext.isExternalTarget(target))) {
+                if (target == null) {
+                    window.location.href = href;
+                } else {
+                    window.open(href, target);
+                }
+            } else {
+                // Forward to the server side rendering handler:
+                sircl._loadUrl($(this), href, $(target));
+            }
+        }
+        // If not returned earlier, stop event propagation:
+        event.preventDefault();
+        event.stopPropagation();
+    });
+
+    // <* ondblclick-click="selector"> On doubleclick, triggers a click event on the elements matching the given selector.
+    $(document.body).on("dblclick", "*[ondblclick-click]", function (event) {
+        var targetSelector = $(this).attr("ondblclick-click");
+        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        //event.preventDefault();
+    });
+
+
+    // <* ondblclick-clear="selector"> On doubleclick clears the elements matching the given selector.
+    $(document.body).on("dblclick", "[ondblclick-clear]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("ondblclick-clear")).html("");
+    });
+
+    // <* ondblclick-show="selector"> On doubleclick shows the elements matching the given selector.
+    $(document.body).on("dblclick", "[ondblclick-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-show")), true);
+    });
+
+    // <* ondblclick-hide="selector"> On doubleclick hides the elements matching the given selector.
+    $(document.body).on("dblclick", "[ondblclick-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-hide")), false);
+    });
+
+    // <* ondblclick-toggleshow="selector"> On doubleclick shows/hides the elements matching the given selector.
+    $(document.body).on("dblclick", "[ondblclick-toggleshow]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("ondblclick-toggleshow")).each(function () {
+            sircl.ext.visible($(this), !sircl.ext.visible($(this)));
+        });
+    });
+
+    /// <* ondblclick-removeclass="class [on selector]"> On doubleclick, removes the class.
+    $(document.body).on("dblclick", "[ondblclick-removeclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("ondblclick-removeclass"));
+    });
+
+    /// <* ondblclick-addclass="class [on selector]"> On doubleclick, adds the class.
+    $(document.body).on("dblclick", "[ondblclick-addclass]", function (event) {
+        sircl.ext.addClass($(this), $(this).attr("ondblclick-addclass"));
+    });
+
+    /// <* ondblclick-toggleclass="class [on selector]"> On doubleclick, toggles the class.
+    $(document.body).on("dblclick", "[ondblclick-toggleclass]", function (event) {
+        sircl.ext.toggleClass($(this), $(this).attr("ondblclick-toggleclass"));
+    });
+
 });
 
 /// Hover event-actions:
@@ -704,7 +804,7 @@ $$(function () {
 //#region Confirmation dialogs
 
 $(function () {
-    /// Buttons and link can have a confirmation dialog;
+    /// Buttons and link can have a confirmation dialog:
     /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
     $(document.body).children().on("click", "*[onclick-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclick-confirm");
@@ -715,9 +815,42 @@ $(function () {
             }
         }
     });
+
+    /// Checkboxes can have a change confirm dialog:
+    /// <input type="checkbox" onchange-confirm="Are you sure ?" />
+    $(document.body).children().on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
+        var confirmMessage = $(this).attr("onchange-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+                $this.prop("checked", !$this.prop("checked"));
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+
+    /// Inputs and selects can have a change confirm dialog:
+    /// <input type="text" onchange-confirm="Are you sure ?" />
+    $(document.body).children().on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
+        var confirmMessage = $(this).attr("onchange-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+                $(this).val(this._beforeConfirmValue);
+                event.stopPropagation();
+                event.preventDefault();
+            } else {
+                this._beforeConfirmValue = $(this).val();
+            }
+        }
+    });
 });
 
-
+$$(function () {
+    // Store initial value of input or select having onchange-confirm, to be able to restore if not confirmed:
+    $(this).find("INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]").each(function () {
+        this._beforeConfirmValue = $(this).val();
+    });
+});
 
 //#endregion
 

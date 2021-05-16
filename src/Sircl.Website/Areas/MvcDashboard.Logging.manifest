@@ -1,6 +1,0 @@
-﻿{
-  "Name": "Logging",
-  "AreaName": "MvcDashboardLogging",
-  "Icon": "<i class=\"fas fa-tachometer-alt\"></i>",
-  "Roles": "Administrator,LoggingAdministrator"
-}

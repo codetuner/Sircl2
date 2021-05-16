@@ -16,5 +16,7 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.Models
         public int MaxPage { get; set; } = 1;
 
         public string Query { get; set; }
+        
+        public string Order { get; set; }
     }
 }

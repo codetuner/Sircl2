@@ -54,7 +54,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     // Close any opened modal that is not the target if target has onload-showmodal class and is not open:
     var $openedTarget = req.$initialTarget.closest(".modal:not(.onload-showmodal):not(.show)");
     var $openModals = $(".modal.show");
-    if ($openModals.length > 0 && $openedTarget.length == 0) {
+    if (req.isForeground == true && $openModals.length > 0 && $openedTarget.length == 0) {
         if (!$.contains($openModals[0], req.$initialTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {
@@ -123,7 +123,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
     var processor = this;
     // Close any opened modal that is not the target:
     var $openModals = $(".modal.show");
-    if ($openModals.length > 0) {
+    if (req.isForeground == true && $openModals.length > 0) {
         if (!$.contains($openModals[0], req.$finalTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {
