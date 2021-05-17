@@ -918,34 +918,25 @@ $(function () {
         event.originalEvent.dataTransfer.setData("any", $(this).attr("drop-value"));
     });
 
-    $(document.body).on("dragenter", "[ondragover-addclass]", function (event) {
-        if ($(this).hasAttr("ondrop-accept")) {
-            var acceptTypes = $(this).attr("ondrop-accept").split(" ");
-            var abort = true;
-            for (var i = 0; i < acceptTypes.length; i++)
-                for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++)
-                    if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) abort = false;
-            if (abort) return;
+    $(document.body).children().on("dragover", "[ondrop-accept]", function (event) {
+        var acceptTypes = $(this).attr("ondrop-accept").split(" ");
+        for (var i = 0; i < acceptTypes.length; i++) {
+            for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++) {
+                if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) {
+                    // If a match is found, allow drop:
+                    event.preventDefault();
+                    // If has [ondragover-addclass], add class:
+                    var $scope = $(this).closest("[ondragover-addclass]");
+                    if ($scope.length > 0) {
+                        sircl.ext.addClass($scope, $scope.attr("ondragover-addclass"));
+                    }
+                }
+            }
         }
-
-        sircl.ext.addClass($(this), $(this).attr("ondragover-addclass"));
     });
 
     $(document.body).on("dragleave", "[ondragover-addclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
-    });
-
-    $(document.body).on("dragover", ".ondrop-submit", function (event) {
-        if ($(this).hasAttr("ondrop-accept")) {
-            var acceptTypes = $(this).attr("ondrop-accept").split(" ");
-            var abort = true;
-            for (var i = 0; i < acceptTypes.length; i++)
-                for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++)
-                    if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) abort = false;
-            if (abort) return;
-        }
-
-        event.preventDefault();
     });
 
     $(document.body).on("drop", ".ondrop-submit", function (event) {
