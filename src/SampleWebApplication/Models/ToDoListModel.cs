@@ -7,8 +7,14 @@ namespace SampleWebApplication.Models
 {
     public class ToDoListModel
     {
-        public List<List<ToDoItem>> Items { get; set; }
-
         public ToDoItem NewItem { get; set; }
+
+        public List<ToDoItem> NewItems { get; set; } = new List<ToDoItem>();
+
+        public List<ToDoItem> BusyItems { get; set; } = new List<ToDoItem>();
+
+        public List<ToDoItem> DoneItems { get; set; } = new List<ToDoItem>();
+
+        public string DropData { get; set; }
     }
 }

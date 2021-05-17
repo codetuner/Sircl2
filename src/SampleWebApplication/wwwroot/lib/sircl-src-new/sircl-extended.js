@@ -893,7 +893,6 @@ $(function () {
         }
     });
 
-
     $(document.body).children().on("click", "FORM.form-changed *[onclickchanged-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclickchanged-confirm");
         if (!sircl.ext.confirm($(this), confirmMessage, event)) {
@@ -905,29 +904,68 @@ $(function () {
 
 //#endregion
 
-//#region Protected forms (onbeforeunload)
+//#region Drag & Drop
 
-//$(function () {
-//    window.onbeforeunload = function (event) {
-//        if ($("FORM.form-changed[protect-message]").length > 0) {
-//            event.preventDefault();
-//            event.returnValue = "";
-//        }
-//    };
-//});
+$(function () {
 
-//sircl.addRequestHandler("beforeSend", function (req) {
-//    if ((req.$initialTarget == null) && !req.$trigger.is(".protect-ignore")) {
-//        var $protectedForms = $("FORM.form-changed[protect-message]");
-//        if ($protectedForms.length > 0) {
-//            if (!confirm($protectedForms.attr("protect-message"))) {
-//                req.abort = true;
-//            }
-//        }
-//    }
-//    this.next(req);
-//});
+    $(document.body).on("dragstart", "[draggable]", function (event) {
+        if ($(this).hasAttr("drop-type")) {
+            var dragTypes = $(this).attr("drop-type").split(" ");
+            for (var i = 0; i < dragTypes.length; i++) {
+                if (dragTypes[i].trim() != "") event.originalEvent.dataTransfer.setData(dragTypes[i].trim(), true);
+            }
+        }
+        event.originalEvent.dataTransfer.setData("any", $(this).attr("drop-value"));
+    });
+
+    $(document.body).on("dragenter", "[ondragover-addclass]", function (event) {
+        if ($(this).hasAttr("ondrop-accept")) {
+            var acceptTypes = $(this).attr("ondrop-accept").split(" ");
+            var abort = true;
+            for (var i = 0; i < acceptTypes.length; i++)
+                for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++)
+                    if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) abort = false;
+            if (abort) return;
+        }
+
+        sircl.ext.addClass($(this), $(this).attr("ondragover-addclass"));
+    });
+
+    $(document.body).on("dragleave", "[ondragover-addclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
+    });
+
+    $(document.body).on("dragover", ".ondrop-submit", function (event) {
+        if ($(this).hasAttr("ondrop-accept")) {
+            var acceptTypes = $(this).attr("ondrop-accept").split(" ");
+            var abort = true;
+            for (var i = 0; i < acceptTypes.length; i++)
+                for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++)
+                    if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) abort = false;
+            if (abort) return;
+        }
+
+        event.preventDefault();
+    });
+
+    $(document.body).on("drop", ".ondrop-submit", function (event) {
+        var $form = $(this).closest("FORM");
+        if ($form.length > 0) {
+            // Copy drop-value to .drop-value input element:
+            $form.find("INPUT.drop-value").each(function () {
+                $(this).val(event.originalEvent.dataTransfer.getData("any"));
+            });
+            // Submit form:
+            var form = $form[0];
+            form._formTrigger = this;
+            form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
+            form.submit();
+            event.preventDefault();
+        }
+    });
+
+
+});
 
 //#endregion
-
 

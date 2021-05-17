@@ -13,7 +13,9 @@ namespace SampleWebApplication.Controllers
         public IActionResult Index()
         {
             var model = new ToDoListModel();
-            model.Items = Program.ToDoLanes;
+            model.NewItems = Program.ToDoLanes[0];
+            model.BusyItems = Program.ToDoLanes[1];
+            model.DoneItems = Program.ToDoLanes[2];
 
             return ViewIndex(model, true);
         }
@@ -25,9 +27,49 @@ namespace SampleWebApplication.Controllers
         }
 
         [HttpPost]
+        public IActionResult Drop(ToDoListModel model, int targetZone)
+        {
+            var dropdata = model.DropData.Split(',');
+            var sourceZone = Int32.Parse(dropdata[0]);
+            var sourceIndex = Int32.Parse(dropdata[1]);
+
+            ToDoItem item = null;
+            switch (sourceZone)
+            {
+                case 0:
+                    item = model.NewItems[sourceIndex];
+                    model.NewItems.RemoveAt(sourceIndex);
+                    break;
+                case 1:
+                    item = model.BusyItems[sourceIndex];
+                    model.BusyItems.RemoveAt(sourceIndex);
+                    break;
+                case 2:
+                    item = model.DoneItems[sourceIndex];
+                    model.DoneItems.RemoveAt(sourceIndex);
+                    break;
+            }
+
+            switch (targetZone)
+            {
+                case 0:
+                    model.NewItems.Add(item);
+                    break;
+                case 1:
+                    model.BusyItems.Add(item);
+                    break;
+                case 2:
+                    model.DoneItems.Add(item);
+                    break;
+            }
+
+            return ViewIndex(model, true);
+        }
+
+        [HttpPost]
         public IActionResult Add(ToDoListModel model)
         {
-            model.Items[0].Add(model.NewItem);
+            model.NewItems.Add(model.NewItem);
             model.NewItem = null;
 
             return ViewIndex(model, true);
@@ -38,7 +80,12 @@ namespace SampleWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                Program.ToDoLanes = model.Items;
+                Program.ToDoLanes = new List<List<ToDoItem>>() 
+                {
+                    model.NewItems,
+                    model.BusyItems,
+                    model.DoneItems
+                };
             }
 
             return ViewIndex(model, false);

@@ -1,31 +1,64 @@
 ﻿@model ToDoListModel
 
+<style>
+    .drop-zone {
+        background-color: lightgreen;
+    }
+        .drop-zone * { /* https://stackoverflow.com/a/18582960 */
+            pointer-events: none;
+        }
+</style>
+
 <form asp-action="Submit" method="post">
+
+    <input type="hidden" asp-for="DropData" class="drop-value" />
 
     <div class="container">
         <div class="row">
-            <div class="col">
+            <div class="col ondrop-submit" ondragover-addclass="drop-zone" ondrop-accept="busy-task done-task" formaction="@Url.Action("Drop", new  { targetZone = 0 })">
                 <h3>New</h3>
-                @for (int i = 0; i < Model.Items[0].Count; i++)
+                @for (int i = 0; i < Model.NewItems.Count; i++)
                 {
-                    <div class="card mb-3">
-                        <h5 class="card-title">@Model.Items[0][i].Name</h5>
+                    <div class="card mb-3" draggable="true" drop-type="new-task" drop-value="0,@i">
+                        <h5 class="card-title">@Model.NewItems[i].Name</h5>
                         <div class="card-body">
-                            @Model.Items[0][i].Description
+                            @Model.NewItems[i].Description
                         </div>
-                        <input type="hidden" asp-for="Items[0][i].Name" />
-                        <input type="hidden" asp-for="Items[0][i].Description" />
+                        <input type="hidden" asp-for="NewItems[i].Name" />
+                        <input type="hidden" asp-for="NewItems[i].Description" />
                     </div>
                 }
                 <p class="mb-3">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editToDoModal"><i class="fas fa-plus"></i> Add...</button>
                 </p>
             </div>
-            <div class="col">
+            <div class="col ondrop-submit" ondragover-addclass="drop-zone" ondrop-accept="new-task done-task" formaction="@Url.Action("Drop", new  { targetZone = 1 })">
                 <h3>Busy</h3>
+                @for (int i = 0; i < Model.BusyItems.Count; i++)
+                {
+                    <div class="card mb-3" draggable="true" drop-type="busy-task" drop-value="1,@i">
+                        <h5 class="card-title">@Model.BusyItems[i].Name</h5>
+                        <div class="card-body">
+                            @Model.BusyItems[i].Description
+                        </div>
+                        <input type="hidden" asp-for="BusyItems[i].Name" />
+                        <input type="hidden" asp-for="BusyItems[i].Description" />
+                    </div>
+                }
             </div>
-            <div class="col">
+            <div class="col ondrop-submit" ondragover-addclass="drop-zone" ondrop-accept="busy-task" formaction="@Url.Action("Drop", new  { targetZone = 2 })">
                 <h3>Done</h3>
+                @for (int i = 0; i < Model.DoneItems.Count; i++)
+                {
+                    <div class="card mb-3" draggable="true" drop-type="done-task" drop-value="2,@i">
+                        <h5 class="card-title">@Model.DoneItems[i].Name</h5>
+                        <div class="card-body">
+                            @Model.DoneItems[i].Description
+                        </div>
+                        <input type="hidden" asp-for="DoneItems[i].Name" />
+                        <input type="hidden" asp-for="DoneItems[i].Description" />
+                    </div>
+                }
             </div>
         </div>
     </div>
