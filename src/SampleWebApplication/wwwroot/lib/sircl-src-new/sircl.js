@@ -822,7 +822,28 @@ $(document).ready(function () {
     /// Any element having a href attribute (and no download attribute):
     /// Handles special href values
     $(document.body).on("click", "*[href]:not([download])", function (event) {
+        // Get href:
         var href = this.getAttribute("href");
+        // In href, substitute "[...]" by form values:
+        if ($(this).hasClass("substitute-fields")) {
+            var $formscope = $(triggerElement).closest("FORM");
+            if ($formscope.length == 0) $formscope = $(document);
+            var fieldparser = new RegExp(/\%5B[a-z0-9\.\-\_]+?\%5D/gi);
+            var fieldnames = [];
+            do {
+                var fieldname = fieldparser.exec(url);
+                if (fieldname !== null) fieldnames.push(fieldname[0]);
+                else break;
+            } while (true);
+            for (var f = 0; f < fieldnames.length; f++) {
+                var fieldvalue = $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
+                if (fieldvalue === undefined)
+                    href = href.replace(fieldnames[f], "");
+                else
+                    href = href.replace(fieldnames[f], encodeURIComponent(fieldvalue));
+            }
+        }
+        // Process href:
         if (href === "null" || href === "") {
             // Ignore
         } else if (href === "history:back") {

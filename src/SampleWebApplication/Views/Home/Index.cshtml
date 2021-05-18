@@ -55,7 +55,7 @@
             <div class="card-body">
                 <p><b>Autocomplete without form:</b></p>
                 <form action="/Home/Privacy" method="get">
-                    <input class="oninput-change onchange-nosubmit" type="text" name="prod" list="autoprod2" autocomplete="off" onchange-action="@Url.Action("AutoComplete", "Products", new { age="[age]", date = "[date]" })" browser-cache="on" target="#autoprod2" />
+                    <input class="oninput-change onchange-nosubmit substitute-fields" type="text" name="prod" list="autoprod2" autocomplete="off" onchange-action="@Url.Action("AutoComplete", "Products", new { age="[age]", date = "[date]" })" browser-cache="on" target="#autoprod2" />
                     <datalist id="autoprod2"></datalist>
                     <p>
                         <input type="text" value="45" name="age" />

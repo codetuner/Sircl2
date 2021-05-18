@@ -49,21 +49,23 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     // Get method:
     var method = (($(triggerElement).closest("[method]").attr("method") || "get").toUpperCase() == "POST") ? "POST" : "GET";
     // In url, substitute "[...]" by form values:
-    var $formscope = $(triggerElement).closest("FORM");
-    if ($formscope.length == 0) $formscope = $(document);
-    var fieldparser = new RegExp(/\%5B[a-z0-9\.\-\_]+?\%5D/gi);
-    var fieldnames = [];
-    do {
-        var fieldname = fieldparser.exec(url);
-        if (fieldname !== null) fieldnames.push(fieldname[0]);
-        else break;
-    } while (true);
-    for (var f = 0; f < fieldnames.length; f++) {
-        var fieldvalue = $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
-        if (fieldvalue === undefined)
-            url = url.replace(fieldnames[f], "");
-        else
-            url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
+    if ($scope.hasClass("substitute-fields")) {
+        var $formscope = $(triggerElement).closest("FORM");
+        if ($formscope.length == 0) $formscope = $(document);
+        var fieldparser = new RegExp(/\%5B[a-z0-9\.\-\_]+?\%5D/gi);
+        var fieldnames = [];
+        do {
+            var fieldname = fieldparser.exec(url);
+            if (fieldname !== null) fieldnames.push(fieldname[0]);
+            else break;
+        } while (true);
+        for (var f = 0; f < fieldnames.length; f++) {
+            var fieldvalue = $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
+            if (fieldvalue === undefined)
+                url = url.replace(fieldnames[f], "");
+            else
+                url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
+        }
     }
     // Build data:
     if (value === null || value === undefined) value = [];
