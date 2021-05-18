@@ -969,14 +969,20 @@ $(function () {
             });
             // Prevent default browser behavior:
             event.preventDefault();
-            // Submit form:
-            var form = $form[0];
-            form._formTrigger = this;
-            form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
-            form.submit();
+            // Submit form (add a submit button, then click that button):
+            var btnid = "sircl-autoid-" + new Date().getTime();
+            var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
+            if ($(this).hasAttr("form")) btn += "form=\"" + $(this).attr("form") + "\" ";
+            if ($(this).hasAttr("formaction")) btn += "formaction=\"" + $(this).attr("formaction") + "\" ";
+            if ($(this).hasAttr("formenctype")) btn += "formenctype=\"" + $(this).attr("formaction") + "\" ";
+            if ($(this).hasAttr("formmethod")) btn += "formmethod=\"" + $(this).attr("formaction") + "\" ";
+            if ($(this).hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $(this).attr("formaction") + "\" ";
+            if ($(this).hasAttr("formtarget")) btn += "formtarget=\"" + $(this).attr("formaction") + "\" ";
+            btn += "/>";
+            $form.append(btn);
+            $("#" + btnid).click();
         }
     });
-
 
 });
 

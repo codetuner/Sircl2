@@ -878,18 +878,8 @@ $(document).ready(function () {
     /// Submitting a form:
     $(document.body).on("submit", "form:not([download]):not([method=dialog])", function (event) {
         this.submit();
-    //    var $trigger = (this._formTrigger) ? $(this._formTrigger) : $(this);
-    //    var target = null;
-    //    var targetHolder$ = $trigger.closest("[target]");
-    //    if (targetHolder$.length > 0) target = targetHolder$.attr("target");
-    //    if ((target == null && !sircl.singlePageMode) || (target != null && sircl.ext.isExternalTarget(target))) {
-    //        return; // navigate link through default behavior
-    //    } else {
-    //        // Forward to the server side rendering handler:
-    //        sircl._submitForm($trigger, $(this), event);
-            event.preventDefault();
-            event.stopPropagation();
-    //    }
+        event.preventDefault();
+        event.stopPropagation();
     });
 
     /// Disable ENTER key to submit forms. I.e. useful when multiple submit buttons and first
