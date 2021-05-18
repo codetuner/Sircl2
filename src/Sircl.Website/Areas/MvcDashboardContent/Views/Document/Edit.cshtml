@@ -44,7 +44,13 @@
 
     <div class="mb-3">
         <label for="@Html.IdFor(m => m.Item.Path)" class="form-label">Path:</label>
-        <input asp-for="Item.Path" type="text" class="form-control" list="@Html.IdFor(m => m.Item.Path)List" />
+        <div class="input-group">
+            <input asp-for="Item.Path" type="text" class="form-control byvalue-events" list="@Html.IdFor(m => m.Item.Path)List" />
+            @if (Model.Item.Id != 0)
+            {
+                <a class="btn btn-outline-secondary ifvalueItem.Path-enable ifvalueItem.Pathis-disable substitute-fields" href="[Item.Path]" target="view">View</a>
+            }
+        </div>
         <datalist id="@Html.IdFor(m => m.Item.Path)List">
             @foreach (var item in Model.PathsList)
             {

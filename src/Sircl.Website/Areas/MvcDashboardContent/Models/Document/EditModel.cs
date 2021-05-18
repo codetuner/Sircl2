@@ -21,6 +21,14 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Models.Document
         
         public IList<CultureInfo> SupportedUICultures { get; internal set; }
 
+        public string ItemState { get; set; }
+
+        public bool RequestPublication { get; set; }
+
+        public bool Publish { get; set; }
+
+        public bool Unpublish { get; set; }
+
         /// <summary>
         /// Returns all instantiable document types in hierarchy of the current one (all parent types and all child types).
         /// </summary>

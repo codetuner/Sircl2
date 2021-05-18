@@ -52,7 +52,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     if ($scope.hasClass("substitute-fields")) {
         var $formscope = $(triggerElement).closest("FORM");
         if ($formscope.length == 0) $formscope = $(document);
-        var fieldparser = new RegExp(/\%5B[a-z0-9\.\-\_]+?\%5D/gi);
+        var fieldparser = new RegExp(/(\[[a-z0-9\.\-\_]+?\])|(\%5B[a-z0-9\.\-\_]+?\%5D)/gi);
         var fieldnames = [];
         do {
             var fieldname = fieldparser.exec(url);
@@ -60,9 +60,13 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             else break;
         } while (true);
         for (var f = 0; f < fieldnames.length; f++) {
-            var fieldvalue = $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
+            var fieldvalue = (fieldnames[f].charAt(0) === "[")
+                ? $formscope.find("[name='" + fieldnames[f].substr(1, fieldnames[f].length - 2) + "']").val()
+                : $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
             if (fieldvalue === undefined)
                 url = url.replace(fieldnames[f], "");
+            else if (fieldnames[f].charAt(0) === "[")
+                url = url.replace(fieldnames[f], fieldvalue);
             else
                 url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
         }

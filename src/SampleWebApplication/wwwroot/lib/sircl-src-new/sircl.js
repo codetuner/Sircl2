@@ -825,20 +825,26 @@ $(document).ready(function () {
         // Get href:
         var href = this.getAttribute("href");
         // In href, substitute "[...]" by form values:
+        var hrefHasSubstitutions = false;
         if ($(this).hasClass("substitute-fields")) {
-            var $formscope = $(triggerElement).closest("FORM");
+            var $formscope = $(this).closest("FORM");
             if ($formscope.length == 0) $formscope = $(document);
-            var fieldparser = new RegExp(/\%5B[a-z0-9\.\-\_]+?\%5D/gi);
+            var fieldparser = new RegExp(/(\[[a-z0-9\.\-\_]+?\])|(\%5B[a-z0-9\.\-\_]+?\%5D)/gi);
             var fieldnames = [];
             do {
-                var fieldname = fieldparser.exec(url);
+                var fieldname = fieldparser.exec(href);
                 if (fieldname !== null) fieldnames.push(fieldname[0]);
                 else break;
             } while (true);
             for (var f = 0; f < fieldnames.length; f++) {
-                var fieldvalue = $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
+                hrefHasSubstitutions = true;
+                var fieldvalue = (fieldnames[f].charAt(0) === "[")
+                    ? $formscope.find("[name='" + fieldnames[f].substr(1, fieldnames[f].length - 2) + "']").val()
+                    : $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
                 if (fieldvalue === undefined)
                     href = href.replace(fieldnames[f], "");
+                else if (fieldnames[f].charAt(0) === "[")
+                    href = href.replace(fieldnames[f], fieldvalue);
                 else
                     href = href.replace(fieldnames[f], encodeURIComponent(fieldvalue));
             }
@@ -869,7 +875,11 @@ $(document).ready(function () {
         } else {
             var target = this.getAttribute("target");
             if ((target == null && !sircl.singlePageMode) || (target != null && sircl.ext.isExternalTarget(target))) {
-                if (this.tagName === "A") {
+                if (hrefHasSubstitutions && target === null) {
+                    window.location.href = href;
+                } else if (hrefHasSubstitutions) {
+                    window.open(href, target);
+                } else if (this.tagName === "A") {
                     return; // navigate link through default behavior
                 } else if (target == null) {
                     window.location.href = href;
