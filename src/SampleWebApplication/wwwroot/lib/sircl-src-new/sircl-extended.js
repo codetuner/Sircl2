@@ -915,6 +915,7 @@ $(function () {
                 if (dragTypes[i].trim() != "") event.originalEvent.dataTransfer.setData(dragTypes[i].trim(), true);
             }
         }
+        event.originalEvent.dataTransfer.setData("__id", sircl.ext.getId(this, true));
         event.originalEvent.dataTransfer.setData("any", $(this).attr("drop-value"));
     });
 
@@ -939,6 +940,26 @@ $(function () {
         sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
     });
 
+    $(document.body).on("drop", "[ondragover-addclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
+    });
+
+    $(document.body).on("drop", ".ondrop-move", function (event) {
+        // Prevent default browser behavior:
+        event.preventDefault();
+        // Perform move:
+        var sourceId = event.originalEvent.dataTransfer.getData("__id");
+        event.originalEvent.target.appendChild(document.getElementById(sourceId));
+    });
+
+    $(document.body).on("drop", ".ondrop-copy", function (event) {
+        // Prevent default browser behavior:
+        event.preventDefault();
+        // Perform move:
+        var sourceId = event.originalEvent.dataTransfer.getData("__id");
+        $(event.originalEvent.target).append(document.getElementById(sourceId).outerHTML.replace("id=\"" + sourceId + "\"", ""));
+    });
+
     $(document.body).on("drop", ".ondrop-submit", function (event) {
         var $form = $(this).closest("FORM");
         if ($form.length > 0) {
@@ -946,12 +967,13 @@ $(function () {
             $form.find("INPUT.drop-value").each(function () {
                 $(this).val(event.originalEvent.dataTransfer.getData("any"));
             });
+            // Prevent default browser behavior:
+            event.preventDefault();
             // Submit form:
             var form = $form[0];
             form._formTrigger = this;
             form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
             form.submit();
-            event.preventDefault();
         }
     });
 
