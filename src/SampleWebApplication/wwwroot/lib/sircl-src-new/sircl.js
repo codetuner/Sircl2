@@ -1549,7 +1549,7 @@ $$(function () {
 
     /// <* onload-click="selector"> On load, triggers a click event on the selector matches.
     $(this).closest("[onload-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("onload-click")).click();
+        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
     });
 
     /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
