@@ -875,16 +875,17 @@ $(document).ready(function () {
     /// one is not necessarily the default one.
     /// I.e:
     ///   <form default-submit-button="#save-button" method="post">...</form>
-    $(document.body).on("keydown", "FORM[default-submit-button]", function (event) {
+    $(document.body).on("keydown", "FORM[default-submit-button] INPUT", function (event) {
         if (event.keyCode == 13) {
-            var target = $(this).find($(this).attr("default-submit-button"))[0];
-            if (target != null) target.click(); // See: http://goo.gl/lGftqn
             event.preventDefault();
-        }
-        else if (event.keyCode == 27) {
-            var target = $(this).find($(this).attr("default-cancel-button"))[0];
-            if (target != null) target.click(); // See: http://goo.gl/lGftqn
+            var $form = $(this).closest("FORM");
+            var $target = sircl.ext.$select($form, $form.attr("default-submit-button"));
+            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
+        } else if (event.keyCode == 27) {
             event.preventDefault();
+            var $form = $(this).closest("FORM");
+            var $target = sircl.ext.$select($form, $form.attr("default-cancel-button"));
+            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
         }
     });
 

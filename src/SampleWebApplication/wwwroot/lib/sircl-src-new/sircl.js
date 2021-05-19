@@ -621,6 +621,13 @@ SirclRequestProcessor.prototype._send = function (req) {
                 $(this).load($(this).attr("onload-load"));
             });
         }
+        // Check for abort reload:
+        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+        if (reloadAfter != null) {
+            if (parseFloat(reloadAfter) <= 0) {
+                clearInterval(req.$initialTarget[0]._onloadInterval);
+            }
+        }
         // If a Location header is given, redirect to that location:
         var newLocation = req.xhr.getResponseHeader("Location"); // Redirect
         if (newLocation !== null) {
@@ -913,20 +920,21 @@ $(document).ready(function () {
         event.stopPropagation();
     });
 
-    /// Disable ENTER key to submit forms. I.e. useful when multiple submit buttons and first
-    /// one is not necessarily the default one.
+    /// Defines default submit or cancel buttons.
+    /// Pass an empty selector to disable default form submission.
     /// I.e:
     ///   <form default-submit-button="#save-button" method="post">...</form>
-    $(document.body).on("keydown", "FORM[default-submit-button]", function (event) {
+    $(document.body).on("keydown", "FORM[default-submit-button] INPUT", function (event) {
         if (event.keyCode == 13) {
-            var $target = $(this).find($(this).attr("default-submit-button"));
-            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
             event.preventDefault();
-        }
-        else if (event.keyCode == 27) {
-            var $target = $(this).find($(this).attr("default-cancel-button"));
+            var $form = $(this).closest("FORM");
+            var $target = sircl.ext.$select($form, $form.attr("default-submit-button"));
             if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
+        } else if (event.keyCode == 27) {
             event.preventDefault();
+            var $form = $(this).closest("FORM");
+            var $target = sircl.ext.$select($form, $form.attr("default-cancel-button"));
+            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
         }
     });
 
@@ -1359,6 +1367,24 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 //#endregion
 
+//#region Reload by server
+
+sircl.addRequestHandler("afterRender", function (req) {
+    // If reloadAfter header is set with value > 0, reload after timeout:
+    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+    if (reloadAfter) {
+        if (reloadAfter > 0 && req.method == "get") {
+            setTimeout(function () {
+                req.$finalTarget.load(req.url)
+            }, reloadAfter * 1000);
+        }
+    }
+    // Move to next handler:
+    this.next(req);
+});
+
+//#endregion
+
 //#region HTML5 Dialog handling
 
 sircl.addRequestHandler("beforeSend", function (req) {
@@ -1535,7 +1561,7 @@ $$(function () {
         var loadRefresh = $(this).attr("onload-reloadafter");
         $(this).load(url.replace("{rnd}", Math.random()));
         if (loadRefresh) {
-            window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, loadRefresh * 1000, $(this));
+            $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, loadRefresh * 1000, $(this));
         } else {
             //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
         }
