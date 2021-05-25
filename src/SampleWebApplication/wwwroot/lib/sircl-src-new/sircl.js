@@ -1240,7 +1240,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
         var $spinners = req.$trigger.find(".spinner");
         if ($spinners.length > 0) {
-            req._spinner_to_restore = $spinners[0].outerHTML;
+            req._spinner_to_restore = req.$trigger[0].innerHTML;
             $spinners[0].outerHTML = sircl.html_spinner;
         }
     }
@@ -1251,7 +1251,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
 sircl.addRequestHandler("afterSend", function (req) {
     // Hide spinner if any:
     if (req._spinner_to_restore) {
-        req.$trigger.find(".sircl-spinner")[0].outerHTML = req._spinner_to_restore;
+        req.$trigger[0].innerHTML = req._spinner_to_restore;
     }
     // Move to next handler:
     this.next(req);
