@@ -142,7 +142,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
 
 $(function () {
     // On change of an ungrouped radio:
-    $(document.body).on("change", "INPUT[type=radio][onchange-action]", function (event) {
+    $(document).on("change", "INPUT[type=radio][onchange-action]", function (event) {
         var $this = $(this);
         sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.prop("checked"), event, function (req) {
             this._previousActionValue = $this.prop("checked");
@@ -153,7 +153,7 @@ $(function () {
         });
     });
     // On change of a grouped radio:
-    $(document.body).on("change", "[onchange-action] INPUT[type=radio]:not([onchange-action])", function (event) {
+    $(document).on("change", "[onchange-action] INPUT[type=radio]:not([onchange-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
         var $subjects = $scope.find("INPUT[type=radio][name='" + this.name + "']:not([onchange-action])");
@@ -181,7 +181,7 @@ $(function () {
         });
     });
     // On change of an ungrouped checkbox:
-    $(document.body).on("change", "INPUT[type=checkbox][onchange-action]", function (event) {
+    $(document).on("change", "INPUT[type=checkbox][onchange-action]", function (event) {
         var $this = $(this);
         sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.prop("checked"), event, function (req) {
             this._previousActionValue = $this.prop("checked");
@@ -192,7 +192,7 @@ $(function () {
         });
     });
     // On change of a grouped checkbox:
-    $(document.body).on("change", "[onchange-action] INPUT[type=checkbox]:not([onchange-action])", function (event) {
+    $(document).on("change", "[onchange-action] INPUT[type=checkbox]:not([onchange-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
         var $subjects = $scope.find("INPUT[type=checkbox][name='" + this.name + "']:not([onchange-action])");
@@ -215,7 +215,7 @@ $(function () {
         });
     });
     // On change of other INPUT, TEXTAREA or SELECT:
-    $(document.body).on("change", "INPUT[onchange-action]:not([type=checkbox]):not([type=radio]), [onchange-action] INPUT:not([type=checkbox]):not([type=radio]):not([onchange-action]), SELECT[onchange-action], [onchange-action] SELECT:not([onchange-action]), TEXTAREA[onchange-action], [onchange-action] TEXTAREA:not([onchange-action])", function (event) {
+    $(document).on("change", "INPUT[onchange-action]:not([type=checkbox]):not([type=radio]), [onchange-action] INPUT:not([type=checkbox]):not([type=radio]):not([onchange-action]), SELECT[onchange-action], [onchange-action] SELECT:not([onchange-action]), TEXTAREA[onchange-action], [onchange-action] TEXTAREA:not([onchange-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
         sircl._actionCall(this, $this, $scope, $scope.attr("onchange-action"), this.name, $this.val(), event, function (req) {
@@ -232,7 +232,7 @@ $(function () {
     });
 
     // On focus of textual INPUT or TEXTAREA:
-    $(document.body).on("focusin", "INPUT[onfocusin-action]:not([type=checkbox]):not([type=radio]), [onfocusin-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusin-action], [onfocusin-action] TEXTAREA:not([onfocusout-action])", function (event) {
+    $(document).on("focusin", "INPUT[onfocusin-action]:not([type=checkbox]):not([type=radio]), [onfocusin-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusin-action], [onfocusin-action] TEXTAREA:not([onfocusout-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onfocusin-action]");
         sircl._actionCall(this, $this, $scope, $scope.attr("onfocusin-action"), this.name, $this.val(), event, function (req) {
@@ -245,7 +245,7 @@ $(function () {
             sircl.ext.$select(req.$scope, req.$scope.attr("target")).html(req.data);
         });
     });
-    $(document.body).on("focusout", "INPUT[onfocusout-action]:not([type=checkbox]):not([type=radio]), [onfocusout-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusout-action], [onfocusout-action] TEXTAREA:not([onfocusout-action])", function (event) {
+    $(document).on("focusout", "INPUT[onfocusout-action]:not([type=checkbox]):not([type=radio]), [onfocusout-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusout-action], [onfocusout-action] TEXTAREA:not([onfocusout-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onfocusout-action]");
         sircl._actionCall(this, $this, $scope, $scope.attr("onfocusout-action"), this.name, $this.val(), event, function (req) {

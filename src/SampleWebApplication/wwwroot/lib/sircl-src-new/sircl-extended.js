@@ -77,71 +77,71 @@ sircl.addContentReadyHandler("enrich", function () {
 $(function () {
 
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.
-    $(document.body).on("click", "*[onclick-click]", function (event) {
+    $(document).on("click", "*[onclick-click]", function (event) {
         var targetSelector = $(this).attr("onclick-click");
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
         //event.preventDefault();
     });
 
     // <* onclick-clear="selector"> On click clears the elements matching the given selector.
-    $(document.body).on("click", "[onclick-clear]", function (event) {
+    $(document).on("click", "[onclick-clear]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-clear")).html("");
     });
 
     // <* onclick-show="selector"> On click shows the elements matching the given selector.
-    $(document.body).on("click", "[onclick-show]", function (event) {
+    $(document).on("click", "[onclick-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-show")), true);
     });
 
     // <* onclick-hide="selector"> On click hides the elements matching the given selector.
-    $(document.body).on("click", "[onclick-hide]", function (event) {
+    $(document).on("click", "[onclick-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-hide")), false);
     });
 
     // <* onclick-toggleshow="selector"> On click shows/hides the elements matching the given selector.
-    $(document.body).on("click", "[onclick-toggleshow]", function (event) {
+    $(document).on("click", "[onclick-toggleshow]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-toggleshow")).each(function () {
             sircl.ext.visible($(this), !sircl.ext.visible($(this)));
         });
     });
 
     /// <* onclick-removeclass="class [on selector]"> On click, removes the class.
-    $(document.body).on("click", "[onclick-removeclass]", function (event) {
+    $(document).on("click", "[onclick-removeclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("onclick-removeclass"));
     });
 
     /// <* onclick-addclass="class [on selector]"> On click, adds the class.
-    $(document.body).on("click", "[onclick-addclass]", function (event) {
+    $(document).on("click", "[onclick-addclass]", function (event) {
         sircl.ext.addClass($(this), $(this).attr("onclick-addclass"));
     });
 
     /// <* onclick-toggleclass="class [on selector]"> On click, toggles the class.
-    $(document.body).on("click", "[onclick-toggleclass]", function (event) {
+    $(document).on("click", "[onclick-toggleclass]", function (event) {
         sircl.ext.toggleClass($(this), $(this).attr("onclick-toggleclass"));
     });
 
     // <* onclick-disable="selector"> On click disables the elements matching the given selector.
-    $(document.body).on("click", "[onclick-disable]", function (event) {
+    $(document).on("click", "[onclick-disable]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-disable")).prop("disabled", true);
     });
 
     // <* onclick-enable="selector"> On click enables the elements matching the given selector.
-    $(document.body).on("click", "[onclick-enable]", function (event) {
+    $(document).on("click", "[onclick-enable]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-enable")).prop("disabled", false);
     });
 
     // <* onclick-readonly="selector"> On click makes the elements matching the given selector readonly.
-    $(document.body).on("click", "[onclick-readonly]", function (event) {
+    $(document).on("click", "[onclick-readonly]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-readonly")).prop("readonly", true);
     });
 
     // <* onclick-readwrite="selector"> On click makes the elements matching the given selector non-readonly.
-    $(document.body).on("click", "[onclick-readwrite]", function (event) {
+    $(document).on("click", "[onclick-readwrite]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-readwrite")).prop("readonly", false);
     });
 
     // <* onclick-clearvalue="selector"> On click clears the value of the elements matching the given selector.
-    $(document.body).on("click", "[onclick-clearvalue]", function (event) {
+    $(document).on("click", "[onclick-clearvalue]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
@@ -149,7 +149,7 @@ $(function () {
     });
 
     // <* onclick-check="selector"> On click checks matching checkbox or radio inputs.
-    $(document.body).on("click", "[onclick-check]", function (event) {
+    $(document).on("click", "[onclick-check]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = true;
             $(this).change();
@@ -157,7 +157,7 @@ $(function () {
     });
 
     // <* onclick-uncheck="selector"> On click unchecks matching checkbox or radio inputs.
-    $(document.body).on("click", "[onclick-uncheck]", function (event) {
+    $(document).on("click", "[onclick-uncheck]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = false;
             $(this).change();
@@ -165,7 +165,7 @@ $(function () {
     });
 
     // <* onclick-togglecheck="selector"> On click changes the checked/unchecked state of matching checkbox or radio inputs.
-    $(document.body).on("click", "[onclick-togglecheck]", function (event) {
+    $(document).on("click", "[onclick-togglecheck]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = !this.checked;
             $(this).change();
@@ -179,7 +179,7 @@ $(function () {
 $(function () {
 
     // <* ondblclick-load="url"> On doubleclick, calls the given URL.
-    $(document.body).on("dblclick", "*[ondblclick-load]", function (event) {
+    $(document).on("dblclick", "*[ondblclick-load]", function (event) {
         var href = this.getAttribute("ondblclick-load");
         if (href === "null" || href === "") {
             // Ignore
@@ -220,7 +220,7 @@ $(function () {
     });
 
     // <* ondblclick-click="selector"> On doubleclick, triggers a click event on the elements matching the given selector.
-    $(document.body).on("dblclick", "*[ondblclick-click]", function (event) {
+    $(document).on("dblclick", "*[ondblclick-click]", function (event) {
         var targetSelector = $(this).attr("ondblclick-click");
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
         //event.preventDefault();
@@ -228,39 +228,39 @@ $(function () {
 
 
     // <* ondblclick-clear="selector"> On doubleclick clears the elements matching the given selector.
-    $(document.body).on("dblclick", "[ondblclick-clear]", function (event) {
+    $(document).on("dblclick", "[ondblclick-clear]", function (event) {
         sircl.ext.$select($(this), $(this).attr("ondblclick-clear")).html("");
     });
 
     // <* ondblclick-show="selector"> On doubleclick shows the elements matching the given selector.
-    $(document.body).on("dblclick", "[ondblclick-show]", function (event) {
+    $(document).on("dblclick", "[ondblclick-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-show")), true);
     });
 
     // <* ondblclick-hide="selector"> On doubleclick hides the elements matching the given selector.
-    $(document.body).on("dblclick", "[ondblclick-hide]", function (event) {
+    $(document).on("dblclick", "[ondblclick-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-hide")), false);
     });
 
     // <* ondblclick-toggleshow="selector"> On doubleclick shows/hides the elements matching the given selector.
-    $(document.body).on("dblclick", "[ondblclick-toggleshow]", function (event) {
+    $(document).on("dblclick", "[ondblclick-toggleshow]", function (event) {
         sircl.ext.$select($(this), $(this).attr("ondblclick-toggleshow")).each(function () {
             sircl.ext.visible($(this), !sircl.ext.visible($(this)));
         });
     });
 
     /// <* ondblclick-removeclass="class [on selector]"> On doubleclick, removes the class.
-    $(document.body).on("dblclick", "[ondblclick-removeclass]", function (event) {
+    $(document).on("dblclick", "[ondblclick-removeclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("ondblclick-removeclass"));
     });
 
     /// <* ondblclick-addclass="class [on selector]"> On doubleclick, adds the class.
-    $(document.body).on("dblclick", "[ondblclick-addclass]", function (event) {
+    $(document).on("dblclick", "[ondblclick-addclass]", function (event) {
         sircl.ext.addClass($(this), $(this).attr("ondblclick-addclass"));
     });
 
     /// <* ondblclick-toggleclass="class [on selector]"> On doubleclick, toggles the class.
-    $(document.body).on("dblclick", "[ondblclick-toggleclass]", function (event) {
+    $(document).on("dblclick", "[ondblclick-toggleclass]", function (event) {
         sircl.ext.toggleClass($(this), $(this).attr("ondblclick-toggleclass"));
     });
 
@@ -271,42 +271,42 @@ $(function () {
 
 $(function () {
     /// <* onhover-show="selector"> On hover, displays elements matching the given selector.
-    $(document.body).on("mouseenter", "*[onhover-show]", function (event) {
+    $(document).on("mouseenter", "*[onhover-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), true);
     });
-    $(document.body).on("mouseleave", "*[onhover-show]", function (event) {
+    $(document).on("mouseleave", "*[onhover-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), false);
     });
 
     /// <* onhover-hide="selector"> On hover, hides elements matching the given selector.
-    $(document.body).on("mouseenter", "*[onhover-hide]", function (event) {
+    $(document).on("mouseenter", "*[onhover-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), false);
     });
-    $(document.body).on("mouseleave", "*[onhover-hide]", function (event) {
+    $(document).on("mouseleave", "*[onhover-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), true);
     });
 
     /// <* onhover-removeclass="class [on selector]"> On hover, removes the class, on leave, adds the class.
-    $(document.body).on("mouseenter", "*[onhover-removeclass]", function (event) {
+    $(document).on("mouseenter", "*[onhover-removeclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("onhover-removeclass"));
     });
-    $(document.body).on("mouseleave", "*[onhover-removeclass]", function (event) {
+    $(document).on("mouseleave", "*[onhover-removeclass]", function (event) {
         sircl.ext.addClass($(this), $(this).attr("onhover-removeclass"));
     });
 
     /// <* onhover-addclass="class [on selector]"> On hover, adds the class, on leave, removes the class.
-    $(document.body).on("mouseenter", "*[onhover-addclass]", function (event) {
+    $(document).on("mouseenter", "*[onhover-addclass]", function (event) {
         sircl.ext.addClass($(this), $(this).attr("onhover-addclass"));
     });
-    $(document.body).on("mouseleave", "*[onhover-addclass]", function (event) {
+    $(document).on("mouseleave", "*[onhover-addclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("onhover-addclass"));
     });
 
     /// <* onhover-toggleclass="class [on selector]"> On hover, toggles the class, on leave, toggles the class back.
-    $(document.body).on("mouseenter", "*[onhover-toggleclass]", function (event) {
+    $(document).on("mouseenter", "*[onhover-toggleclass]", function (event) {
         sircl.ext.toggleClass($(this), $(this).attr("onhover-toggleclass"));
     });
-    $(document.body).on("mouseleave", "*[onhover-toggleclass]", function (event) {
+    $(document).on("mouseleave", "*[onhover-toggleclass]", function (event) {
         sircl.ext.toggleClass($(this), $(this).attr("onhover-toggleclass"));
     });
 });
@@ -322,78 +322,78 @@ $(function () {
 
 $(function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
-    $(document.body).children().on("change", "*[onchecked-click]:checked", function (event) {
+    $(document.body).on("change", "*[onchecked-click]:checked", function (event) {
         var targetSelector = $(this).attr("onclick-click");
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
     });
 
-    $(document.body).children().on("change", "[ifchecked-show]", function (event) {
+    $(document.body).on("change", "[ifchecked-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-show")), this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-hide]", function (event) {
+    $(document.body).on("change", "[ifchecked-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-enable]", function (event) {
+    $(document.body).on("change", "[ifchecked-enable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")).prop("disabled", !this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-disable]", function (event) {
+    $(document.body).on("change", "[ifchecked-disable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")).prop("disabled", this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-readonly]", function (event) {
+    $(document.body).on("change", "[ifchecked-readonly]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly")).prop("readonly", this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-readwrite]", function (event) {
+    $(document.body).on("change", "[ifchecked-readwrite]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
     });
 
-    $(document.body).children().on("change", "[ifchecked-clearvalue]", function (event) {
+    $(document.body).on("change", "[ifchecked-clearvalue]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", "[ifunchecked-clearvalue]", function (event) {
+    $(document.body).on("change", "[ifunchecked-clearvalue]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", "[ifchecked-check]", function (event) {
+    $(document.body).on("change", "[ifchecked-check]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", "[ifchecked-uncheck]", function (event) {
+    $(document.body).on("change", "[ifchecked-uncheck]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", "[ifunchecked-check]", function (event) {
+    $(document.body).on("change", "[ifunchecked-check]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", "[ifunchecked-uncheck]", function (event) {
+    $(document.body).on("change", "[ifunchecked-uncheck]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
             $(this).change();
         });
     });
 
-    $(document.body).children().on("change", ".byvalue-events", function (event) {
+    $(document.body).on("change", ".byvalue-events", function (event) {
         var $scope = $("BODY");
         var tocheck = [];
         var touncheck = [];
@@ -687,28 +687,28 @@ $$(function () {
 });
 
 $(function () {
-    $(document.body).on("change", "[ifvalid-show]", function (event) {
+    $(document).on("change", "[ifvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
     });
-    $(document.body).on("change", "[ifinvalid-show]", function (event) {
+    $(document).on("change", "[ifinvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifinvalid-show")), !sircl.ext.isValid($(this)));
     });
-    $(document.body).on("change", "[ifvalid-addclass]", function (event) {
+    $(document).on("change", "[ifvalid-addclass]", function (event) {
         if (sircl.ext.isValid($(this)))
             sircl.ext.addClass($(this), this.getAttribute("ifvalid-addclass"));
         else
             sircl.ext.removeClass($(this), this.getAttribute("ifvalid-addclass"));
     });
-    $(document.body).on("change", "[ifinvalid-addclass]", function (event) {
+    $(document).on("change", "[ifinvalid-addclass]", function (event) {
         if (sircl.ext.isValid($(this)))
             sircl.ext.removeClass($(this), this.getAttribute("ifinvalid-addclass"));
         else
             sircl.ext.addClass($(this), this.getAttribute("ifinvalid-addclass"));
     });
-    $(document.body).on("change", "[ifvalid-enable]", function (event) {
+    $(document).on("change", "[ifvalid-enable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifvalid-enable")).prop("disabled", !sircl.ext.isValid($(this)));
     });
-    $(document.body).on("change", "[ifinvalid-enable]", function (event) {
+    $(document).on("change", "[ifinvalid-enable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifinvalid-enable")).prop("disabled", sircl.ext.isValid($(this)));
     });
 });
@@ -717,7 +717,7 @@ $(function () {
 ////////////////////////
 
 /// <INPUT class="onfocus-select"> Select all text when element gets focus:
-$(document.body).on("focus", "INPUT.onfocus-select:not([type=checkbox]):not([type=radio]:not([type=button])", function (event) {
+$(document).on("focus", "INPUT.onfocus-select:not([type=checkbox]):not([type=radio]:not([type=button])", function (event) {
     $(this)[0].select();
 });
 
@@ -732,10 +732,10 @@ $(document.body).on("focus", "INPUT.onfocus-select:not([type=checkbox]):not([typ
 
 $(function () {
     /// <* on<click|dblclick|change|input>-propagate="on|off"> If off, blocks propagation of the event.
-    $(document.body).children().on("click", "*[onclick-propagate=off]", function (event) { event.stopPropagation(); });
-    $(document.body).children().on("dblclick", "*[ondblclick-propagate=off]", function (event) { event.stopPropagation(); });
-    $(document.body).children().on("change", "*[onchange-propagate=off]", function (event) { event.stopPropagation(); });
-    $(document.body).children().on("input", "*[oninput-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("click", "*[onclick-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("dblclick", "*[ondblclick-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("change", "*[onchange-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("input", "*[oninput-propagate=off]", function (event) { event.stopPropagation(); });
 });
 
 /// Scroll/Viewport event-actions:
@@ -774,7 +774,7 @@ $(function () {
     });
 
     /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animaged way).
-    $(document.body).on("click", ".onclick-scrolltop", function (event) {
+    $(document).on("click", ".onclick-scrolltop", function (event) {
         $("body,html").animate({
             scrollTop: 0
         }, 500);
@@ -806,7 +806,7 @@ $$(function () {
 $(function () {
     /// Buttons and link can have a confirmation dialog:
     /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
-    $(document.body).children().on("click", "*[onclick-confirm]", function (event) {
+    $(document.body).on("click", "*[onclick-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclick-confirm");
         if (confirmMessage) {
             if (!sircl.ext.confirm($(this), confirmMessage, event)) {
@@ -818,7 +818,7 @@ $(function () {
 
     /// Checkboxes can have a change confirm dialog:
     /// <input type="checkbox" onchange-confirm="Are you sure ?" />
-    $(document.body).children().on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
+    $(document.body).on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
             if (!sircl.ext.confirm($(this), confirmMessage, event)) {
@@ -831,7 +831,7 @@ $(function () {
 
     /// Inputs and selects can have a change confirm dialog:
     /// <input type="text" onchange-confirm="Are you sure ?" />
-    $(document.body).children().on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
+    $(document.body).on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
             if (!sircl.ext.confirm($(this), confirmMessage, event)) {
@@ -868,7 +868,7 @@ $$(function () {
 
 // On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
 $(function () {
-    $(document.body).on("change", "FORM[onchange-set]", function (event) {
+    $(document).on("change", "FORM[onchange-set]", function (event) {
         if ($(event.target).closest(".sircl-content-processing").length == 0) {
             $(this).addClass("form-changed");
             var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
@@ -881,7 +881,7 @@ $(function () {
     // onunloadchanged-confirm
 
     // A click on a hyperlink anywhere in the page triggers the onunloadchanged-confirm of the first changed form:
-    $(document.body).children().on("click", "*[href]:not(.onunloadchanged-allow):not([download])", function (event) {
+    $(document.body).on("click", "*[href]:not(.onunloadchanged-allow):not([download])", function (event) {
         // Find any form having [onunloadchanged-confirm] and being changed, anywhere in the page:
         var $changedForm = $("FORM.form-changed[onunloadchanged-confirm]");
         if ($changedForm.length > 0) {
@@ -893,7 +893,7 @@ $(function () {
         }
     });
 
-    $(document.body).children().on("click", "FORM.form-changed *[onclickchanged-confirm]", function (event) {
+    $(document.body).on("click", "FORM.form-changed *[onclickchanged-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclickchanged-confirm");
         if (!sircl.ext.confirm($(this), confirmMessage, event)) {
             event.stopPropagation();
@@ -910,7 +910,7 @@ $(function () {
 
     /// Allow dragging file:
     /// <* ondropfile-accept="mimetypse">...</*>
-    $(document.body).children().on("dragover", "[ondropfile-accept]", function (event) {
+    $(document.body).on("dragover", "[ondropfile-accept]", function (event) {
         if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
             // Allow by preventing default browser behavior:
             event.preventDefault();
@@ -924,7 +924,7 @@ $(function () {
 
     /// Allow dropping file:
     /// <* class="ondropfile-submit" ondropfile-accept="mimetypes">...</*>
-    $(document.body).on("drop", "[ondropfile-accept]", function (event) {
+    $(document).on("drop", "[ondropfile-accept]", function (event) {
         // Prevent default browser behavior:
         event.preventDefault();
         // Verify files:
@@ -996,7 +996,7 @@ $(function () {
 
 $(function () {
 
-    $(document.body).on("dragstart", "[draggable]", function (event) {
+    $(document).on("dragstart", "[draggable]", function (event) {
         if ($(this).hasAttr("drop-type")) {
             var dragTypes = $(this).attr("drop-type").split(" ");
             for (var i = 0; i < dragTypes.length; i++) {
@@ -1007,7 +1007,7 @@ $(function () {
         event.originalEvent.dataTransfer.setData("any", $(this).attr("drop-value"));
     });
 
-    $(document.body).children().on("dragover", "[ondrop-accept]", function (event) {
+    $(document.body).on("dragover", "[ondrop-accept]", function (event) {
         var acceptTypes = $(this).attr("ondrop-accept").split(" ");
         for (var i = 0; i < acceptTypes.length; i++) {
             for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++) {
@@ -1024,15 +1024,15 @@ $(function () {
         }
     });
 
-    $(document.body).on("dragleave", "[ondragover-addclass]", function (event) {
+    $(document).on("dragleave", "[ondragover-addclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
     });
 
-    $(document.body).on("drop", "[ondragover-addclass]", function (event) {
+    $(document).on("drop", "[ondragover-addclass]", function (event) {
         sircl.ext.removeClass($(this), $(this).attr("ondragover-addclass"));
     });
 
-    $(document.body).on("drop", ".ondrop-move", function (event) {
+    $(document).on("drop", ".ondrop-move", function (event) {
         // Prevent default browser behavior:
         event.preventDefault();
         // Perform move:
@@ -1040,7 +1040,7 @@ $(function () {
         event.originalEvent.target.appendChild(document.getElementById(sourceId));
     });
 
-    $(document.body).on("drop", ".ondrop-copy", function (event) {
+    $(document).on("drop", ".ondrop-copy", function (event) {
         // Prevent default browser behavior:
         event.preventDefault();
         // Perform move:
@@ -1048,7 +1048,7 @@ $(function () {
         $(event.originalEvent.target).append(document.getElementById(sourceId).outerHTML.replace("id=\"" + sourceId + "\"", ""));
     });
 
-    $(document.body).on("drop", ".ondrop-submit", function (event) {
+    $(document).on("drop", ".ondrop-submit", function (event) {
         var $this = $(this);
         var $form = ($this.hasAttr("form"))
             ? $("#" + $this.attr("form"))

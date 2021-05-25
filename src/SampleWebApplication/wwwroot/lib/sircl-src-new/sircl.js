@@ -838,7 +838,7 @@ $(document).ready(function () {
 
     /// Any element having a href attribute (and no download attribute):
     /// Handles special href values
-    $(document.body).on("click", "*[href]:not([download])", function (event) {
+    $(document).on("click", "*[href]:not([download])", function (event) {
         // Get href:
         var href = this.getAttribute("href");
         // In href, substitute "[...]" by form values:
@@ -914,7 +914,7 @@ $(document).ready(function () {
     });
 
     /// Clicking a submit element may submit a form:
-    $(document.body).on("click", "form *:submit, *:submit[form]", function (event) {
+    $(document).on("click", "form *:submit, *:submit[form]", function (event) {
         // To not interfer with form validation, we let default behavior happen.
         // But we want to know the form trigger element, and unfortunately there's no but a dirty way to get it...
         var form = (this.hasAttribute("form")) ? document.getElementById(this.getAttribute("form")) : $(this).closest("FORM")[0];
@@ -924,7 +924,7 @@ $(document).ready(function () {
     });
 
     /// Submitting a form:
-    $(document.body).on("submit", "form:not([download]):not([method=dialog])", function (event) {
+    $(document).on("submit", "form:not([download]):not([method=dialog])", function (event) {
         this.submit();
         event.preventDefault();
         event.stopPropagation();
@@ -934,7 +934,7 @@ $(document).ready(function () {
     /// Pass an empty selector to disable default form submission.
     /// I.e:
     ///   <form default-submit-button="#save-button" method="post">...</form>
-    $(document.body).on("keydown", "FORM[default-submit-button] INPUT", function (event) {
+    $(document).on("keydown", "FORM[default-submit-button] INPUT", function (event) {
         if (event.keyCode == 13) {
             event.preventDefault();
             var $form = $(this).closest("FORM");
@@ -1286,7 +1286,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 sircl.addRequestHandler("beforeSend", function (req) {
     // Set classes to loading state:
-    $(document.body).addClass("body-loading");
+    $(document).addClass("body-loading");
     req.$initialTarget.addClass("loading");
     // Move to next handler:
     this.next(req);
@@ -1294,7 +1294,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
 
 sircl.addRequestHandler("afterSend", function (req) {
     // Reset classes to loading state:
-    $(document.body).removeClass("body-loading");
+    $(document).removeClass("body-loading");
     req.$initialTarget.removeClass("loading");
     // Move to next handler:
     this.next(req);
@@ -1303,7 +1303,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 $(document).ready(function () {
     $(window).on("beforeunload", function (event) {
         // Ensure load status items are shown:
-        $(document.body).addClass("body-loading");
+        $(document).addClass("body-loading");
     });
 });
 
@@ -1446,7 +1446,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
 
 $(document).ready(function () {
     // Reset content of a modal with onclose-reset when closing the modal:
-    $(document.body).on("close", "DIALOG.onclose-restore", function (event) {
+    $(document).on("close", "DIALOG.onclose-restore", function (event) {
         var originalContent = $(this)[0]._originalContent;
         if (originalContent !== undefined) $(this).html(originalContent);
     });
@@ -1472,7 +1472,7 @@ sircl.addAttributeAlias(".onchange-submit", "onchange-submit", ":form");
 $(function () {
 
     /// <* onchange-submit="form-selector"> Triggers form submission on change.
-    $(document.body).on("change", "[onchange-submit]", function (event) {
+    $(document).on("change", "[onchange-submit]", function (event) {
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
             if ($form.length > 0) $form[0].submit();
@@ -1480,7 +1480,7 @@ $(function () {
     });
 
     /// <input oninput-changeafter="0.8"> On input on the element, triggers a change event.
-    $(document.body).on("input", "INPUT[oninput-changeafter], TEXTAREA[oninput-changeafter]", function (event) {
+    $(document).on("input", "INPUT[oninput-changeafter], TEXTAREA[oninput-changeafter]", function (event) {
         var timeout = 1000 * $(this).attr("oninput-changeafter");
         if (this._oninput_changeafter_timeout) {
             clearTimeout(this._oninput_changeafter_timeout);
@@ -1490,7 +1490,7 @@ $(function () {
         }, timeout, this);
     });
     /// Prevent change event if value has not really changed since last change event:
-    $(document.body).children().on("change", "INPUT[oninput-changeafter], TEXTAREA[oninput-changeafter]", function (event) {
+    $(document.body).on("change", "INPUT[oninput-changeafter], TEXTAREA[oninput-changeafter]", function (event) {
         var currentValue = $(this).val();
         var previousValue = this._previousChangeValue;
         if (currentValue === previousValue) {

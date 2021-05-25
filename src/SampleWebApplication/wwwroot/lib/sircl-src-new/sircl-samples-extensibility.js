@@ -41,13 +41,13 @@ sircl.ext.confirm = function ($subject, message, event) {
 $(function () {
 
     // When OK button clicked, prepare to execute confirmAction and close modal:
-    $(document.body).on("click", "#confirm-modal button[name=okButton]", function (event) {
+    $(document).on("click", "#confirm-modal button[name=okButton]", function (event) {
         $("#confirm-modal")[0]._onCloseOnce = $("#confirm-modal")[0]._confirmAction;
         $("#confirm-modal").modal("hide");
     });
 
     // When modal closed, execute confirmAction if it was prepared:
-    $(document.body).on("hidden.bs.modal", "#confirm-modal", function (event) {
+    $(document).on("hidden.bs.modal", "#confirm-modal", function (event) {
         if (this._onCloseOnce) {
             var fx = this._onCloseOnce;
             this._onCloseOnce = undefined;

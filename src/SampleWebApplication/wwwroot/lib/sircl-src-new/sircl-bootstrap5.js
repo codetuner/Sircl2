@@ -165,7 +165,7 @@ sircl.addRequestHandler("afterRender", function (req) {
 
 $(function () {
     // Perform onOpen action once:
-    $(document.body).on("shown.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         if (this._onOpenOnce) {
             var fx = this._onOpenOnce;
             this._onOpenOnce = undefined;
@@ -174,7 +174,7 @@ $(function () {
     });
 
     // Perform onClose action once:
-    $(document.body).on("hidden.bs.modal", ".modal", function (event) {
+    $(document).on("hidden.bs.modal", ".modal", function (event) {
         if (this._onCloseOnce) {
             var fx = this._onCloseOnce;
             this._onCloseOnce = undefined;
@@ -183,7 +183,7 @@ $(function () {
     });
 
     // When opening modal, set focus:
-    $(document.body).on("shown.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         $(this).find("*[autofocus]:first").each(function (index) {
             try { this.focus(); } catch (x) { }
             try { this.select(); } catch (x) { }
@@ -191,13 +191,13 @@ $(function () {
     });
 
     // Reset content of a modal with onclose-restore when closing the modal:
-    $(document.body).on("hidden.bs.modal", ".modal.onclose-restore", function (event) {
+    $(document).on("hidden.bs.modal", ".modal.onclose-restore", function (event) {
         var originalContent = $(this)[0]._originalContent;
         if (originalContent !== undefined) $(this).html(originalContent);
     });
 
     // Dynamically load content on showing modal:
-    $(document.body).on("show.bs.modal", ".modal", function (event) {
+    $(document).on("show.bs.modal", ".modal", function (event) {
         var $container = $(this).find("[onshowmodal-load]");
         if ($container.length > 0) {
             $container.load($container.attr("onshowmodal-load"));
@@ -246,7 +246,7 @@ $$(function () {
 
 $(function () {
     // Dynamically load content on showing tab:
-    $(document.body).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
+    $(document).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
         $(this).load($(this).attr("onshow-load"));
     });
 });
@@ -336,7 +336,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 // Write hash value in location.href for hash-routed elements:
 $(function () {
-    $(document.body).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
+    $(document).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
         var hash = this.getAttribute("href");
         var url = window.location.href.replace(/(#.*|$)/i, hash); // Add or update the hash:
         var state = window.history.state;
@@ -364,7 +364,7 @@ sircl.addAfterHistoryHandler(function () {
 //#region ifroute-setactive
 
 sircl.addAfterHistoryHandler(function () {
-    $(document.body).find("[ifroute-setactive]").each(function () {
+    $(document).find("[ifroute-setactive]").each(function () {
         var regex = new RegExp($(this).attr("ifroute-setactive"), "i");
         if (regex.exec(location.pathname) !== null) {
             $(this).addClass("active");
