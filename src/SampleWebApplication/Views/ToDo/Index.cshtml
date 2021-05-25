@@ -4,6 +4,7 @@
     .drop-zone {
         background-color: lightgreen;
     }
+
         .drop-zone * { /* https://stackoverflow.com/a/18582960 */
             pointer-events: none;
         }
@@ -88,3 +89,22 @@
 
 </form>
 
+<hr />
+
+<div class="ondropfile-submit"
+     form="f1"
+     name="files"
+     formaction="/ToDo/DropFiles"
+     ondragover-addclass="drop-zone"
+     ondropfile-accept="image/* application/*"
+     ondropinvalidfile-alert="Some files were too large or of wrong type."
+     dropfile-maxsize="12 MB"
+     style="border: solid 2px gray; height: 200px">
+
+    <form class="target" id="f1" action="/ToDo/Save" method="post" enctype="multipart/form-data">
+        @await Html.PartialAsync("Index_FileList", new List<string>())
+    </form>
+
+    Drop files here
+
+</div>

@@ -216,7 +216,7 @@ $$(function () {
     var $scope = $(this);
     $(this).find(".modal.auto-show").each(function () {
         if ($(this).attr("auto-show-delay") !== undefined) {
-            var delaypart = $(this).attr("auto-show-delay").split(':');
+            var delaypart = $(this).attr("auto-show-delay").split(":");
             var delay = 0;
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
             setTimeout(function ($scope) {
@@ -224,7 +224,8 @@ $$(function () {
                 if ($modal.length > 0) {
                     // Only show if no other modals shown yet, or if class force-show is set:
                     if ($(".modal.show").length == 0 || $modal.hasClass("force-show")) {
-                        $modal.modal('show');
+                        var options = { backdrop: $modal.data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+                        new bootstrap.Modal($modal[0], options).show();
                     }
                 }
             }, 1000 * delay, $scope);

@@ -754,13 +754,13 @@ sircl.isElementInViewport = function(el) {
 
 $(function () {
 
-    $(window).on('DOMContentLoaded load resize scroll', function () {
+    $(window).on("DOMContentLoaded load resize scroll", function () {
 
         /// <* class="onscrolltop-fade"> Makes the element visible when scrolling down (using a fading animation), hidden when scrolled at top.
         if ($(this).scrollTop() > 100) {
-            $('.onscrolltop-fade').fadeIn(800);
+            $(".onscrolltop-fade").fadeIn(800);
         } else {
-            $('.onscrolltop-fade').fadeOut(400);
+            $(".onscrolltop-fade").fadeOut(400);
         }
 
         /// <* ifinviewport-load="url"> Loads the given URL and places the result in the element when the element is visible in the viewport.
@@ -775,7 +775,7 @@ $(function () {
 
     /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animaged way).
     $(document.body).on("click", ".onclick-scrolltop", function (event) {
-        $('body,html').animate({
+        $("body,html").animate({
             scrollTop: 0
         }, 500);
         return false;
@@ -908,6 +908,94 @@ $(function () {
 
 $(function () {
 
+    /// Allow dragging file:
+    /// <* ondropfile-accept="mimetypse">...</*>
+    $(document.body).children().on("dragover", "[ondropfile-accept]", function (event) {
+        if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
+            // Allow by preventing default browser behavior:
+            event.preventDefault();
+            // If has [ondragover-addclass], add class:
+            var $scope = $(this).closest("[ondragover-addclass]");
+            if ($scope.length > 0) {
+                sircl.ext.addClass($scope, $scope.attr("ondragover-addclass"));
+            }
+        }
+    });
+
+    /// Allow dropping file:
+    /// <* class="ondropfile-submit" ondropfile-accept="mimetypes">...</*>
+    $(document.body).on("drop", "[ondropfile-accept]", function (event) {
+        // Prevent default browser behavior:
+        event.preventDefault();
+        // Verify files:
+        var $this = $(this);
+        var acceptedTypes = $this.attr("ondropfile-accept").split(" ");
+        var maxFileSize = ($this.attr("dropfile-maxsize") || "1024 MB").toUpperCase();
+        if (maxFileSize.indexOf("KB") > 0) maxFileSize = parseFloat(maxFileSize.replace("KB", "").trim()) * 1024;
+        else if (maxFileSize.indexOf("MB") > 0) maxFileSize = parseFloat(maxFileSize.replace("MB", "").trim()) * 1024 * 1024;
+        else maxFileSize = parseFloat(maxFileSize);
+        var invalidFileMsg = invalidFileMsg = $this.attr("ondropinvalidfile-alert");
+        var validFileIndexes = [];
+        for (var f = 0; f < event.originalEvent.dataTransfer.files.length; f++) {
+            var file = event.originalEvent.dataTransfer.files[f];
+            if (file.size > maxFileSize) continue;
+            for (var t = 0; t < acceptedTypes.length; t++) {
+                var type = acceptedTypes[t].trim().toLowerCase();
+                if (type == "") continue;
+                if (type.indexOf("*") == 0) { // If type = "*/*":
+                    validFileIndexes.push(f);
+                } else if (type.indexOf("*") == type.length - 1) { // If type ends with "*":
+                    if (file.type.toLowerCase().indexOf(type.substr(0, type.length - 1)) == 0) {
+                        validFileIndexes.push(f);
+                    }
+                } else { // Else must be exact match:
+                    if (file.type.toLowerCase() == type) {
+                        validFileIndexes.push(f);
+                    }
+                }
+            }
+        }
+        if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length) {
+            if (invalidFileMsg) sircl.ext.alert($this, invalidFileMsg, event, false);
+        }
+        if (validFileIndexes.length > 0) {
+            if ($this.hasClass("ondropfile-submit")) {
+                var $form = ($this.hasAttr("form"))
+                    ? $("#" + $this.attr("form"))
+                    : $this.closest("FORM");
+                if ($form.length > 0) {
+
+                    // Prevent default browser behavior:
+                    event.preventDefault();
+                    // Add a submit button:
+                    var btnid = "sircl-autoid-" + new Date().getTime();
+                    var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
+                    if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
+                    if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
+                    if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
+                    if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
+                    if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
+                    btn += "/>";
+                    $form.append(btn);
+                    var $btn = $("#" + btnid);
+                    // Add files to submit button:
+                    var files = [];
+                    for (var i = 0; i < validFileIndexes.length; i++) {
+                        files.push(event.originalEvent.dataTransfer.files[validFileIndexes[i]]);
+                    }
+                    $btn[0]._files = files;
+                    $btn[0]._filesName = $this.attr("name") || "files";
+                    // Submit form:
+                    $btn.click();
+                }
+            }
+        }
+    });
+});
+
+
+$(function () {
+
     $(document.body).on("dragstart", "[draggable]", function (event) {
         if ($(this).hasAttr("drop-type")) {
             var dragTypes = $(this).attr("drop-type").split(" ");
@@ -961,7 +1049,10 @@ $(function () {
     });
 
     $(document.body).on("drop", ".ondrop-submit", function (event) {
-        var $form = $(this).closest("FORM");
+        var $this = $(this);
+        var $form = ($this.hasAttr("form"))
+            ? $("#" + $this.attr("form"))
+            : $this.closest("FORM");
         if ($form.length > 0) {
             // Copy drop-value to .drop-value input element:
             $form.find("INPUT.drop-value").each(function () {
@@ -972,12 +1063,11 @@ $(function () {
             // Submit form (add a submit button, then click that button):
             var btnid = "sircl-autoid-" + new Date().getTime();
             var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
-            if ($(this).hasAttr("form")) btn += "form=\"" + $(this).attr("form") + "\" ";
-            if ($(this).hasAttr("formaction")) btn += "formaction=\"" + $(this).attr("formaction") + "\" ";
-            if ($(this).hasAttr("formenctype")) btn += "formenctype=\"" + $(this).attr("formaction") + "\" ";
-            if ($(this).hasAttr("formmethod")) btn += "formmethod=\"" + $(this).attr("formaction") + "\" ";
-            if ($(this).hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $(this).attr("formaction") + "\" ";
-            if ($(this).hasAttr("formtarget")) btn += "formtarget=\"" + $(this).attr("formaction") + "\" ";
+            if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
+            if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
+            if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
+            if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
+            if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
             btn += "/>";
             $form.append(btn);
             $("#" + btnid).click();

@@ -96,7 +96,7 @@
 
         var appId = "MvcDashboardIdentity";
 
-        sircl.$mainTargetSelector = "#body-content";
+        sircl.mainTargetSelector$ = "#body-content";
 
         sircl.addRequestHandler("onError", function (req) {
             if (req.method == "get") {

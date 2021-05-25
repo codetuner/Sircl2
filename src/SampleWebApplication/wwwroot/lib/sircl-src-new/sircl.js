@@ -69,14 +69,17 @@ HTMLFormElement.prototype.submit = function (event) {
         // Find target of submit request:
         var $trigger = (this._formTrigger) ? $(this._formTrigger) : $(this);
         var target = null;
+        var $targetScope = $(this);
         if ($trigger.hasAttr("formtarget")) {
             target = $trigger.attr("formtarget");
+            $targetScope = $trigger;
         } else if ($trigger.closest("[target]").length > 0) {
             target = $trigger.closest("[target]").attr("target");
+            $targetScope = $trigger.closest("[target]");
         }
         if ((target != null && sircl.ext.isInternalTarget(target)) || (target == null && sircl.singlePageMode == true)) {
             // Forward to the server side rendering handler:
-            var $target = (target != null) ? $(target) : sircl.ext.$mainTarget();
+            var $target = (target != null) ? sircl.ext.$select($targetScope, target) : sircl.ext.$mainTarget();
             sircl._submitForm($trigger, $(this), $target, event);
         } else {
             // Navigate link through default behavior
@@ -141,7 +144,7 @@ console.info("Sircl v." + sircl.version+ " running.");
 
 sircl.html_spinner = '<i class="sircl-spinner sircl-spinning"></i> ';
 
-sircl.$mainTargetSelector = ".main-target";
+sircl.mainTargetSelector$ = ".main-target";
 
 //#endregion
 
@@ -192,7 +195,7 @@ sircl.ext.getId = function (elementOrSelector, createIdIfMissing) {
  * Returns the main target of the page.
  */
 sircl.ext.$mainTarget = function () {
-    var $mainTarget = $(sircl.$mainTargetSelector);
+    var $mainTarget = $(sircl.mainTargetSelector$);
     return $mainTarget;
 }
 
@@ -246,7 +249,7 @@ sircl.ext.$select = function ($context, selector$) {
                 $result = $result.add($context);
             } else if (sel$ === ":form") {
                 if ($context.hasAttr("form")) {
-                    $result = $result.add(sircl.ext.$select($context, $context.attr("form")));
+                    $result = $result.add($("#" + $context.attr("form")));
                 } else {
                     $result = $result.add($context.closest("FORM"));
                 }
@@ -462,6 +465,13 @@ sircl._submitForm = function ($trigger, $form, $target, event, loadComplete) {
         var actionParsed = sircl.urlParser.exec(req.action); // [1]=base url, [2]=query string, [3]=hash
         req.action = actionParsed[1] + ((actionParsed[2]) ? actionParsed[2] + "&" : "?") + $form.serialize() + ((actionParsed[3]) ? actionParsed[3] : "");
         req.formData = null;
+    }
+
+    // Add files if any:
+    if ($trigger.length > 0 && $trigger[0]._files != null && req.formData != null && req.method == "post" && req.enctype == "multipart/form-data") {
+        for (var f = 0; f < $trigger[0]._files.length; f++) {
+            req.formData.append($trigger[0]._filesName, $trigger[0]._files[f]);
+        }
     }
 
     // Process submission:
@@ -761,7 +771,7 @@ SirclRequestProcessor.prototype._render = function (req) {
     // If the sub-target is found in the finalTarget:
     if (subTarget$ != null && $subTarget.length > 0) {
         // Parse the responseText:
-        var $response = $('<div/>').append(req.responseText);
+        var $response = $("<div/>").append(req.responseText);
         var subResponseText = $response.find(subTarget$).html();
         // If the responseText also contains the sub-target:
         if (subResponseText != null) {
@@ -823,7 +833,7 @@ SirclRequestProcessor.prototype.error = function (req) {
 $(document).ready(function () {
 
     // Detect SinglePage modus:
-    sircl.singlePageMode = $(sircl.$mainTargetSelector).length > 0;
+    sircl.singlePageMode = $(sircl.mainTargetSelector$).length > 0;
     console.info("sircl.singlePageMode = " + sircl.singlePageMode + "");
 
     /// Any element having a href attribute (and no download attribute):

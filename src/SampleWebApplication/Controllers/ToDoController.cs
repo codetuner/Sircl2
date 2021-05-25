@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SampleWebApplication.Models;
 using System;
 using System.Collections.Generic;
@@ -95,6 +96,18 @@ namespace SampleWebApplication.Controllers
         {
             if (clearModelstate) ModelState.Clear();
             return View("Index", model);
+        }
+
+        [HttpPost]
+        public IActionResult DropFiles(List<IFormFile> files, List<string> filenames = null)
+        {
+            filenames ??= new List<string>();
+            foreach (var item in files)
+            {
+                filenames.Add(item.FileName);
+            }
+
+            return View("Index_FileList", filenames);
         }
     }
 }
