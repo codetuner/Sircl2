@@ -58,7 +58,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     // Close any opened modal that is not the target if target has onload-showmodal class and is not open:
     var $openedTarget = req.$initialTarget.closest(".modal:not(.onload-showmodal):not(.show)");
     var $openModals = $(".modal.show");
-    if ($openModals.length > 0 && $openedTarget.length == 0) {
+    if (req.isForeground == true && $openModals.length > 0 && $openedTarget.length == 0) {
         if (!$.contains($openModals[0], req.$initialTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {
@@ -128,7 +128,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
     var processor = this;
     // Close any opened modal that is not the target:
     var $openModals = $(".modal.show");
-    if ($openModals.length > 0) {
+    if (req.isForeground == true && $openModals.length > 0) {
         if (!$.contains($openModals[0], req.$finalTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {
@@ -165,7 +165,7 @@ sircl.addRequestHandler("afterRender", function (req) {
 
 $(function () {
     // Perform onOpen action once:
-    $(document.body).on("shown.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         if (this._onOpenOnce) {
             var fx = this._onOpenOnce;
             this._onOpenOnce = undefined;
@@ -174,7 +174,7 @@ $(function () {
     });
 
     // Perform onClose action once:
-    $(document.body).on("hidden.bs.modal", ".modal", function (event) {
+    $(document).on("hidden.bs.modal", ".modal", function (event) {
         if (this._onCloseOnce) {
             var fx = this._onCloseOnce;
             this._onCloseOnce = undefined;
@@ -183,7 +183,7 @@ $(function () {
     });
 
     // When opening modal, set focus:
-    $(document.body).on("shown.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         $(this).find("*[autofocus]:first").each(function (index) {
             try { this.focus(); } catch (x) { }
             try { this.select(); } catch (x) { }
@@ -191,13 +191,13 @@ $(function () {
     });
 
     // Reset content of a modal with onclose-restore when closing the modal:
-    $(document.body).on("hidden.bs.modal", ".modal.onclose-restore", function (event) {
+    $(document).on("hidden.bs.modal", ".modal.onclose-restore", function (event) {
         var originalContent = $(this)[0]._originalContent;
         if (originalContent !== undefined) $(this).html(originalContent);
     });
 
     // Dynamically load content on showing modal:
-    $(document.body).on("show.bs.modal", ".modal", function (event) {
+    $(document).on("show.bs.modal", ".modal", function (event) {
         var $container = $(this).find("[onshowmodal-load]");
         if ($container.length > 0) {
             $container.load($container.attr("onshowmodal-load"));
@@ -216,7 +216,7 @@ $$(function () {
     var $scope = $(this);
     $(this).find(".modal.auto-show").each(function () {
         if ($(this).attr("auto-show-delay") !== undefined) {
-            var delaypart = $(this).attr("auto-show-delay").split(':');
+            var delaypart = $(this).attr("auto-show-delay").split(":");
             var delay = 0;
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
             setTimeout(function ($scope) {
@@ -224,7 +224,8 @@ $$(function () {
                 if ($modal.length > 0) {
                     // Only show if no other modals shown yet, or if class force-show is set:
                     if ($(".modal.show").length == 0 || $modal.hasClass("force-show")) {
-                        $modal.modal('show');
+                        var options = { backdrop: $modal.data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+                        new bootstrap.Modal($modal[0], options).show();
                     }
                 }
             }, 1000 * delay, $scope);
@@ -245,7 +246,7 @@ $$(function () {
 
 $(function () {
     // Dynamically load content on showing tab:
-    $(document.body).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
+    $(document).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
         $(this).load($(this).attr("onshow-load"));
     });
 });
@@ -335,7 +336,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 // Write hash value in location.href for hash-routed elements:
 $(function () {
-    $(document.body).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
+    $(document).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
         var hash = this.getAttribute("href");
         var url = window.location.href.replace(/(#.*|$)/i, hash); // Add or update the hash:
         var state = window.history.state;
@@ -363,7 +364,7 @@ sircl.addAfterHistoryHandler(function () {
 //#region ifroute-setactive
 
 sircl.addAfterHistoryHandler(function () {
-    $(document.body).find("[ifroute-setactive]").each(function () {
+    $(document).find("[ifroute-setactive]").each(function () {
         var regex = new RegExp($(this).attr("ifroute-setactive"), "i");
         if (regex.exec(location.pathname) !== null) {
             $(this).addClass("active");
