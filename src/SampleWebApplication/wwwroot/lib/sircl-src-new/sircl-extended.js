@@ -934,7 +934,9 @@ $(function () {
         if (maxFileSize.indexOf("KB") > 0) maxFileSize = parseFloat(maxFileSize.replace("KB", "").trim()) * 1024;
         else if (maxFileSize.indexOf("MB") > 0) maxFileSize = parseFloat(maxFileSize.replace("MB", "").trim()) * 1024 * 1024;
         else maxFileSize = parseFloat(maxFileSize);
-        var invalidFileMsg = invalidFileMsg = $this.attr("ondropinvalidfile-alert");
+        var maxFileCount = parseInt($this.attr("dropfile-maxcount") || "99");
+        var invalidFileMsg = $this.attr("ondropinvalidfile-alert");
+        var tooManyFilesMsg = $this.attr("ondroptoomanyfiles-alert");
         var validFileIndexes = [];
         for (var f = 0; f < event.originalEvent.dataTransfer.files.length; f++) {
             var file = event.originalEvent.dataTransfer.files[f];
@@ -955,16 +957,22 @@ $(function () {
                 }
             }
         }
-        if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length) {
-            if (invalidFileMsg) sircl.ext.alert($this, invalidFileMsg, event, false);
+        if (validFileIndexes.length > maxFileCount && tooManyFilesMsg != null) {
+            sircl.ext.alert($this, tooManyFilesMsg, event, false);
+        } else if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length && invalidFileMsg != null) {
+            sircl.ext.alert($this, invalidFileMsg, event, false);
         }
         if (validFileIndexes.length > 0) {
+            if (validFileIndexes.length > maxFileCount) {
+                // Shorten array to maxFileCount:
+                validFileIndexes = validFileIndexes.slice(0, maxFileCount);
+            }
             if ($this.hasClass("ondropfile-submit")) {
+                // Determine form:
                 var $form = ($this.hasAttr("form"))
                     ? $("#" + $this.attr("form"))
                     : $this.closest("FORM");
                 if ($form.length > 0) {
-
                     // Prevent default browser behavior:
                     event.preventDefault();
                     // Add a submit button:

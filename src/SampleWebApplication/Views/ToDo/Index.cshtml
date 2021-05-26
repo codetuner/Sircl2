@@ -96,9 +96,11 @@
      name="files"
      formaction="/ToDo/DropFiles"
      ondragover-addclass="drop-zone"
-     ondropfile-accept="image/* application/*"
+     ondropfile-accept="image/* application/pdf"
      ondropinvalidfile-alert="Some files were too large or of wrong type."
+     ondroptoomanyfiles-alert="Too many files.&#10;Only 3 files at a time allowed."
      dropfile-maxsize="12 MB"
+     dropfile-maxcount="3"
      style="border: solid 2px gray; height: 200px">
 
     <form class="target" id="f1" action="/ToDo/Save" method="post" enctype="multipart/form-data">
