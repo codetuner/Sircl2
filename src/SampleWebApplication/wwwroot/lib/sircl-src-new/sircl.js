@@ -1417,9 +1417,6 @@ $(function () {
                     if (!$dlg.is($(this))) {
                         // Close dialog:
                         this.close();
-                        //// Restore content:
-                        //var originalContent = this._originalContent;
-                        //if (originalContent !== undefined) $(this).html(originalContent);
                     }
                 });
             }
@@ -1439,9 +1436,6 @@ $(function () {
         if ($dlg.length > 0) {
             // Close dialog:
             $dlg[0].close();
-        //    // Restore content:
-        //    var originalContent = $dlg[0]._originalContent;
-        //    if (originalContent !== undefined) $dlg.html(originalContent);
         }
     });
 
@@ -1458,9 +1452,6 @@ sircl.addRequestHandler("beforeSend", function (req) {
                 if (!$(this).is(req.$finalTarget)) {
                     // Close dialog:
                     this.close();
-                //    // Restore content:
-                //    var originalContent = this._originalContent;
-                //    if (originalContent !== undefined) $(this).html(originalContent);
                 }
             });
         }
@@ -1488,9 +1479,6 @@ sircl.addRequestHandler("afterSend", function (req) {
         if ($dlg.length > 0) {
             // Close dialog:
             $dlg[0].close();
-        //    // Restore content:
-        //    var originalContent = $dlg[0]._originalContent;
-        //    if (originalContent !== undefined) $dlg.html(originalContent);
         }
     }
     // Move to next handler:
@@ -1505,9 +1493,6 @@ sircl.addRequestHandler("beforeRender", function (req) {
             // Close dialog:
             req._dialogOpened[0].close();
             req._dialogOpened = $([]);
-        //    // Restore content:
-        //    var originalContent = req._dialogOpened[0]._originalContent;
-        //    if (originalContent !== undefined) req._dialogOpened.html(originalContent);
         }
     }
     // If final dialog is exclusive, close all other open dialogs:
@@ -1517,9 +1502,6 @@ sircl.addRequestHandler("beforeRender", function (req) {
             if (!$targetDlg.is($(this))) {
                 // Close dialog:
                 this.close();
-                //// Restore content:
-                //var originalContent = this._originalContent;
-                //if (originalContent !== undefined) $(this).html(originalContent);
             }
         });
     }
@@ -1543,6 +1525,15 @@ sircl.addRequestHandler("afterRender", function (req) {
 });
 
 $$(function () {
+    // Disable cancelling of dialog with .dialog-nocancel:
+    $(this).find("DIALOG").each(function (index, elem) {
+        elem.addEventListener("cancel", function (event) {
+            if ($(this).is(".dialog-nocancel")) {
+                event.preventDefault();
+            }
+        });
+    });
+
     // Backup original content of onclose-restore dialogs to be able to reset on close:
     $(this).find("DIALOG.onclose-restore").each(function (index, elem) {
         elem._originalContent = $(elem).html();
@@ -1569,9 +1560,6 @@ $$(function () {
                     if (!$dlg.is($(this))) {
                         // Close dialog:
                         this.close();
-                        //// Restore content:
-                        //var originalContent = this._originalContent;
-                        //if (originalContent !== undefined) $(this).html(originalContent);
                     }
                 });
             }
