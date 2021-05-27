@@ -123,7 +123,6 @@ form.form-changed {
     color: #222;
     background-color: white;
     opacity: 0.4;
-    display: none;
     z-index: 500;
 }
 

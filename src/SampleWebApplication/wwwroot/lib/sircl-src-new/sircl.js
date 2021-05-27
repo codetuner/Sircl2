@@ -1383,10 +1383,15 @@ sircl.addRequestHandler("afterRender", function (req) {
     // If reloadAfter header is set with value > 0, reload after timeout:
     var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
     if (reloadAfter) {
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delaypart = reloadAfter.split(":");
+        var delay = 0;
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
         if (reloadAfter > 0 && req.method == "get") {
             setTimeout(function () {
                 req.$finalTarget.load(req.url)
-            }, reloadAfter * 1000);
+            }, delay * 1000);
         }
     }
     // Move to next handler:
@@ -1397,66 +1402,188 @@ sircl.addRequestHandler("afterRender", function (req) {
 
 //#region HTML5 Dialog handling
 
+sircl.addAttributeAlias(".onclick-closedialog", "onclick-closedialog", "<DIALOG");
+
+$(function () {
+
+    /// Opens the given dialog when clicked:
+    /// <* onclick-showdialog="selector" >
+    $(document).on("click", "[onclick-showdialog]", function (event) {
+        var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-showdialog"));
+        if ($dlg.length > 0) {
+            // If final dialog is exclusive, close all other open dialogs:
+            if ($dlg.is(".dialog-exclusive")) {
+                $("DIALOG[open]").each(function () {
+                    if (!$dlg.is($(this))) {
+                        // Close dialog:
+                        this.close();
+                        //// Restore content:
+                        //var originalContent = this._originalContent;
+                        //if (originalContent !== undefined) $(this).html(originalContent);
+                    }
+                });
+            }
+            // Open the dialog:
+            if ($dlg.hasClass("dialog-modal")) {
+                $dlg[0].showModal();
+            } else {
+                $dlg[0].show();
+            }
+        }
+    });
+
+    /// Closes the given dialog when clicked:
+    /// <* onclick-closedialog="selector" >
+    $(document).on("click", "[onclick-closedialog]", function (event) {
+        var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-closedialog"));
+        if ($dlg.length > 0) {
+            // Close dialog:
+            $dlg[0].close();
+        //    // Restore content:
+        //    var originalContent = $dlg[0]._originalContent;
+        //    if (originalContent !== undefined) $dlg.html(originalContent);
+        }
+    });
+
+});
+
 sircl.addRequestHandler("beforeSend", function (req) {
+    var processor = this;
     // Open any non-open dialog holding the initial target and having class "onload-showdialog":
-    req._dialogHtml5Opened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
-    if (req._dialogHtml5Opened.length > 0) {
-        if (req._dialogHtml5Opened.hasClass("modal-dialog")) {
-            req._dialogHtml5Opened[0].showModal();
+    req._dialogOpened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
+    if (req._dialogOpened.length > 0) {
+        // If initial dialog is exclusive, close all other open dialogs:
+        if (req._dialogOpened.is(".dialog-exclusive")) {
+            $("DIALOG[open]").each(function () {
+                if (!$(this).is(req.$finalTarget)) {
+                    // Close dialog:
+                    this.close();
+                //    // Restore content:
+                //    var originalContent = this._originalContent;
+                //    if (originalContent !== undefined) $(this).html(originalContent);
+                }
+            });
+        }
+        // Open the dialog:
+        if (req._dialogOpened.hasClass("dialog-modal")) {
+            req._dialogOpened[0].showModal();
         } else {
-            req._dialogHtml5Opened[0].show();
+            req._dialogOpened[0].show();
         }
     }
     // Move to next handler:
-    this.next(req);
+    processor.next(req);
 });
 
 sircl.addRequestHandler("afterSend", function (req) {
+    var processor = this;
     // On error, undo opened dialogs:
-    if (!req.succeeded && req._dialogHtml5Opened.length > 0) {
-        req._dialogHtml5Opened[0].close();
+    if (!req.succeeded && req._dialogOpened.length > 0) {
+        // Close dialog:
+        req._dialogOpened[0].close();
+        req._dialogOpened = $([]);
     } else if (req.xhr.status == "204") {
         // Else, if status "204" (no content), close target dialog:
         var $dlg = req.$initialTarget.closest("DIALOG[open]");
         if ($dlg.length > 0) {
+            // Close dialog:
             $dlg[0].close();
+        //    // Restore content:
+        //    var originalContent = $dlg[0]._originalContent;
+        //    if (originalContent !== undefined) $dlg.html(originalContent);
         }
     }
     // Move to next handler:
-    this.next(req);
+    processor.next(req);
 });
 
 sircl.addRequestHandler("beforeRender", function (req) {
-    // If target has changed, close any previously opened dialog:
-    if (req.targetHasChanged && req._dialogHtml5Opened.length > 0) {
-        req._dialogHtml5Opened[0].close();
+    var processor = this;
+    // Undo opened dialog if target has changed:
+    if (req.targetHasChanged && req._dialogOpened.length > 0) {
+        if (!req.$finalTarget.has(req._dialogOpened)) {
+            // Close dialog:
+            req._dialogOpened[0].close();
+            req._dialogOpened = $([]);
+        //    // Restore content:
+        //    var originalContent = req._dialogOpened[0]._originalContent;
+        //    if (originalContent !== undefined) req._dialogOpened.html(originalContent);
+        }
     }
-    // Open dialog on final target:
+    // If final dialog is exclusive, close all other open dialogs:
+    var $targetDlg = req.$finalTarget.closest("DIALOG");
+    if ($targetDlg.is(".dialog-exclusive")) {
+        $("DIALOG[open]").each(function () {
+            if (!$targetDlg.is($(this))) {
+                // Close dialog:
+                this.close();
+                //// Restore content:
+                //var originalContent = this._originalContent;
+                //if (originalContent !== undefined) $(this).html(originalContent);
+            }
+        });
+    }
+    // Move to next handler:
+    processor.next(req);
+});
+
+sircl.addRequestHandler("afterRender", function (req) {
+    var processor = this;
+    // Open modal on final target:
     var $dlg = req.$finalTarget.closest("DIALOG:not([open])");
     if ($dlg.length > 0) {
-        if ($dlg.hasClass("modal-dialog")) {
+        if ($dlg.hasClass("dialog-modal")) {
             $dlg[0].showModal();
         } else {
             $dlg[0].show();
         }
     }
     // Move to next handler:
-    this.next(req);
-});
-
-$(document).ready(function () {
-    // Reset content of a modal with onclose-reset when closing the modal:
-    $(document).on("close", "DIALOG.onclose-restore", function (event) {
-        var originalContent = $(this)[0]._originalContent;
-        if (originalContent !== undefined) $(this).html(originalContent);
-    });
+    processor.next(req);
 });
 
 $$(function () {
-    // Backup original content of onclose-reset dialogs to be able to reset on close:
+    // Backup original content of onclose-restore dialogs to be able to reset on close:
     $(this).find("DIALOG.onclose-restore").each(function (index, elem) {
         elem._originalContent = $(elem).html();
+        // Reset content of a dialog with onclose-restore when closing the dialog:
+        elem.addEventListener("close", function (event) {
+            var originalContent = this._originalContent;
+            if (originalContent !== undefined) {
+                $(this).html(originalContent);
+            }
+        });
     });
+
+    $(this).find("DIALOG[open-after]").each(function () {
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delay = 0;
+        var delaypart = $(this).attr("open-after").split(":");
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
+        setTimeout(function (dlg) {
+            var $dlg = $(dlg);
+            // If final dialog is exclusive, close all other open dialogs:
+            if ($dlg.is(".dialog-exclusive")) {
+                $("DIALOG[open]").each(function () {
+                    if (!$dlg.is($(this))) {
+                        // Close dialog:
+                        this.close();
+                        //// Restore content:
+                        //var originalContent = this._originalContent;
+                        //if (originalContent !== undefined) $(this).html(originalContent);
+                    }
+                });
+            }
+            // Open dialog:
+            if ($dlg.hasClass("dialog-modal")) {
+                dlg.showModal();
+            } else {
+                dlg.show();
+            }
+        }, (delay * 1000), this);
+    });
+
 });
 
 //#endregion
@@ -1571,7 +1698,12 @@ $$(function () {
         var loadRefresh = $(this).attr("onload-reloadafter");
         $(this).load(url.replace("{rnd}", Math.random()));
         if (loadRefresh) {
-            $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, loadRefresh * 1000, $(this));
+            // Parse delay ("seconds" or "[hh:]mm:ss"):
+            var delaypart = loadRefresh.split(":");
+            var delay = 0;
+            for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+            // Set timer:
+            $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, delay * 1000, $(this));
         } else {
             //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
         }

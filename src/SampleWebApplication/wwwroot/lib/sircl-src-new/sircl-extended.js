@@ -758,9 +758,15 @@ $(function () {
 
         /// <* class="onscrolltop-fade"> Makes the element visible when scrolling down (using a fading animation), hidden when scrolled at top.
         if ($(this).scrollTop() > 100) {
-            $(".onscrolltop-fade").fadeIn(800);
+            if ($.isFunction($.fn.fadeIn)) { // fadeIn/Out is not available in slim version if jQuery
+                $(".onscrolltop-fade").fadeIn(800);
+            }
+            sircl.ext.visible($(".onscrolltop-fade"), true);
         } else {
-            $(".onscrolltop-fade").fadeOut(400);
+            if ($.isFunction($.fn.fadeOut)) { // fadeIn/Out is not available in slim version if jQuery
+                $(".onscrolltop-fade").fadeOut(400);
+            }
+            sircl.ext.visible($(".onscrolltop-fade"), false);
         }
 
         /// <* ifinviewport-load="url"> Loads the given URL and places the result in the element when the element is visible in the viewport.
@@ -773,11 +779,15 @@ $(function () {
         });
     });
 
-    /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animaged way).
+    /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animated way).
     $(document).on("click", ".onclick-scrolltop", function (event) {
-        $("body,html").animate({
-            scrollTop: 0
-        }, 500);
+        if ($.isFunction($.fn.animate)) { // animate is not available in slim version if jQuery
+            $("body,html").animate({
+                scrollTop: 0
+            }, 500);
+        } else {
+            window.scrollTo(0, 0);
+        }
         return false;
     });
 });
