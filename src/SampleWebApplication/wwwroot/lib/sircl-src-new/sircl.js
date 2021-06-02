@@ -523,6 +523,7 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
     // Start processing:
     var processor = new SirclRequestProcessor(loadComplete);
@@ -632,7 +633,7 @@ SirclRequestProcessor.prototype._send = function (req) {
             });
         }
         // Check for abort reload:
-        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
         if (reloadAfter != null) {
             if (parseFloat(reloadAfter) <= 0) {
                 clearInterval(req.$initialTarget[0]._onloadInterval);
@@ -1381,12 +1382,10 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 sircl.addRequestHandler("afterRender", function (req) {
     // If reloadAfter header is set with value > 0, reload after timeout:
-    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
     if (reloadAfter) {
-        // Parse delay ("seconds" or "[hh:]mm:ss"):
-        var delaypart = reloadAfter.split(":");
-        var delay = 0;
-        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Parse delay (in seconds):
+        var delay = parseFloat(reloadAfter);
         // Set timer:
         if (reloadAfter > 0 && req.method == "get") {
             setTimeout(function () {

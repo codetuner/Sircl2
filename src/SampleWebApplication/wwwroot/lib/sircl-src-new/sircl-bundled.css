@@ -1,5 +1,6 @@
 /* Sircl 2.x stylesheets */
-/* (c) Rudi Breedenraedt */
+/* Copyright (c) 2019-2021 Rudi Breedenraedt */
+/* www.getsircl.com */
 
 /* Hidden attribute */
 [hidden] {
@@ -11,7 +12,7 @@
     position: relative;
 }
 
-.sircl-overlay {
+.overlay {
     position: absolute;
     left: 0;
     top: 0;
@@ -19,6 +20,7 @@
     width: 100%;
     background-color: rgba(0,0,0,0.33);
     border-radius: 5px;
+    z-index: 1100;
 }
 
 /* Spinning spinner:
@@ -57,7 +59,8 @@
 }
 
 /* Sircl 2.x stylesheets */
-/* (c) Rudi Breedenraedt */
+/* Copyright (c) 2019-2021 Rudi Breedenraedt */
+/* www.getsircl.com */
 
 /* Contextmenus */
 
