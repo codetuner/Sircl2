@@ -1,18 +1,391 @@
 ﻿
 
-<div draggable="true" drop-type="customer"> Caesar </div>
-<div draggable="true" drop-type="supplier"> Sophia </div>
-<div draggable="true" drop-type="customer supplier"> Bernice </div>
-<div draggable="true" drop-type="partner"> Peter </div>
+<hr />
 
-<div ondrop-accept="customer">
-    Drop customers here
+<input id="val01" type="text" />
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val01')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val01')[0]))">val</button>
+<br />
+
+<label><input id="val02" type="checkbox" /> Checkbox</label>
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val02')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val02')[0]))">val</button>
+<br />
+
+<label><input id="val03" type="radio" /> Radio</label>
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val03')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val03')[0]))">val</button>
+<br />
+
+<select id="val04">
+    <option disabled>Red</option>
+    <option disabled>Green</option>
+    <option disabled>Blue</option>
+</select>
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val04')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val04')[0]))">val</button>
+<br />
+
+<select id="val05">
+    <option>Red</option>
+    <option>Green</option>
+    <option>Blue</option>
+</select>
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val05')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val05')[0]))">val</button>
+<br />
+
+<select id="val06" multiple>
+    <option>Red</option>
+    <option>Green</option>
+    <option>Blue</option>
+</select>
+<button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val06')[0]))">typ</button>
+<button type="button" onclick="alert(sircl.ext.effectiveValue($('#val06')[0]))">val</button>
+<br />
+
+
+<hr />
+
+
+<a href="/Elsewhere">Leave page</a>
+<a href="/Elsewhere" class="onunloadchanged-allow">Leave page without confirmation</a>
+...
+<form onchange-set="HasChanges" onunloadchanged-confirm="Ok to loose changes ?">
+    <input type="hidden" name="HasChanges" />
+    <input type="text" name="Town" />
+    <button type="submit">Submit</button>
+</form>
+
+<hr />
+
+<form onchange-set="HasChanges">
+    <input type="hidden" name="HasChanges" />
+    <input type="text" name="Town" />
+    <button type="submit" onclickchanged-confirm="Are you sure you want to save those changes ?">Submit</button>
+</form>
+
+
+<hr />
+
+<select oninit-defaultselect="C" required>
+    <option value="">Select a region</option>
+    <option value="A">Region A</option>
+    <option value="B">Region B</option>
+</select>
+
+<hr />
+
+<label>
+    <input type="checkbox" ifchecked-enable="#phone" ifunchecked-disable="#phone" ifunchecked-clearvalue="#phone" />
+    I have a phone
+</label>
+<br />
+<input id="phone" type="text" placeholder="Phone number" />
+
+<hr />
+
+<button onclick-show="#extopt" onclick-hide=":this"> More options </button>
+<div id="extopt" hidden>
+    <label><input type="checkbox"> Option 1</label><br />
+    <label><input type="checkbox"> Option 2</label><br />
+    <label><input type="checkbox"> Option 3</label><br />
 </div>
 
-<div ondrop-accept="supplier">
-    Drop suppliers here
+<hr />
+
+<img src="~/lib/images/itag.png" ondblclick-load="/Time" target="#help" />
+<div id="help"></div>
+
+<hr />
+
+<label><input id="pdel" type="checkbox" ifunchecked-uncheck="#xdel" /> Postal delivery</label>
+<br />
+<label><input id="xdel" type="checkbox" ifchecked-check="#pdel" /> Express delivery</label>
+
+<hr />
+
+<label><input type="checkbox" ifunchecked-uncheck=".req-pd" ifchecked-enable=".req-pd" /> Postal delivery</label>
+<br />
+<label><input type="checkbox" class="req-pd" /> Express delivery</label>
+
+<hr />
+
+<button type="button" onclick-enable="#opt1" onclick-disable=".opt">Only option 1</button>
+<label><input type="checkbox" id="opt1" class="opt">Option 1</label>
+<label><input type="checkbox" id="opt2" class="opt">Option 2</label>
+<label><input type="checkbox" id="opt3" class="opt">Option 3</label>
+
+<hr />
+
+<input type="text" name="name" required ifinvalid-show="#info" />
+<div id="info">Please enter your name</div>
+
+
+<hr />
+
+<form action="/Time" class="onchange-submit target">
+    <label><input type="radio" id="col" value="R">Red</label>
+    <label><input type="radio" id="col" value="G">Green</label>
+    <label><input type="radio" id="col" value="B">Blue</label>
+</form>
+
+<hr />
+
+<form action="/Time" class="onsubmit-disable" target="#info">
+    <button type="submit">Submit</button>
+</form>
+
+<hr />
+
+<input type="checkbox" id="chchk1" />
+<input onchange-check="#chchk1" type="text" value="Jane Doe" class="onfocus-select">
+<br />
+<input type="checkbox" id="chchk2" />
+<input onchange-check="#chchk2" type="text" value="Jane Doe">
+
+<hr />
+
+<style>
+    .bright {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<button type="button" onhover-addclass="bright on #storeinfo">Store</button>
+<div id="storeinfo"> Stores the data.</div>
+
+<hr />
+
+<a href="/Time" target="#news5">Get news</a>
+<div id="news5">
+    <div class="onload-show" hidden>Getting news...</div>
 </div>
 
-<div ondrop-accept="customer supplier">
-    Drop customers or suppliers here
+<hr />
+
+<form class="onchange-submit" action="/Query" target=">#t">
+
+    <input type="text" name="a" value="  Not trimmed    " />
+    <br />
+    <input type="text" name="b" value="  Trimmed    " class="onfocusout-trim" />
+    <br />
+    <div id="t"></div>
+
+</form>
+
+<hr />
+
+<ul>
+    <li>
+        <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" ifchecked-check="<LI |> UL INPUT" /> America
+        <ul>
+            <li><input type="checkbox" /> Central and South-America</li>
+            <li>
+                <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" ifchecked-check="<LI |> UL INPUT" /> North-America
+                <ul>
+                    <li><input type="checkbox" />Canada</li>
+                    <li><input type="checkbox" />United States</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+
+<hr />
+
+<input type="checkbox" class="line" /> Line 1
+<br />
+<input type="checkbox" class="line" /> Line 2
+<br />
+<input type="checkbox" class="line" /> Line 3
+<br />
+<button type="submit" enable-ifanychecked=".line" show-ifexists=".line">Delete selected lines</button>
+
+<hr />
+
+
+<select name="Country" class="ifvalue-events">
+    <option value="CA">Canada</option>
+    <option value="US" selected>Unites States of America</option>
+    <option value="..">...</option>
+</select>
+<br />
+<select name="State" class="ifvalueCountry-hide ifvalueCountryisUS-show">
+    <option value="AL">Alabama</option>
+    <option value="AK">Alaska</option>
+    <option value="AZ">Arizona</option>
+    <option value="..">...</option>
+</select>
+
+<hr />
+
+<form ifvalid-enable=">:submit" class="oninput-change">
+    Enable submits if form is valid:
+    <p>
+        <input type="text" name="a" required />
+    </p>
+    <p>
+        <select name="b" required>
+            <option></option>
+            <option>Man</option>
+            <option>Woman</option>
+        </select>
+    </p>
+    <p>
+        <button type="submit"> Submit </button>
+    </p>
+</form>
+
+
+<hr />
+
+<input type="radio" name="delx" value="car" ifchecked-disable="#delmbc" /> By car
+<br />
+<input type="radio" name="delx" value="train" ifchecked-disable="#delmbc" /> By train
+<br />
+<input type="radio" name="delx" value="plane" ifchecked-enable="#delmbc" /> By plane
+<br />
+<input type="checkbox" id="delmbc" /> Business class
+
+
+<hr />
+<input class="ifvalue-events" type="radio" name="delm" value="car" /> By car
+<br />
+<input class="ifvalue-events" type="radio" name="delm" value="train" /> By train
+<br />
+<input class="ifvalue-events" type="radio" name="delm" value="plane" /> By plane
+<br />
+<input type="checkbox" class="ifvaluedelm-disable ifvaluedelmisplane-enable" /> Business class
+
+
+<hr />
+
+<select name="transp" class="ifvalue-events">
+    <option value="">(choose)</option>
+    <option value="car">By Bus</option>
+    <option value="train">By Train</option>
+</select>
+<br />
+<input type="checkbox" class="ifvaluetransp-enable ifvaluetranspis-disable" /> Buy a ticket
+
+<hr />
+
+<p>
+    <input class="ifvalue-events" name="item.addr[0].cntry"
+           type="radio" value="FR" /> France<br />
+    <input class="ifvalue-events" name="item.addr[0].cntry"
+           type="radio" value="DE" /> Germany
+</p>
+
+<p>
+    <input class="ifvalueitem.addr[0].cntry-uncheck
+                  ifvalueitem.addr[0].cntryisFR-check"
+           name="language" type="radio" value="fr" /> French<br />
+    <input class="ifvalueitem.addr[0].cntry-uncheck
+                  ifvalueitem.addr[0].cntryisDE-check"
+           name="language" type="radio" value="de" /> German
+</p>
+
+<hr />
+<p>
+    <input class="ifvalue-events" name="Item.Customers[12].Discount"
+           type="radio" value="" /> None<br />
+    <input class="ifvalue-events" name="Item.Customers[12].Discount"
+           type="radio" value="12.5%" /> 12.5%
+</p>
+
+<p>
+    <input class="ifvalueItem.Customers[12].Discount-uncheck
+                  ifvalueItem.Customers[12].Discountis-check"
+           name="language" type="radio" value="fr" /> No discount<br />
+    <input class="ifvalueItem.Customers[12].Discount-uncheck
+                  ifvalueItem.Customers[12].Discountis12.5%-check"
+           name="language" type="radio" value="de" /> Great discount
+</p>
+
+<hr />
+
+<input type="text" id="xname" />
+<button type="button" onclick="$('#xname').val(CSS.escape($('#xname').val()))"> CSS escaped </button>
+
+
+<hr />
+
+<style>
+    .s1 {
+        border: solid 2px green;
+    }
+
+    .s2 {
+        background-color: blue;
+    }
+</style>
+
+<div class="s1" onclick-toggleclass="s1, s2">CLICK HERE TO TOGGLE CLASSES</div>
+<div class="s1" onclick-toggleclass="s1 s2 on #a11, #a12, s2 on #a13, s1 on :this, aa on">CLICK HERE TO TOGGLE CLASSES</div>
+<div class="s2" id="a11">
+    Target a11
 </div>
+<div class="s2" id="a12">
+    Target a11
+</div>
+<div class="s2" id="a13">
+    Target a11
+</div>
+
+<hr />
+
+<style>
+    .emphasized {
+        background-color: yellow;
+    }
+</style>
+<button type="button" onhover-addclass="emphasized on #actionhlp"> Action </button>
+<span id="actionhlp">Pressing this button will...</span>
+
+
+<hr />
+<style>
+    .on {
+        background-color: yellow;
+    }
+</style>
+<button type="button" onhover-addclass="on"> Action </button>
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+

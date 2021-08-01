@@ -210,9 +210,11 @@ $$(function () {
     var $scope = $(this);
     $(this).find(".modal.auto-show").each(function () {
         if ($(this).attr("auto-show-delay") !== undefined) {
+            // Parse delay ("seconds" or "[hh:]mm:ss"):
             var delaypart = $(this).attr("auto-show-delay").split(":");
             var delay = 0;
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+            // Set timer:
             setTimeout(function ($scope) {
                 var $modal = $scope.find(".modal.auto-show[auto-show-delay]");
                 if ($modal.length > 0) {
@@ -248,8 +250,8 @@ $(function () {
 //#region Handling Bootstrap Toasts
 
 $$(function () {
-    // Automatically show toasts with .onload-showtoast when loaded:
-    $(this).find(".toast.onload-showtoast").toast("show");
+    // Automatically show toasts with .oninit-showtoast on init:
+    $(this).find(".toast.oninit-showtoast").toast("show");
 });
 
 //#endregion

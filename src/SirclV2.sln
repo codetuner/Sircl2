@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sircl.Website", "Sircl.Webs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arebis.Core.AspNet.Localization", "Arebis.Core.AspNet.Localization\Arebis.Core.AspNet.Localization.csproj", "{12C1053A-F053-4061-A392-1796A35599C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.Core.Localization", "Arebis.Core.Localization\Arebis.Core.Localization.csproj", "{45455F4D-E8A8-4C15-93C3-FF48C1BBBBD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arebis.Core.Localization", "Arebis.Core.Localization\Arebis.Core.Localization.csproj", "{45455F4D-E8A8-4C15-93C3-FF48C1BBBBD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -26,26 +26,15 @@
 // - Strings are surrounded by double-quotes.
 
 // Todo:
-// * Must:
+// - Bootstrap 5 sidebar
 // - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
-// - 
-// * Should:
-// - ondrag / ondrop event-actions
-// - Store settings in LocalStorage/SessionStorage/Cookies, i.e. to remember cookie preferences or other. Ability to clear settings.
-// - Use LocalStorage/SessionStorage as cache for partial views
-// - 
-// * Could:
 // - Character count feedback (as counter, remaining counter or progressbar)
-// - Formatting numbers and setting time in local timezone
+// - Error handling
 // - 
-// * Examples for extensions:
+// - 
+// Examples for extensions:
 // - Extension to return timezone/local time and number formatting in headers (only on POST requests?)
 // - Countdown timer with timer action
-// - 
-// * Not:
-// - Keep-Alive
-// - 
-// - 
 // - 
 // - 
 
@@ -136,7 +125,7 @@ $.fn.hasAttr = function (name) {
 // Sircl root object:
 if (typeof sircl === "undefined") sircl = {};
 sircl.version = 2.0;
-console.info("Sircl v." + sircl.version+ " running.");
+console.info("Sircl v." + sircl.version + " running.");
 
 //#endregion
 
@@ -190,6 +179,22 @@ sircl.ext.getId = function (elementOrSelector, createIdIfMissing) {
         return null;
     }
 };
+
+/**
+ * Returns the effective value of the form control element. For checkboxes and radios: there value if they are
+ * checked, empty string otherwise, for other controls, their current value.
+ * For multiselects, an array is returned. For all other controls, a string is returned.
+ * @param {any} element Form control element to get the value from.
+ */
+sircl.ext.effectiveValue = function (element) {
+    if (element.tagName == "INPUT" && element.getAttribute('type') == 'checkbox') {
+        return (element.checked) ? element.value : "";
+    } else if (element.tagName == "INPUT" && element.getAttribute('type') == 'radio') {
+        return (element.checked) ? element.value : "";
+    } else {
+        return $(element).val() || "";
+    }
+}
 
 /**
  * Returns the main target of the page.
@@ -277,16 +282,19 @@ sircl.ext.cssEscape = function (value) {
     try {
         return CSS.escape(value);
     } catch (ex) {
-        // MSIE does noet support CSS.escape:
+        // MSIE does not support CSS.escape:
         return value
             .replace(/\./g, "\\.")
-            .replace(/\,/g, "\\.")
-            .replace(/\:/g, "\\.")
-            .replace(/\*/g, "\\.")
-            .replace(/\#/g, "\\.")
-            .replace(/\(/g, "\\.")
-            .replace(/\)/g, "\\.")
+            .replace(/\,/g, "\\,")
+            .replace(/\:/g, "\\:")
+            .replace(/\*/g, "\\*")
+            .replace(/\#/g, "\\#")
+            .replace(/\(/g, "\\(")
+            .replace(/\)/g, "\\)")
             .replace(/\[/g, "\\[")
+            .replace(/\\/g, "\\\\")
+            .replace(/\//g, "\\/")
+            .replace(/\%/g, "\\%")
             .replace(/\]/g, "\\]");
     }
 };
@@ -298,19 +306,23 @@ sircl.ext.cssEscape = function (value) {
  * @param {scopedDoCallback} action The action to perform.
  */
 sircl.ext.scopedDo = function ($scope, expression, action) {
-    var part0 = null;
-    expression.split(",").forEach(function (exprItem) {
-        var parts = exprItem.split(" on ").map(function (value) { return value.trim(); });
-        if (parts.length === 1) {
-            if (part0 == null) {
-                action($scope, parts[0]);
+    try {
+        var part0 = null;
+        expression.split(",").forEach(function (exprItem) {
+            var parts = exprItem.split(" on ").map(function (value) { return value.trim(); });
+            if (parts.length === 1) {
+                if (part0 == null) {
+                    action($scope, parts[0]);
+                } else {
+                    action(sircl.ext.$select($scope, parts[0]), part0);
+                }
             } else {
-                action(sircl.ext.$select($scope, parts[0]), part0);
+                action(sircl.ext.$select($scope, parts[1]), part0 = parts[0]);
             }
-        } else {
-            action(sircl.ext.$select($scope, parts[1]), part0 = parts[0]);
-        }
-    });
+        });
+    } catch (ex) {
+        sircl.handleError("S100", "Error evaluating class action value \"" + expression + "\" : " + ex, { exception: ex, element: $scope[0] });
+    }
 };
 
 /**
@@ -523,6 +535,7 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
     // Start processing:
     var processor = new SirclRequestProcessor(loadComplete);
@@ -627,12 +640,12 @@ SirclRequestProcessor.prototype._send = function (req) {
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Load");
         // Execute additional reload requests:
         if (reloadSection != null) {
-            $(reloadSection).filter("[onload-load]").each(function () {
-                $(this).load($(this).attr("onload-load"));
+            $(reloadSection).filter("[oninit-load]").each(function () {
+                $(this).load($(this).attr("oninit-load"));
             });
         }
         // Check for abort reload:
-        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
         if (reloadAfter != null) {
             if (parseFloat(reloadAfter) <= 0) {
                 clearInterval(req.$initialTarget[0]._onloadInterval);
@@ -662,6 +675,7 @@ SirclRequestProcessor.prototype._send = function (req) {
                     req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
                     req.xhr.setRequestHeader("Pragma", "no-cache");
                     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+                    req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
                     req.xhr.send();
                     // Xhr's load event should be fired again (recursively).
                 }
@@ -1056,9 +1070,9 @@ sircl._afterLoad = function (scope) {
 //#region Default Content Ready handlers
 
 $$("content", function () {
-    /// <* onload-moveto="selector"> Moves the content to the given selector.
-    $(this).find("*[onload-moveto]").each(function () {
-        $($(this).attr("onload-moveto")).html($(this).html());
+    /// <* oninit-moveto="selector"> Moves the content to the given selector.
+    $(this).find("*[oninit-moveto]").each(function () {
+        $($(this).attr("oninit-moveto")).html($(this).html());
         $(this).html("");
     });
 });
@@ -1381,12 +1395,15 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 sircl.addRequestHandler("afterRender", function (req) {
     // If reloadAfter header is set with value > 0, reload after timeout:
-    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-ReloadAfter");
+    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
     if (reloadAfter) {
+        // Parse delay (in seconds):
+        var delay = parseFloat(reloadAfter);
+        // Set timer:
         if (reloadAfter > 0 && req.method == "get") {
             setTimeout(function () {
                 req.$finalTarget.load(req.url)
-            }, reloadAfter * 1000);
+            }, delay * 1000);
         }
     }
     // Move to next handler:
@@ -1397,66 +1414,176 @@ sircl.addRequestHandler("afterRender", function (req) {
 
 //#region HTML5 Dialog handling
 
+sircl.addAttributeAlias(".onclick-closedialog", "onclick-closedialog", "<DIALOG");
+
+$(function () {
+
+    /// Opens the given dialog when clicked:
+    /// <* onclick-showdialog="selector" >
+    $(document).on("click", "[onclick-showdialog]", function (event) {
+        var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-showdialog"));
+        if ($dlg.length > 0) {
+            // If final dialog is exclusive, close all other open dialogs:
+            if ($dlg.is(".dialog-exclusive")) {
+                $("DIALOG[open]").each(function () {
+                    if (!$dlg.is($(this))) {
+                        // Close dialog:
+                        this.close();
+                    }
+                });
+            }
+            // Open the dialog:
+            if ($dlg.hasClass("dialog-modal")) {
+                $dlg[0].showModal();
+            } else {
+                $dlg[0].show();
+            }
+        }
+    });
+
+    /// Closes the given dialog when clicked:
+    /// <* onclick-closedialog="selector" >
+    $(document).on("click", "[onclick-closedialog]", function (event) {
+        var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-closedialog"));
+        if ($dlg.length > 0) {
+            // Close dialog:
+            $dlg[0].close();
+        }
+    });
+
+});
+
 sircl.addRequestHandler("beforeSend", function (req) {
+    var processor = this;
     // Open any non-open dialog holding the initial target and having class "onload-showdialog":
-    req._dialogHtml5Opened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
-    if (req._dialogHtml5Opened.length > 0) {
-        if (req._dialogHtml5Opened.hasClass("modal-dialog")) {
-            req._dialogHtml5Opened[0].showModal();
+    req._dialogOpened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
+    if (req._dialogOpened.length > 0) {
+        // If initial dialog is exclusive, close all other open dialogs:
+        if (req._dialogOpened.is(".dialog-exclusive")) {
+            $("DIALOG[open]").each(function () {
+                if (!$(this).is(req.$finalTarget)) {
+                    // Close dialog:
+                    this.close();
+                }
+            });
+        }
+        // Open the dialog:
+        if (req._dialogOpened.hasClass("dialog-modal")) {
+            req._dialogOpened[0].showModal();
         } else {
-            req._dialogHtml5Opened[0].show();
+            req._dialogOpened[0].show();
         }
     }
     // Move to next handler:
-    this.next(req);
+    processor.next(req);
 });
 
 sircl.addRequestHandler("afterSend", function (req) {
+    var processor = this;
     // On error, undo opened dialogs:
-    if (!req.succeeded && req._dialogHtml5Opened.length > 0) {
-        req._dialogHtml5Opened[0].close();
+    if (!req.succeeded && req._dialogOpened.length > 0) {
+        // Close dialog:
+        req._dialogOpened[0].close();
+        req._dialogOpened = $([]);
     } else if (req.xhr.status == "204") {
         // Else, if status "204" (no content), close target dialog:
         var $dlg = req.$initialTarget.closest("DIALOG[open]");
         if ($dlg.length > 0) {
+            // Close dialog:
             $dlg[0].close();
         }
     }
     // Move to next handler:
-    this.next(req);
+    processor.next(req);
 });
 
 sircl.addRequestHandler("beforeRender", function (req) {
-    // If target has changed, close any previously opened dialog:
-    if (req.targetHasChanged && req._dialogHtml5Opened.length > 0) {
-        req._dialogHtml5Opened[0].close();
+    var processor = this;
+    // Undo opened dialog if target has changed:
+    if (req.targetHasChanged && req._dialogOpened.length > 0) {
+        if (!req.$finalTarget.has(req._dialogOpened)) {
+            // Close dialog:
+            req._dialogOpened[0].close();
+            req._dialogOpened = $([]);
+        }
     }
-    // Open dialog on final target:
+    // If final dialog is exclusive, close all other open dialogs:
+    var $targetDlg = req.$finalTarget.closest("DIALOG");
+    if ($targetDlg.is(".dialog-exclusive")) {
+        $("DIALOG[open]").each(function () {
+            if (!$targetDlg.is($(this))) {
+                // Close dialog:
+                this.close();
+            }
+        });
+    }
+    // Move to next handler:
+    processor.next(req);
+});
+
+sircl.addRequestHandler("afterRender", function (req) {
+    var processor = this;
+    // Open modal on final target:
     var $dlg = req.$finalTarget.closest("DIALOG:not([open])");
     if ($dlg.length > 0) {
-        if ($dlg.hasClass("modal-dialog")) {
+        if ($dlg.hasClass("dialog-modal")) {
             $dlg[0].showModal();
         } else {
             $dlg[0].show();
         }
     }
     // Move to next handler:
-    this.next(req);
-});
-
-$(document).ready(function () {
-    // Reset content of a modal with onclose-reset when closing the modal:
-    $(document).on("close", "DIALOG.onclose-restore", function (event) {
-        var originalContent = $(this)[0]._originalContent;
-        if (originalContent !== undefined) $(this).html(originalContent);
-    });
+    processor.next(req);
 });
 
 $$(function () {
-    // Backup original content of onclose-reset dialogs to be able to reset on close:
+    // Disable cancelling of dialog with .dialog-nocancel:
+    $(this).find("DIALOG").each(function (index, elem) {
+        elem.addEventListener("cancel", function (event) {
+            if ($(this).is(".dialog-nocancel")) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    // Backup original content of onclose-restore dialogs to be able to reset on close:
     $(this).find("DIALOG.onclose-restore").each(function (index, elem) {
         elem._originalContent = $(elem).html();
+        // Reset content of a dialog with onclose-restore when closing the dialog:
+        elem.addEventListener("close", function (event) {
+            var originalContent = this._originalContent;
+            if (originalContent !== undefined) {
+                $(this).html(originalContent);
+            }
+        });
     });
+
+    $(this).find("DIALOG[open-after]").each(function () {
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delay = 0;
+        var delaypart = $(this).attr("open-after").split(":");
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
+        setTimeout(function (dlg) {
+            var $dlg = $(dlg);
+            // If final dialog is exclusive, close all other open dialogs:
+            if ($dlg.is(".dialog-exclusive")) {
+                $("DIALOG[open]").each(function () {
+                    if (!$dlg.is($(this))) {
+                        // Close dialog:
+                        this.close();
+                    }
+                });
+            }
+            // Open dialog:
+            if ($dlg.hasClass("dialog-modal")) {
+                dlg.showModal();
+            } else {
+                dlg.show();
+            }
+        }, (delay * 1000), this);
+    });
+
 });
 
 //#endregion
@@ -1533,80 +1660,118 @@ sircl.addRequestHandler("afterSend", function (req) {
     this.next(req);
 });
 
+/// Propagate event-actions:
+////////////////////////////
 
-// Load event-actions:
-//////////////////////
-
-sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
-
-$$("enrich", function () {
-    $(this).find(".onload-setvaluefromquery").each(function () {
-        $(this).attr("onload-setvaluefromquery", this.name);
-    });
+$(function () {
+    /// <* on<click|dblclick|change|input>-propagate="on|off"> If off, blocks propagation of the event.
+    $(document.body).on("click", "*[onclick-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("dblclick", "*[ondblclick-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("change", "*[onchange-propagate=off]", function (event) { event.stopPropagation(); });
+    $(document.body).on("input", "*[oninput-propagate=off]", function (event) { event.stopPropagation(); });
 });
+
+// Init event-action:
+/////////////////////
+
+sircl.addAttributeAlias(".oninit-click", "oninit-click", ":this");
 
 $$(function () {
 
-    /// <* class="onload-show"> Set on the target or a parent of the target, will make that element visible on load.
-    $(this).closest(".onload-show").each(function () {
-        sircl.ext.visible(this, true);
+    /// <* oninit-click="selector"> On init, triggers a click event on the selector matches.
+    $(this).find("[oninit-click]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("oninit-show"))[0].click(); // See: http://goo.gl/lGftqn
     });
 
-    /// <* class="onload-hide"> Set on the target or a parent of the target, will make that element invisible on load.
-    $(this).closest(".onload-hide").each(function () {
-        sircl.ext.visible(this, false);
-    });
-
-    /// <* onload-click="selector"> On load, triggers a click event on the selector matches.
-    $(this).closest("[onload-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
-    });
-
-    /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
-    /// Optionally, a "[onload-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
+    /// <* oninit-load="url" [oninit-reloadafter="seconds"]> Loads the given URL.
+    /// Optionally, a "[oninit-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
     /// The url can contain a "{rnd}" literal that will then be replaced by a random number to force reloading.
-    /// I.e: <div onload-load="/Home/News/?x={rnd}" onload-reloadafter="10"></div>
-    $(this).find("[onload-load]").each(function () {
-        var url = $(this).attr("onload-load") + "";
-        var loadRefresh = $(this).attr("onload-reloadafter");
+    /// I.e: <div oninit-load="/Home/News/?x={rnd}" oninit-reloadafter="10"></div>
+    $(this).find("[oninit-load]").each(function () {
+        var url = $(this).attr("oninit-load") + "";
+        var loadRefresh = $(this).attr("oninit-reloadafter");
         $(this).load(url.replace("{rnd}", Math.random()));
         if (loadRefresh) {
-            $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, loadRefresh * 1000, $(this));
+            // Parse delay ("seconds" or "[hh:]mm:ss"):
+            var delaypart = loadRefresh.split(":");
+            var delay = 0;
+            for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+            // Set timer:
+            $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, delay * 1000, $(this));
         } else {
-            //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
+            //$(this).removeAttr("oninit-load"); Do not remove otherwise oninit-reload does not work...
         }
     });
 
-    /// <* onload-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [onload-load] attribute).
-    $(this).find("[onload-reload]").each(function () {
-        $($(this).attr("onload-reload")).filter("[onload-load]").each(function () {
-            var url = $(this).attr("onload-load") + "";
+    /// <* oninit-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [oninit-load] attribute).
+    $(this).find("[oninit-reload]").each(function () {
+        $($(this).attr("oninit-reload")).filter("[oninit-load]").each(function () {
+            var url = $(this).attr("oninit-load") + "";
             $(this).load(url.replace("{rnd}", Math.random()));
         });
     });
-
-    /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
-    $(this).find("[onload-setvaluefromquery]").each(function () {
-        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
-    });
 });
-
-//
-////////////////////////////
-
-//
-////////////////////////////
 
 //#endregion
 
-//#region 
+//#region Form changed state handling
+
+// On initial load, if onchange-set input is true, add .form-changed class to form:
+$$(function () {
+    $(this).find("FORM[onchange-set]").each(function () {
+        var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
+        if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
+            $(this).addClass("form-changed");
+        }
+    });
+});
+
+// On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
+$(function () {
+    $(document).on("change", "FORM[onchange-set]", function (event) {
+        if ($(event.target).closest(".sircl-content-processing").length == 0) {
+            $(this).addClass("form-changed");
+            var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
+            if ($input.length > 0) {
+                $input.val(true);
+            }
+        }
+    });
+
+    // A click on a hyperlink anywhere in the page triggers the onunloadchanged-confirm of the first changed form:
+    $(document.body).on("click", "*[href]:not(.onunloadchanged-allow):not([download])", function (event) {
+        // Find any form having [onunloadchanged-confirm] and being changed, anywhere in the page:
+        var $changedForm = $("FORM.form-changed[onunloadchanged-confirm]");
+        if ($changedForm.length > 0) {
+            var confirmMessage = $changedForm[0].getAttribute("onunloadchanged-confirm");
+            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+
+    // A click on an element within the form triggers the onclickchanged-confirm:
+    $(document.body).on("click", "FORM.form-changed *[onclickchanged-confirm]", function (event) {
+        var confirmMessage = $(this).attr("onclickchanged-confirm");
+        if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+});
+
 //#endregion
 
 //#region Document ready handler executing initial afterLoad
 
 $(document).ready(function () {
-    /// Document is loaded:
-    sircl._afterLoad(this);
+    /// Document is loaded; delay afterLoad untill all document ready handlers have run (also those in extended and other libraries):
+    setTimeout(function (t) {
+        $("BODY").addClass("sircl-content-processing");
+        sircl._afterLoad(t);
+        $("BODY").removeClass("sircl-content-processing");
+    }, 0, this);
 });
 
 //#endregion

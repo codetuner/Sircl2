@@ -581,6 +581,8 @@
             </div>
         </div>
 
+        <button type="button" class="btn btn-outline-info" onclick-scrollintoview="#myTab">Go to Tabs</button>
+
     </div>
 
     <!-- TAB CHECKS -->
@@ -588,7 +590,7 @@
         <div class="row">
             <div class="col">
                 <p></p>
-                <p>Enable-ifchecked:</p>
+                <p>Enable-ifallchecked/ifanychecked:</p>
             </div>
         </div>
         <div class="row">
@@ -596,16 +598,26 @@
                 <label><input type="checkbox" name="c1" /></label><br />
                 <label><input type="checkbox" name="c1" /></label><br />
                 <label><input type="checkbox" name="c1" /></label><br />
-                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c1]"> If any</button>
+                <button type="button" class="btn btn-primary" enable-ifallchecked="[name=c1]"> If all</button>
+                <button type="button" class="btn btn-primary" enable-ifanychecked="[name=c1]"> If any</button>
             </div>
             <div class="col">
                 <label><input type="checkbox" name="c2" checked /></label><br />
                 <label><input type="checkbox" name="c2" /></label><br />
                 <label><input type="checkbox" name="c2" /></label><br />
-                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c2]"> If any</button>
+                <button type="button" class="btn btn-primary" enable-ifallchecked="[name=c2]"> If all</button>
+                <button type="button" class="btn btn-primary" enable-ifanychecked="[name=c2]"> If any</button>
             </div>
             <div class="col">
-                <button type="button" class="btn btn-primary" enable-ifchecked="[name=c3]"> If any</button>
+                <label><input type="checkbox" name="c3" checked /></label><br />
+                <label><input type="checkbox" name="c3" checked /></label><br />
+                <label><input type="checkbox" name="c3" checked /></label><br />
+                <button type="button" class="btn btn-primary" enable-ifallchecked="[name=c3]" x-show-ifexists="[name=c3]"> If all</button>
+                <button type="button" class="btn btn-primary" enable-ifanychecked="[name=c3]" x-show-ifexists="[name=c3]"> If any</button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary" enable-ifallchecked="[name=c4]" x-show-ifexists="[name=c4]"> If all</button>
+                <button type="button" class="btn btn-primary" enable-ifanychecked="[name=c4]" x-show-ifexists="[name=c4]"> If any</button>
             </div>
         </div>
         <div class="row">
@@ -731,12 +743,12 @@
         <div class="row">
             <div class="col">
                 <hr />
-                <p>Byvalue-events:</p>
+                <p>ifvalue-events:</p>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <select name="selcountry1" class="byvalue-events">
+                <select name="selcountry1" class="ifvalue-events">
                     <option value="">-</option>
                     <option value="BE">Belgium</option>
                     <option value="FR">France</option>
@@ -756,7 +768,7 @@
                 <label><input type="checkbox" class="ifvalueselcountry1is-uncheck" checked /> Uncheck if empty</label>
             </div>
             <div class="col">
-                <select name="selcountry2" class="byvalue-events">
+                <select name="selcountry2" class="ifvalue-events">
                     <option value="">-</option>
                     <option value="BE">Belgium</option>
                     <option value="FR">France</option>
@@ -776,7 +788,7 @@
                 <label><input type="checkbox" class="ifvalueselcountry2isBE-uncheck" checked /> Uncheck if BE</label>
             </div>
             <div class="col">
-                <select name="selcountry3" class="byvalue-events">
+                <select name="selcountry3" class="ifvalue-events">
                     <option value="">-</option>
                     <option value="BE" selected>Belgium</option>
                     <option value="FR">France</option>
@@ -796,7 +808,7 @@
                 <label><input type="checkbox" class="ifvalueselcountry3isBE-uncheck" checked /> Uncheck if BE</label>
             </div>
             <div class="col">
-                <select name="selcountry4" class="byvalue-events" onload-select="BE">
+                <select name="selcountry4" class="ifvalue-events" oninit-defaultselect="BE">
                     <option value="">-</option>
                     <option value="BE">Belgium</option>
                     <option value="FR">France</option>
@@ -824,7 +836,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <select name="selmulticountry1" class="byvalue-events" multiple size="6">
+                <select name="selmulticountry1" class="ifvalue-events" multiple size="6">
                     <option value="">-</option>
                     <option value="BE" selected>Belgium</option>
                     <option value="FR">France</option>
@@ -844,11 +856,11 @@
                 <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isFR-show ifvalueselmulticountry1isES-show">Show if FR or ES</div>
             </div>
             <div class="col">
-                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isNL-check" value="NL" />Netherlands</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isDE-check" value="DE" checked />Germany</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="byvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isES-check" value="ES" />Spain</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isNL-check" value="NL" />Netherlands</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isDE-check" value="DE" checked />Germany</label><br />
+                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isES-check" value="ES" />Spain</label><br />
                 <br />
                 <div class="ifvaluemulticheckcountry1-show ifvaluemulticheckcountry1isBE-hide">Hide if BE</div>
                 <br />
@@ -859,11 +871,11 @@
                 <div class="ifvaluemulticheckcountry1-hide ifvaluemulticheckcountry1isDE-show">Show if DE</div>
             </div>
             <div class="col">
-                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="BE" />Belgium</label><br />
-                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="FR" />France</label><br />
-                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="DE" checked />Germany</label><br />
-                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="NL" />Netherlands</label><br />
-                <label><input type="radio" class="byvalue-events" name="multiradiocountry1" value="ES" />Spain</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="BE" />Belgium</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="FR" />France</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="DE" checked />Germany</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="NL" />Netherlands</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="ES" />Spain</label><br />
                 <br />
                 <div class="ifvaluemultiradiocountry1-show ifvaluemultiradiocountry1isBE-hide">Hide if BE</div>
                 <br />
@@ -876,6 +888,58 @@
             <div class="col">
             </div>
         </div>
+
+        <p>
+            <hr />
+        </p>
+
+        <p>Checkbox tree</p>
+
+        <ul>
+            <li>
+                <input type="checkbox" check-ifanychecked="<LI |> UL INPUT" /> If Any
+                <ul>
+                    <li><input type="checkbox" /></li>
+                    <li>
+                        <input type="checkbox" check-ifanychecked="<LI |> UL INPUT" />
+                        <ul>
+                            <li><input type="checkbox" /></li>
+                            <li><input type="checkbox" /></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" /> If All
+                <ul>
+                    <li><input type="checkbox" checked /></li>
+                    <li>
+                        <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" />
+                        <ul>
+                            <li><input type="checkbox" checked /></li>
+                            <li><input type="checkbox" checked /></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" ifchecked-check="<LI |> UL INPUT" /> If All witch check children
+                <ul>
+                    <li><input type="checkbox" /></li>
+                    <li>
+                        <input type="checkbox" check-ifallchecked="<LI |> UL INPUT" ifchecked-check="<LI |> UL INPUT" />
+                        <ul>
+                            <li><input type="checkbox" /></li>
+                            <li><input type="checkbox" /></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+
+        <button type="button" class="btn btn-outline-info" onclick-scrollintoview="#myTab">Go to Tabs</button>
+
     </div>
 
     <!-- TAB EXTRA -->
@@ -893,6 +957,10 @@
 </div>
 
 <p>
+    <hr />
+</p>
+
+<p>
     <a href="http://www.google.com" download>Test download</a>
 </p>
 <p>
@@ -905,6 +973,6 @@
 
 <!-- Infinite page -->
 
-<div ifinviewport-load="/Home/Infinite?Page=1">
+<div ifinview-load="/Home/Infinite?Page=1">
     Wait for loading...
 </div>

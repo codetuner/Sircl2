@@ -258,8 +258,8 @@ $(function () {
 //#region Handling Bootstrap Toasts
 
 $$(function () {
-    // Automatically show toasts with .onload-showtoast when loaded:
-    $(this).find(".toast.onload-showtoast").each(function () {
+    // Automatically show toasts with .oninit-showtoast on init:
+    $(this).find(".toast.oninit-showtoast").each(function () {
         new bootstrap.Toast(this).show();
     });
 });

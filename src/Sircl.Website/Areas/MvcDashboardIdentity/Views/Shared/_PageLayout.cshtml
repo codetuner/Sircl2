@@ -119,13 +119,13 @@
                 <a class="navbar-brand" asp-area="MvcDashboardIdentity" asp-controller="Home" asp-action="Index">
                     <i class="whileloading-hide fas fa-tachometer-alt"></i>&nbsp;MvcDashboardIdentity
                 </a>
-                <span class="btn-group" role="group" onload-load="@Url.Action("MvcDashboardsDropdown", "Home")"></span>
+                <span class="btn-group" role="group" oninit-load="@Url.Action("MvcDashboardsDropdown", "Home")"></span>
             </span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarMainContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navBarMainContent">
-                <ul id="topMenu" class="navbar-nav me-auto mb-2 mb-lg-0" onload-load="@Url.Action("TopMenu", "Home")" onload-reloadafter="120">
+                <ul id="topMenu" class="navbar-nav me-auto mb-2 mb-lg-0" oninit-load="@Url.Action("TopMenu", "Home")" onload-reloadafter="120">
                     <li class="nav-item" ifroute-setactive="\/Users(\/|$)">
                         <a class="nav-link" asp-area="MvcDashboardIdentity" asp-controller="Users" asp-action="Index"><i class="fas fa-user"></i> Users</a>
                     </li>

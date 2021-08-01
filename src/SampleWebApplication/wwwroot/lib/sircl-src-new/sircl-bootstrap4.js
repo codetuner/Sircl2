@@ -250,8 +250,8 @@ $(function () {
 //#region Handling Bootstrap Toasts
 
 $$(function () {
-    // Automatically show toasts with .onload-showtoast when loaded:
-    $(this).find(".toast.onload-showtoast").toast("show");
+    // Automatically show toasts with .oninit-showtoast on init:
+    $(this).find(".toast.oninit-showtoast").toast("show");
 });
 
 //#endregion

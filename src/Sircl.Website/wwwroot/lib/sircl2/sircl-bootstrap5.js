@@ -86,7 +86,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
             processor.next(req);
         };
         // Open modal:
-        var options = { backdrop: req._bsModalOpened.data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+        var options = { backdrop: req._bsModalOpened.data("bs-backdrop") || "true", keyboard: false, focus: true };
         new bootstrap.Modal(req._bsModalOpened[0], options).show();
     } else {
         // Move to next handler:
@@ -155,7 +155,7 @@ sircl.addRequestHandler("afterRender", function (req) {
             processor.next(req);
         };
         // Open modal:
-        var options = { backdrop: $modal.data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+        var options = { backdrop: $modal.data("bs-backdrop") || "true", keyboard: false, focus: true };
         new bootstrap.Modal($modal[0], options).show();
     } else {
         // Move to next handler:
@@ -216,21 +216,23 @@ $$(function () {
     var $scope = $(this);
     $(this).find(".modal.auto-show").each(function () {
         if ($(this).attr("auto-show-delay") !== undefined) {
+            // Parse delay ("seconds" or "[hh:]mm:ss"):
             var delaypart = $(this).attr("auto-show-delay").split(":");
             var delay = 0;
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+            // Set timer:
             setTimeout(function ($scope) {
                 var $modal = $scope.find(".modal.auto-show[auto-show-delay]");
                 if ($modal.length > 0) {
                     // Only show if no other modals shown yet, or if class force-show is set:
                     if ($(".modal.show").length == 0 || $modal.hasClass("force-show")) {
-                        var options = { backdrop: $modal.data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+                        var options = { backdrop: $modal.data("bs-backdrop") || "true", keyboard: false, focus: true };
                         new bootstrap.Modal($modal[0], options).show();
                     }
                 }
             }, 1000 * delay, $scope);
         } else if (automodalmain == false) {
-            var options = { backdrop: $(this).data("bs-backdrop") ?? "true", keyboard: false, focus: true };
+            var options = { backdrop: $(this).data("bs-backdrop") || "true", keyboard: false, focus: true };
             new bootstrap.Modal(this, options).show();
             automodalmain = true;
         } else {
@@ -256,8 +258,8 @@ $(function () {
 //#region Handling Bootstrap Toasts
 
 $$(function () {
-    // Automatically show toasts with .onload-showtoast when loaded:
-    $(this).find(".toast.onload-showtoast").each(function () {
+    // Automatically show toasts with .oninit-showtoast on init:
+    $(this).find(".toast.oninit-showtoast").each(function () {
         new bootstrap.Toast(this).show();
     });
 });

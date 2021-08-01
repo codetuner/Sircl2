@@ -51,8 +51,8 @@
         }
     </ul>
 
-    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetAwaiting")" formmethod="post" enable-ifchecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Awaiting</button>
-    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetPaid")" formmethod="post" enable-ifchecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Paid</button>
+    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetAwaiting")" formmethod="post" enable-ifanychecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Awaiting</button>
+    <button type="submit" class="btn btn-primary" formaction="@Url.Action("SetPaid")" formmethod="post" enable-ifanychecked="<form|>input[name=Selection]"><i class="spinner fas fa-check"></i> Set Paid</button>
 
 </form>
 

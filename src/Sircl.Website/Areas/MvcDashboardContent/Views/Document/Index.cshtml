@@ -85,19 +85,19 @@
 
         @if (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentAuthor"))
         {
-            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifchecked=".state-new [name=Selection]" formaction="@Url.Action("IndexRequestPublication")" formmethod="post" onclick-confirm="@((!canEditToPublish) ? "Once publication requested, you will not be able to edit these documents anymore. Proceed ?" : null)"><i class="spinner"></i> Request publication</button>
+            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifanychecked=".state-new [name=Selection]" formaction="@Url.Action("IndexRequestPublication")" formmethod="post" onclick-confirm="@((!canEditToPublish) ? "Once publication requested, you will not be able to edit these documents anymore. Proceed ?" : null)"><i class="spinner"></i> Request publication</button>
         }
         @if (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor"))
         {
-            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifchecked=".state-to-publish [name=Selection]" formaction="@Url.Action("IndexPublish")" formmethod="post"><i class="spinner"></i> Publish</button>
+            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifanychecked=".state-to-publish [name=Selection]" formaction="@Url.Action("IndexPublish")" formmethod="post"><i class="spinner"></i> Publish</button>
         }
         @if (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor"))
         {
-            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifchecked=".state-to-publish [name=Selection], .state-published [name=Selection]" formaction="@Url.Action("IndexUnpublish")" formmethod="post"><i class="spinner"></i> Unpublish</button>
+            <button class="btn btn-primary" name="Page" value="@Model.Page" enable-ifanychecked=".state-to-publish [name=Selection], .state-published [name=Selection]" formaction="@Url.Action("IndexUnpublish")" formmethod="post"><i class="spinner"></i> Unpublish</button>
         }
         @if (User.IsInRole("Administrator") || User.IsInRole("ContentAdministrator") || User.IsInRole("ContentEditor") || User.IsInRole("ContentAuthor"))
         {
-            <button class="btn btn-danger " name="Page" value="@Model.Page" enable-ifchecked="[name=Selection]" formaction="@Url.Action("IndexDelete")" formmethod="post" onclick-confirm="Are you sure ?"><i class="spinner"></i> Delete</button>
+            <button class="btn btn-danger " name="Page" value="@Model.Page" enable-ifanychecked="[name=Selection]" formaction="@Url.Action("IndexDelete")" formmethod="post" onclick-confirm="Are you sure ?"><i class="spinner"></i> Delete</button>
         }
 
     </div>
