@@ -59,9 +59,12 @@ namespace Sircl.Website.Logging
                 {
                     this.record.Request["Header: " + pair.Key] = pair.Value;
                 }
-                foreach (var pair in httpContext.Request.Form)
+                if (httpContext.Request.HasFormContentType)
                 {
-                    this.record.Request["Form: " + pair.Key] = pair.Value;
+                    foreach (var pair in httpContext.Request.Form)
+                    {
+                        this.record.Request["Form: " + pair.Key] = pair.Value;
+                    }
                 }
 
                 // Add response information:
@@ -83,15 +86,23 @@ namespace Sircl.Website.Logging
             return this.record.AspectName;
         }
 
-        public RequestLogger SetAspectName(string aspectName, bool @override)
+        public RequestLogger SetMessage(string aspectName, bool @override, string message)
         {
-            if (!doNotLog) if (this.record.AspectName == null || @override) this.record.AspectName = aspectName;
+            if ((doNotLog == false) && (this.record.AspectName == null || @override == true))
+            {
+                this.record.Message = message;
+                this.record.AspectName = aspectName;
+            }
             return this;
         }
 
-        public RequestLogger SetAspectNameOverriding(string aspectName, string aspectNameToOverride)
+        public RequestLogger SetMessage(string aspectName, string aspectNameToOverride, string message)
         {
-            if (!doNotLog) if (this.record.AspectName == null || this.record.AspectName == aspectNameToOverride) this.record.AspectName = aspectName;
+            if ((doNotLog == false) && (this.record.AspectName == null || this.record.AspectName == aspectNameToOverride))
+            {
+                this.record.Message = message;
+                this.record.AspectName = aspectName;
+            }
             return this;
         }
 

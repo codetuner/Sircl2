@@ -1,6 +1,4 @@
-﻿
-
-<hr />
+﻿<hr />
 
 <input id="val01" type="text" />
 <button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val01')[0]))">typ</button>
@@ -50,7 +48,7 @@
 
 <a href="/Elsewhere">Leave page</a>
 <a href="/Elsewhere" class="onunloadchanged-allow">Leave page without confirmation</a>
-...
+    ...
 <form onchange-set="HasChanges" onunloadchanged-confirm="Ok to loose changes ?">
     <input type="hidden" name="HasChanges" />
     <input type="text" name="Town" />
@@ -281,10 +279,10 @@
 
 <p>
     <input class="ifvalueitem.addr[0].cntry-uncheck
-                  ifvalueitem.addr[0].cntryisFR-check"
+                      ifvalueitem.addr[0].cntryisFR-check"
            name="language" type="radio" value="fr" /> French<br />
     <input class="ifvalueitem.addr[0].cntry-uncheck
-                  ifvalueitem.addr[0].cntryisDE-check"
+                      ifvalueitem.addr[0].cntryisDE-check"
            name="language" type="radio" value="de" /> German
 </p>
 
@@ -298,11 +296,11 @@
 
 <p>
     <input class="ifvalueItem.Customers[12].Discount-uncheck
-                  ifvalueItem.Customers[12].Discountis-check"
-           name="language" type="radio" value="fr" /> No discount<br />
+                      ifvalueItem.Customers[12].Discountis-check"
+           name="disco" type="radio" value="fr" /> No discount<br />
     <input class="ifvalueItem.Customers[12].Discount-uncheck
-                  ifvalueItem.Customers[12].Discountis12.5%-check"
-           name="language" type="radio" value="de" /> Great discount
+                      ifvalueItem.Customers[12].Discountis12.5%-check"
+           name="disco" type="radio" value="de" /> Great discount
 </p>
 
 <hr />
@@ -358,6 +356,112 @@
 <hr />
 
 
+<select name="selmulticountry1" class="ifvalue-events" multiple size="6">
+    <option value="">-</option>
+    <option value="BE" selected>Belgium</option>
+    <option value="FR">France</option>
+    <option value="NL">Netherlands</option>
+    <option value="DE">Germany</option>
+    <option value="ES">Spain</option>
+</select>
+<br />
+<label><input type="checkbox" name="multicheckcountryBE" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label>
+<br />
+<label><input type="checkbox" name="multicheckcountryFR" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label>
+<br />
+<div class="ifvaluemulticheckcountryBE-show ifvaluemulticheckcountryBEisBE-hide">Niet BE</div>
+<br />
+<div class="ifvaluemulticheckcountryBE-hide ifvaluemulticheckcountryBEisBE-show">Wel BE</div>
+<br />
+
+
+<hr />
+
+
+<form action="/Query" class="target">
+    <fieldset class="onchange-submit">
+        <legend>Customer type</legend>
+        <label><input type="radio" name="CType" value="C" checked> Company</label>
+        <label><input type="radio" name="CType" value="I"> Individual</label>
+    </fieldset>
+    <fieldset>
+        <legend>Name</legend>
+        <input type="text" name="CName" placeholder="Company Name" />
+        <br />
+        <label>
+            <input type="checkbox" name="HasVat" value="True"
+                   class="onchange-submit"
+                   formaction="/Time"
+                   formtarget="#vatinfo">
+            Has a VAT number
+        </label>
+        <div id="vatinfo"></div>
+    </fieldset>
+</form>
+
+
+
+<hr />
+
+
+<label><input type="checkbox" ifchecked-show="#vatinfo2"> Has a VAT number</label>
+<div id="vatinfo2" hidden>
+    <input type="text" name="VAT" placeholder="VAT Number" />
+</div>
+
+<hr />
+
+<form onsubmit-disable=">BUTTON, >INPUT, >SELECT, >TEXTAREA" default-submit-button="#ok" default-cancel-button="#cancel" target="#qsd654654q">
+    <input type="text" name="name" placeholder="Name" autocomplete="off" /><br />
+    <input type="checkbox" name="age" checked /><br />
+    <select name="nat">
+        <option value=""></option>
+        <option value="BE">Belg</option>
+        <option value="NL">Nederlander</option>
+    </select><br />
+    <textarea name="descr"></textarea><br />
+    <button type="submit" name="TestButton" value="Pressed" formaction="/Query?TEST">Test</button>
+    <button id="ok" type="submit" name="OkButton" value="Pressed" formaction="/Query?OK">OK</button>
+    <button id="cancel" type="submit" name="CancelButton" value="Pressed" formaction="/Query?Cancel">Cancel</button>
+    <button id="reset" type="reset">Reset</button>
+</form>
+<div id="qsd654654q"></div>
+
+
+<hr />
+
+<p>Issue Edge: when selecting from autofill, posts form twice</p>
+<form default-submit-button="#btnOk" default-cancel-button="#btnCancel">
+    <input type="text" name="Name" value="" class="onchange-submit" autofocus id="fn61" onchange="console.log('\r\n\r\nField value changed: ' + $('#fn61').val())" />
+    <button id="btnOk" type="submit" name="Cmd" value="OK"> OK </button>
+    <a id="btnCancel" href="history:back" onclick-confirm="Leave?"> Cancel </a>
+</form>
+
+<hr />
+
+
+<form default-submit-button="#btnOk" default-cancel-button="#btnCancel">
+    <input type="text" name="FirstName" autocomplete="given-name" id="fn62" onchange="console.log('FirstName changed: ' + $('#fn62').val())"  /><br />
+    <input type="text" name="LastName" autocomplete="family-name"  /><br />
+    <input type="text" name="Address" autocomplete="address-line1"  /><br />
+    <input type="text" name="ZIP" autocomplete="postal-code"  /><br />
+    <input type="text" name="Town" autocomplete="address-level2"  /><br />
+    <input type="text" name="Email" autocomplete="email"  /><br />
+    <input type="text" name="Code" autocomplete="one-time-code"  /><br />
+    <button id="btnOk" type="submit" name="Cmd" value="OK"> OK </button>
+    <a id="btnCancel" href="history:back" onclick-confirm="Leave?"> Cancel </a>
+</form>
+
+<hr />
+
+<form>
+    <input type="hidden" name="code" value="456" />
+    <input type="text" class="substitute-fields" onchange-action="/Test/ChangeSucceed" name="Name" value="" /><br />
+    <input type="text" class="substitute-fields" onchange-action="/Test/ChangeSucceed" name="Value" value="" /><br />
+    <input type="text" class="substitute-fields" onchange-action="/Test/ChangeSucceed" name="Age" value="" /><br />
+
+</form>
+
 <hr />
 
 
@@ -368,24 +472,3 @@
 
 
 <hr />
-
-
-<hr />
-
-
-<hr />
-
-
-<hr />
-
-
-<hr />
-
-
-<hr />
-
-
-<hr />
-
-
-

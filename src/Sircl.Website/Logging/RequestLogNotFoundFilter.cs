@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sircl.Website.Logging
 {
-    public class RequestLogDurationFilter : BaseRequestLogFilter
+    public class RequestLogNotFoundFilter : BaseRequestLogFilter
     {
-        public RequestLogDurationFilter(RequestDelegate next) : base(next)
+        public RequestLogNotFoundFilter(RequestDelegate next) : base(next)
         { }
 
         public override void PreInvoke(HttpContext context, RequestLogger requestLogger)
@@ -16,10 +16,10 @@ namespace Sircl.Website.Logging
 
         public override void PostInvoke(HttpContext context, RequestLogger requestLogger)
         {
-            if (requestLogger.DurationMs > 5000)
+            if (context.Response.StatusCode == 404)
             {
                 if (requestLogger.StoreLog == null) requestLogger.StoreLog = true;
-                requestLogger.SetMessage(LogAspect.Timing.Name, false, null);
+                requestLogger.SetMessage(LogAspect.NotFound.Name, false, null);
             }
         }
     }

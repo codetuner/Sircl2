@@ -18,8 +18,14 @@ namespace Sircl.Website.Logging
         public async Task InvokeAsync(HttpContext context, RequestLogger requestLogger)
         {
             PreInvoke(context, requestLogger);
-            await _next(context);
-            PostInvoke(context, requestLogger);
+            try
+            {
+                await _next(context);
+            }
+            finally
+            {
+                PostInvoke(context, requestLogger);
+            }
         }
 
         public abstract void PreInvoke(HttpContext context, RequestLogger requestLogger);

@@ -27,6 +27,7 @@
 
 // Todo:
 // - Bootstrap 5 sidebar
+// - Bootstrap on expand(/collapse): load URL
 // - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
 // - Character count feedback (as counter, remaining counter or progressbar)
 // - Error handling
@@ -461,29 +462,30 @@ sircl._submitForm = function ($trigger, $form, $target, event, loadComplete) {
     };
 
     // Encode form data:
+    var triggerIsFormField = ($trigger != null) && ($trigger.is("INPUT:not([type=submit]), SELECT, TEXTAREA"));
     if (req.method == "post") {
         if (req.enctype == "multipart/form-data") {
             req.formData = new FormData($form[0]);
-            if ($trigger != null && $trigger.attr("name") != null) req.formData.append($trigger.attr("name"), $trigger.attr("value"));
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData.append($trigger.attr("name"), $trigger.val());
+            // Add files if any:
+            if ($trigger.length > 0 && $trigger[0]._files != null) {
+                for (var f = 0; f < $trigger[0]._files.length; f++) {
+                    req.formData.append($trigger[0]._filesName, $trigger[0]._files[f]);
+                }
+            }
         } else if (req.enctype == "text/plain") {
             req.formData = $form.serialize(); // TODO: test and eventually change, should be one line per variable, unencoded
-            if ($trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.attr("value")) + "&" + req.formData;
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" + req.formData;
         } else {
             req.formData = $form.serialize();
-            if ($trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.attr("value")) + "&" + req.formData;
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" + req.formData;
         }
     } else {
         // Extend req.action url with serialized form parameters, keeping hash (if any) at the end:
         var actionParsed = sircl.urlParser.exec(req.action); // [1]=base url, [2]=query string, [3]=hash
-        req.action = actionParsed[1] + ((actionParsed[2]) ? actionParsed[2] + "&" : "?") + $form.serialize() + ((actionParsed[3]) ? actionParsed[3] : "");
+        var triggerPair = (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) ? encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" : "";
+        req.action = actionParsed[1] + ((actionParsed[2]) ? actionParsed[2] + "&" : "?") + triggerPair + $form.serialize() + ((actionParsed[3]) ? actionParsed[3] : "");
         req.formData = null;
-    }
-
-    // Add files if any:
-    if ($trigger.length > 0 && $trigger[0]._files != null && req.formData != null && req.method == "post" && req.enctype == "multipart/form-data") {
-        for (var f = 0; f < $trigger[0]._files.length; f++) {
-            req.formData.append($trigger[0]._filesName, $trigger[0]._files[f]);
-        }
     }
 
     // Process submission:
@@ -1602,7 +1604,11 @@ $(function () {
     $(document).on("change", "[onchange-submit]", function (event) {
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
-            if ($form.length > 0) $form[0].submit();
+            if ($form.length > 0) {
+                $form[0]._formTrigger = this;
+                $form[0]._formTriggerTimer = setTimeout(function () { $form[0]._formTrigger = null; }, 700);
+                $form[0].submit();
+            }
         }
     });
 

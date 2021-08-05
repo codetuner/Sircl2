@@ -623,6 +623,24 @@
         <div class="row">
             <div class="col">
                 <hr />
+                <p>Onchecked click:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label><input type="checkbox" onchecked-click="<DIV|>BUTTON" /> Check to click</label><br />
+                <button type="button" href="alert:You have clicked this button :)" onclick-confirm="Do you want to click me ?"> Or click me directly </button>
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr />
                 <p>Ifchecked show/hide:</p>
             </div>
         </div>
@@ -844,48 +862,55 @@
                     <option value="DE">Germany</option>
                     <option value="ES">Spain</option>
                 </select>
+            </div>
+            <div class="col">
+                <label><input type="checkbox" name="multicheckcountryBE" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label><br />
+                <label><input type="checkbox" name="multicheckcountryFR" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label><br />
+                <label><input type="checkbox" name="multicheckcountryNL" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isNL-check" value="NL" />Netherlands</label><br />
+                <label><input type="checkbox" name="multicheckcountryDE" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isDE-check" value="DE" checked />Germany</label><br />
+                <label><input type="checkbox" name="multicheckcountryES" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isES-check" value="ES" />Spain</label><br />
+            </div>
+            <div class="col">
+            </div>
+            <div class="col">
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry" value="BE" />Belgium</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry" value="FR" />France</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry" value="NL" />Netherlands</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry" value="DE" checked />Germany</label><br />
+                <label><input type="radio" class="ifvalue-events" name="multiradiocountry" value="ES" />Spain</label><br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isBE-hide">Not BE</div>
                 <br />
-                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isBE-hide">Hide if BE</div>
+                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isBE-show">Is BE</div>
                 <br />
-                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isBE-show">Show if BE</div>
+                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isDE-hide">Not DE</div>
                 <br />
-                <div class="ifvalueselmulticountry1-show ifvalueselmulticountry1isDE-hide">Hide if DE</div>
-                <br />
-                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isDE-show">Show if DE</div>
+                <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isDE-show">Is DE</div>
                 <br />
                 <div class="ifvalueselmulticountry1-hide ifvalueselmulticountry1isFR-show ifvalueselmulticountry1isES-show">Show if FR or ES</div>
             </div>
             <div class="col">
-                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isBE-check" value="BE" />Belgium</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isFR-check" value="FR" />France</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isNL-check" value="NL" />Netherlands</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isDE-check" value="DE" checked />Germany</label><br />
-                <label><input type="checkbox" name="multicheckcountry1" class="ifvalue-events ifvalueselmulticountry1-uncheck ifvalueselmulticountry1isES-check" value="ES" />Spain</label><br />
+                <div class="ifvaluemulticheckcountryBE-show ifvaluemulticheckcountryBEisBE-hide">Not BE</div>
                 <br />
-                <div class="ifvaluemulticheckcountry1-show ifvaluemulticheckcountry1isBE-hide">Hide if BE</div>
+                <div class="ifvaluemulticheckcountryBE-hide ifvaluemulticheckcountryBEisBE-show">Is BE</div>
                 <br />
-                <div class="ifvaluemulticheckcountry1-hide ifvaluemulticheckcountry1isBE-show">Show if BE</div>
+                <div class="ifvaluemulticheckcountryDE-show ifvaluemulticheckcountryDEisDE-hide">Not DE</div>
                 <br />
-                <div class="ifvaluemulticheckcountry1-show ifvaluemulticheckcountry1isDE-hide">Hide if DE</div>
-                <br />
-                <div class="ifvaluemulticheckcountry1-hide ifvaluemulticheckcountry1isDE-show">Show if DE</div>
+                <div class="ifvaluemulticheckcountryDE-hide ifvaluemulticheckcountryDEisDE-show">Is DE</div>
             </div>
             <div class="col">
-                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="BE" />Belgium</label><br />
-                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="FR" />France</label><br />
-                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="DE" checked />Germany</label><br />
-                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="NL" />Netherlands</label><br />
-                <label><input type="radio" class="ifvalue-events" name="multiradiocountry1" value="ES" />Spain</label><br />
-                <br />
-                <div class="ifvaluemultiradiocountry1-show ifvaluemultiradiocountry1isBE-hide">Hide if BE</div>
-                <br />
-                <div class="ifvaluemultiradiocountry1-hide ifvaluemultiradiocountry1isBE-show">Show if BE</div>
-                <br />
-                <div class="ifvaluemultiradiocountry1-show ifvaluemultiradiocountry1isDE-hide">Hide if DE</div>
-                <br />
-                <div class="ifvaluemultiradiocountry1-hide ifvaluemultiradiocountry1isDE-show">Show if DE</div>
             </div>
             <div class="col">
+                <div class="ifvaluemultiradiocountry-show ifvaluemultiradiocountryisBE-hide">Not BE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry-hide ifvaluemultiradiocountryisBE-show">Is BE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry-show ifvaluemultiradiocountryisDE-hide">Not DE</div>
+                <br />
+                <div class="ifvaluemultiradiocountry-hide ifvaluemultiradiocountryisDE-show">Is DE</div>
             </div>
         </div>
 

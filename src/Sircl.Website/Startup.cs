@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sircl.Website.Data;
 using Sircl.Website.Localize;
+using Sircl.Website.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Sircl.Website
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
 
-            // region Content:
+            #region Content
 
             services.AddDbContext<Data.Content.ContentDbContext>(options => {
                 //options.LogTo(Startup.WriteDebug);
@@ -48,9 +49,9 @@ namespace Sircl.Website
                     Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            // endregion
+            #endregion
 
-            // region Localization:
+            #region Localization
 
             services.AddDbContext<Data.Localize.LocalizeDbContext>(options =>
                 options.UseSqlServer(
@@ -64,24 +65,42 @@ namespace Sircl.Website
 
             services.AddTransient<ILocalizationSource, LocalizationSource>();
 
-            // endregion
+            #endregion
+
+            #region Logging
+
+            services.AddDbContext<Data.Logging.LoggingDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<Sircl.Website.Logging.RequestLogger>();
+
+            #endregion
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-            else
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //    app.UseMigrationsEndPoint();
+            //}
+            //else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            #region Logging
+            app.UseArebisRequestLog()
+                .LogSlowRequests()
+                .LogExceptions()
+                .LogNotFounds();
+            #endregion
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -90,7 +109,9 @@ namespace Sircl.Website
             app.UseAuthentication();
             app.UseAuthorization();
 
+            #region Localization:
             app.UseArebisLocalization();
+            #endregion
 
             app.UseEndpoints(endpoints =>
             {
@@ -109,10 +130,12 @@ namespace Sircl.Website
 
                 endpoints.MapRazorPages();
 
+                #region Content:
                 endpoints.MapControllerRoute(
                     name: "content",
                     pattern: "{**path}",
                     defaults: new { controller = "Content", action = "Render" });
+                #endregion
             });
         }
 

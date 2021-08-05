@@ -71,7 +71,7 @@ namespace Sircl.Website.Data.Logging
         /// <summary>
         /// Short message about the log.
         /// </summary>
-        [Required, MaxLength(2000)]
+        [MaxLength(2000)]
         public virtual string Message { get; set; }
 
         /// <summary>

@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The file 'sircl-changeactions' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-changeactions' component should be registered after the 'sircl' component. Please review order of script files.");
 
 /**
  * Allow controls to be disabled during action call.
@@ -74,13 +74,16 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     // Build data:
     if (value === null || value === undefined) value = [];
     if (!Array.isArray(value)) value = [value];
-    var data = "name=" + encodeURIComponent(name);
+    var data = "";
+    if (name != null && name.toLowerCase() != "name") {
+        data += "name=" + encodeURIComponent(name);
+    }
     for (var i = 0; i < value.length; i++) {
         data += "&value=" + encodeURIComponent(value[i]);
-        if (name != "") data += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(value[i]);
+        if (name != null && name != "" && name.toLowerCase() != "value") data += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(value[i]);
     }
     // If GET, add data to url:
-    if (method === "GET") {
+    if (method === "GET" && data.length > 0) {
         url = url + ((url.indexOf("?") < 0) ? "?" : "&") + data;
         data = null;
     }

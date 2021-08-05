@@ -25,8 +25,9 @@ namespace Sircl.Website.Logging
 
             if (ex != null)
             {
+                if (requestLogger.StoreLog == null) requestLogger.StoreLog = true;
                 var aspect = (ex is SecurityException) ? LogAspect.Security : LogAspect.Error;
-                requestLogger.SetAspectName(aspect.Name, true);
+                requestLogger.SetMessage(aspect.Name, true, ex.Message);
                 requestLogger.WriteLine(ex.ToString());
                 WriteExceptionData(requestLogger, "Ex", ex);
             }

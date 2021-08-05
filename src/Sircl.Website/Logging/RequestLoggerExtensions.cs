@@ -8,19 +8,27 @@ namespace Sircl.Website.Logging
 {
     public static class RequestLoggerExtensions
     {
-        public static IApplicationBuilder UseRequestLog(this IApplicationBuilder builder)
+        public static LoggingBuilder UseArebisRequestLog(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<RequestLogMiddleware>();
+            return new LoggingBuilder(builder.UseMiddleware<RequestLogMiddleware>());
         }
 
-        public static IApplicationBuilder UseRequestLogDuration(this IApplicationBuilder builder)
+        public static LoggingBuilder LogSlowRequests(this LoggingBuilder builder)
         {
-            return builder.UseMiddleware<RequestLogDurationFilter>();
+            builder.Application.UseMiddleware<RequestLogDurationFilter>();
+            return builder;
         }
 
-        public static IApplicationBuilder UseRequestLogException(this IApplicationBuilder builder)
+        public static LoggingBuilder LogExceptions(this LoggingBuilder builder)
         {
-            return builder.UseMiddleware<RequestLogExceptionFilter>();
+            builder.Application.UseMiddleware<RequestLogExceptionFilter>();
+            return builder;
+        }
+
+        public static LoggingBuilder LogNotFounds(this LoggingBuilder builder)
+        {
+            builder.Application.UseMiddleware<RequestLogNotFoundFilter>();
+            return builder;
         }
     }
 }

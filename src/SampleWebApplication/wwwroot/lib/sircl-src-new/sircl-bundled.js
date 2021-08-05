@@ -27,6 +27,7 @@
 
 // Todo:
 // - Bootstrap 5 sidebar
+// - Bootstrap on expand(/collapse): load URL
 // - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
 // - Character count feedback (as counter, remaining counter or progressbar)
 // - Error handling
@@ -461,29 +462,30 @@ sircl._submitForm = function ($trigger, $form, $target, event, loadComplete) {
     };
 
     // Encode form data:
+    var triggerIsFormField = ($trigger != null) && ($trigger.is("INPUT:not([type=submit]), SELECT, TEXTAREA"));
     if (req.method == "post") {
         if (req.enctype == "multipart/form-data") {
             req.formData = new FormData($form[0]);
-            if ($trigger != null && $trigger.attr("name") != null) req.formData.append($trigger.attr("name"), $trigger.attr("value"));
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData.append($trigger.attr("name"), $trigger.val());
+            // Add files if any:
+            if ($trigger.length > 0 && $trigger[0]._files != null) {
+                for (var f = 0; f < $trigger[0]._files.length; f++) {
+                    req.formData.append($trigger[0]._filesName, $trigger[0]._files[f]);
+                }
+            }
         } else if (req.enctype == "text/plain") {
             req.formData = $form.serialize(); // TODO: test and eventually change, should be one line per variable, unencoded
-            if ($trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.attr("value")) + "&" + req.formData;
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" + req.formData;
         } else {
             req.formData = $form.serialize();
-            if ($trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.attr("value")) + "&" + req.formData;
+            if (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) req.formData = encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" + req.formData;
         }
     } else {
         // Extend req.action url with serialized form parameters, keeping hash (if any) at the end:
         var actionParsed = sircl.urlParser.exec(req.action); // [1]=base url, [2]=query string, [3]=hash
-        req.action = actionParsed[1] + ((actionParsed[2]) ? actionParsed[2] + "&" : "?") + $form.serialize() + ((actionParsed[3]) ? actionParsed[3] : "");
+        var triggerPair = (!triggerIsFormField && $trigger != null && $trigger.attr("name") != null) ? encodeURIComponent($trigger.attr("name")) + "=" + encodeURIComponent($trigger.val()) + "&" : "";
+        req.action = actionParsed[1] + ((actionParsed[2]) ? actionParsed[2] + "&" : "?") + triggerPair + $form.serialize() + ((actionParsed[3]) ? actionParsed[3] : "");
         req.formData = null;
-    }
-
-    // Add files if any:
-    if ($trigger.length > 0 && $trigger[0]._files != null && req.formData != null && req.method == "post" && req.enctype == "multipart/form-data") {
-        for (var f = 0; f < $trigger[0]._files.length; f++) {
-            req.formData.append($trigger[0]._filesName, $trigger[0]._files[f]);
-        }
     }
 
     // Process submission:
@@ -1602,7 +1604,11 @@ $(function () {
     $(document).on("change", "[onchange-submit]", function (event) {
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
-            if ($form.length > 0) $form[0].submit();
+            if ($form.length > 0) {
+                $form[0]._formTrigger = this;
+                $form[0]._formTriggerTimer = setTimeout(function () { $form[0]._formTrigger = null; }, 700);
+                $form[0].submit();
+            }
         }
     });
 
@@ -2184,156 +2190,209 @@ $(function () {
 
 $(function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
-    $(document.body).on("change", "*[onchecked-click]:checked", function (event) {
+    $(document).on("change", "*[onchecked-click]:checked", function (event) {
         var targetSelector = $(this).attr("onchecked-click");
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
     });
 
-    $(document.body).on("change", "[ifchecked-hide]", function (event) {
+    $(document).on("change", "[ifchecked-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-show]", function (event) {
+    $(document).on("change", "[ifchecked-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-show")), this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-disable]", function (event) {
+    $(document).on("change", "[ifchecked-disable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")).prop("disabled", this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-enable]", function (event) {
+    $(document).on("change", "[ifchecked-enable]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")).prop("disabled", !this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-readonly]", function (event) {
+    $(document).on("change", "[ifchecked-readonly]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly")).prop("readonly", this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-readwrite]", function (event) {
+    $(document).on("change", "[ifchecked-readwrite]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
     });
 
-    $(document.body).on("change", "[ifchecked-clearvalue]", function (event) {
+    $(document).on("change", "[ifchecked-clearvalue]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
         });
     });
 
-    $(document.body).on("change", "[ifunchecked-clearvalue]", function (event) {
+    $(document).on("change", "[ifunchecked-clearvalue]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
         });
     });
 
-    $(document.body).on("change", "[ifchecked-uncheck]", function (event) {
+    $(document).on("change", "[ifchecked-uncheck]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
             $(this).change();
         });
     });
 
-    $(document.body).on("change", "[ifchecked-check]", function (event) {
+    $(document).on("change", "[ifchecked-check]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
             $(this).change();
         });
     });
 
-    $(document.body).on("change", "[ifunchecked-uncheck]", function (event) {
+    $(document).on("change", "[ifunchecked-uncheck]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
             $(this).change();
         });
     });
 
-    $(document.body).on("change", "[ifunchecked-check]", function (event) {
+    $(document).on("change", "[ifunchecked-check]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
             $(this).change();
         });
     });
 
-    $(document.body).on("change", ".ifvalue-events", function (event) {
-        var $scope = $("BODY");
-        var tocheck = [];
-        var touncheck = [];
-        var name = sircl.ext.cssEscape(this.name);
+    $(document).on("change", ".ifvalue-events", function (event) {
+        var $scope = $(this).closest("FORM");
+        if ($(this).hasAttr("ifvalue-scope")) $scope = sircl.ext.$select($(this), $(this).attr("ifvalue-scope"));
+        else if ($scope.length == 0) $scope = $("BODY");
+        var uncheckedCheck = ($(this).is("INPUT[type=checkbox]") || $(this).is("INPUT[type=radio]")) && this.checked == false;
+        var actions = {
+            toshow: [],
+            tohide: [],
+            toenable: [],
+            todisable: [],
+            toreadwrite: [],
+            toreadonly: [],
+            toclearvalue: [],
+            tocheck: [],
+            touncheck: []
+        };
         // Handle ".ifvalue<name>" classes:
+        // Get name:
+        var name = sircl.ext.cssEscape(this.name);
+        // Get value-independent class:
         var ifvaluename = ".ifvalue" + name;
-        $scope.find(ifvaluename + "-show").each(function () {
-            sircl.ext.visible($(this), true);
-        });
+        // Handle actions:
         $scope.find(ifvaluename + "-hide").each(function () {
-            sircl.ext.visible($(this), false);
+            if (sircl.ext.visible(this)) actions.tohide.push(this);
+        });
+        $scope.find(ifvaluename + "-show").each(function () {
+            if (!sircl.ext.visible(this)) actions.toshow.push(this);
         });
         $scope.find(ifvaluename + "-disable").each(function () {
-            $(this).prop("disabled", true);
+            if ($(this).prop("disabled") == false) actions.todisable.push(this);
         });
         $scope.find(ifvaluename + "-enable").each(function () {
-            $(this).prop("disabled", false);
+            if ($(this).prop("disabled") == true) actions.toenable.push(this);
         });
         $scope.find(ifvaluename + "-readonly").each(function () {
-            $(this).prop("readonly", true);
+            if ($(this).prop("readonly") == false) action.toreadonly.push(this);
         });
         $scope.find(ifvaluename + "-readwrite").each(function () {
-            $(this).prop("readonly", false);
+            if ($(this).prop("readonly") == true) action.toreadwrite.push(this);
         });
         $scope.find(ifvaluename + "-clearvalue").each(function () {
-            $(this).val("");
-            $(this).change();
+            if ($(this).val() != "") action.toclearvalue.push(this);
         });
         $scope.find(ifvaluename + "-uncheck").each(function () {
-            if (this.checked) touncheck.push(this);
+            if (this.checked) actions.touncheck.push(this);
         });
         $scope.find(ifvaluename + "-check").each(function () {
-            if (!this.checked) tocheck.push(this);
+            if (!this.checked) actions.tocheck.push(this);
         });
-        // Handle ".ifvalue<name>is<value>" classes:
-        var values = sircl.ext.effectiveValue(this);
-        if (values == null) values = [];
-        if (!Array.isArray(values)) values = [values];
-        for (var v = 0; v < values.length; v++) {
-            var value = sircl.ext.cssEscape(values[v]);
-            var ifvaluenameisvalue = ifvaluename + "is" + value;
-            $scope.find(ifvaluenameisvalue + "-hide").each(function () {
-                sircl.ext.visible($(this), false);
-            });
-            $scope.find(ifvaluenameisvalue + "-show").each(function () {
-                sircl.ext.visible($(this), true);
-            });
-            $scope.find(ifvaluenameisvalue + "-disable").each(function () {
-                $(this).prop("disabled", true);
-            });
-            $scope.find(ifvaluenameisvalue + "-enable").each(function () {
-                $(this).prop("disabled", false);
-            });
-            $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
-                $(this).prop("readonly", true);
-            });
-            $scope.find(ifvaluenameisvalue + "-readwrite").each(function () {
-                $(this).prop("readonly", false);
-            });
-            $scope.find(ifvaluenameisvalue + "-clearvalue").each(function () {
-                $(this).val("");
-                $(this).change();
-            });
-            $scope.find(ifvaluenameisvalue + "-uncheck").each(function () {
-                if (tocheck.indexOf(this) >= 0) tocheck.splice(tocheck.indexOf(this), 1);
-                if (this.checked && touncheck.indexOf(this) === -1) touncheck.push(this);
-            });
-            $scope.find(ifvaluenameisvalue + "-check").each(function () {
-                if (touncheck.indexOf(this) >= 0) touncheck.splice(touncheck.indexOf(this), 1);
-                if (!this.checked && tocheck.indexOf(this) === -1) tocheck.push(this);
-            });
+        // If it's a radio or checkbox that is not checked, skip the value-specific action:
+        if (!uncheckedCheck) {
+            // Handle ".ifvalue<name>is<value>" classes:
+            var values = sircl.ext.effectiveValue(this);
+            if (values == null) values = [];
+            if (!Array.isArray(values)) values = [values];
+            // Loop over all values (multiselects can have multiple values):
+            for (var v = 0; v < values.length; v++) {
+                // Get value:
+                var value = sircl.ext.cssEscape(values[v]);
+                // Get value-specific class:
+                var ifvaluenameisvalue = ifvaluename + "is" + value;
+                // Handle actions:
+                $scope.find(ifvaluenameisvalue + "-hide").each(function () {
+                    if (actions.toshow.indexOf(this) >= 0) actions.toshow.splice(actions.toshow.indexOf(this), 1);
+                    if (sircl.ext.visible(this) && actions.tohide.indexOf(this) === -1) actions.tohide.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-show").each(function () {
+                    if (actions.tohide.indexOf(this) >= 0) actions.tohide.splice(actions.tohide.indexOf(this), 1);
+                    if (!sircl.ext.visible(this) && actions.toshow.indexOf(this) === -1) actions.toshow.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-disable").each(function () {
+                    if (actions.toenable.indexOf(this) >= 0) actions.toenable.splice(actions.toenable.indexOf(this), 1);
+                    if ($(this).prop("disabled") == false && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-enable").each(function () {
+                    if (actions.todisable.indexOf(this) >= 0) actions.todisable.splice(actions.todisable.indexOf(this), 1);
+                    if ($(this).prop("disabled") == true && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
+                    if (actions.toreadwrite.indexOf(this) >= 0) actions.toreadwrite.splice(actions.toreadwrite.indexOf(this), 1);
+                    if ($(this).prop("readonly") == false && actions.toreadonly.indexOf(this) === -1) action.toreadonly.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-readwrite").each(function () {
+                    if (actions.toreadonly.indexOf(this) >= 0) actions.toreadonly.splice(actions.toreadonly.indexOf(this), 1);
+                    if ($(this).prop("readonly") == true && actions.toreadwrite.indexOf(this) === -1) action.toreadwrite.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-clearvalue").each(function () {
+                    // There is currently no "-keepvalue" to remove items from the clearvalue list
+                    if ($(this).val() != "" && actions.toclearvalue.indexOf(this) === -1) action.toclearvalue.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-uncheck").each(function () {
+                    if (actions.tocheck.indexOf(this) >= 0) actions.tocheck.splice(actions.tocheck.indexOf(this), 1);
+                    if (this.checked && actions.touncheck.indexOf(this) === -1) actions.touncheck.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-check").each(function () {
+                    if (actions.touncheck.indexOf(this) >= 0) actions.touncheck.splice(actions.touncheck.indexOf(this), 1);
+                    if (!this.checked && actions.tocheck.indexOf(this) === -1) actions.tocheck.push(this);
+                });
+            }
         }
+        // Perform only net show/hides:
+        actions.toshow.forEach(function (elem) {
+            sircl.ext.visible(elem, true);
+        });
+        actions.tohide.forEach(function (elem) {
+            sircl.ext.visible(elem, false);
+        });
+        // Perform only net enable/disables:
+        actions.toenable.forEach(function (elem) {
+            $(elem).prop("disabled", false);
+        });
+        actions.todisable.forEach(function (elem) {
+            $(elem).prop("disabled", true);
+        });
+        // Perform only net readwrite/readonlies:
+        actions.toreadwrite.forEach(function (elem) {
+            $(elem).prop("readonly", false);
+        });
+        actions.toreadonly.forEach(function (elem) {
+            $(elem).prop("readonly", true);
+        });
+        // Perform only net clearvalues and trigger change event:
+        actions.toclearvalue.forEach(function (elem) {
+            $(elem).val("");
+            $(elem).change();
+        });
         // Perform only net check/unchecks and trigger change event:
-        tocheck.forEach(function (elem) {
+        actions.tocheck.forEach(function (elem) {
             elem.checked = true;
             $(elem).change();
         });
-        touncheck.forEach(function (elem) {
+        actions.touncheck.forEach(function (elem) {
             elem.checked = false;
             $(elem).change();
         });
@@ -2408,85 +2467,142 @@ $$(function () {
         });
     });
 
+    var handledFielNames = [];
     $(this).find(".ifvalue-events").each(function () {
-        var $scope = $("BODY");
-        var tocheck = [];
-        var touncheck = [];
-        var name = sircl.ext.cssEscape(this.name);
+        var $scope = $(this).closest("FORM");
+        if ($(this).hasAttr("ifvalue-scope")) $scope = sircl.ext.$select($(this), $(this).attr("ifvalue-scope"));
+        else if ($scope.length == 0) $scope = $("BODY");
+        var uncheckedCheck = ($(this).is("INPUT[type=checkbox]") || $(this).is("INPUT[type=radio]")) && this.checked == false;
+        var actions = {
+            toshow: [],
+            tohide: [],
+            toenable: [],
+            todisable: [],
+            toreadwrite: [],
+            toreadonly: [],
+            toclearvalue: [],
+            tocheck: [],
+            touncheck: []
+        };
         // Handle ".ifvalue<name>" classes:
+        // Get name:
+        var name = sircl.ext.cssEscape(this.name);
+        // If this is an unchecked and field already handled, abort:
+        if (uncheckedCheck && handledFielNames.indexOf(this.name) > -1) return;
+        handledFielNames.push(this.name);
+        // Get value-independent class:
         var ifvaluename = ".ifvalue" + name;
+        // Handle actions:
         $scope.find(ifvaluename + "-hide").each(function () {
-            sircl.ext.visible($(this), false);
+            if (sircl.ext.visible(this)) actions.tohide.push(this);
         });
         $scope.find(ifvaluename + "-show").each(function () {
-            sircl.ext.visible($(this), true);
+            if (!sircl.ext.visible(this)) actions.toshow.push(this);
         });
         $scope.find(ifvaluename + "-disable").each(function () {
-            $(this).prop("disabled", true);
+            if ($(this).prop("disabled") == false) actions.todisable.push(this);
         });
         $scope.find(ifvaluename + "-enable").each(function () {
-            $(this).prop("disabled", false);
+            if ($(this).prop("disabled") == true) actions.toenable.push(this);
         });
         $scope.find(ifvaluename + "-readonly").each(function () {
-            $(this).prop("readonly", true);
+            if ($(this).prop("readonly") == false) action.toreadonly.push(this);
         });
         $scope.find(ifvaluename + "-readwrite").each(function () {
-            $(this).prop("readonly", false);
+            if ($(this).prop("readonly") == true) action.toreadwrite.push(this);
         });
         $scope.find(ifvaluename + "-clearvalue").each(function () {
-            $(this).val("");
-            $(this).change();
+            if ($(this).val() != "") action.toclearvalue.push(this);
         });
         $scope.find(ifvaluename + "-uncheck").each(function () {
-            if (this.checked) touncheck.push(this);
+            if (this.checked) actions.touncheck.push(this);
         });
         $scope.find(ifvaluename + "-check").each(function () {
-            if (!this.checked) tocheck.push(this);
+            if (!this.checked) actions.tocheck.push(this);
         });
-        // Handle ".ifvalue<name>is<value>" classes:
-        var values = sircl.ext.effectiveValue(this);
-        if (values == null) values = [];
-        if (!Array.isArray(values)) values = [values];
-        for (var v = 0; v < values.length; v++) {
-            var value = sircl.ext.cssEscape(values[v]);
-            var ifvaluenameisvalue = ifvaluename + "is" + value;
-            $scope.find(ifvaluenameisvalue + "-hide").each(function () {
-                sircl.ext.visible($(this), false);
-            });
-            $scope.find(ifvaluenameisvalue + "-show").each(function () {
-                sircl.ext.visible($(this), true);
-            });
-            $scope.find(ifvaluenameisvalue + "-disable").each(function () {
-                $(this).prop("disabled", true);
-            });
-            $scope.find(ifvaluenameisvalue + "-enable").each(function () {
-                $(this).prop("disabled", false);
-            });
-            $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
-                $(this).prop("readonly", true);
-            });
-            $scope.find(ifvaluenameisvalue + "-readwrite").each(function () {
-                $(this).prop("readonly", false);
-            });
-            $scope.find(ifvaluenameisvalue + "-clearvalue").each(function () {
-                $(this).val("");
-                $(this).change();
-            });
-            $scope.find(ifvaluenameisvalue + "-uncheck").each(function () {
-                if (tocheck.indexOf(this) >= 0) tocheck.splice(tocheck.indexOf(this), 1);
-                if (this.checked && touncheck.indexOf(this) === -1) touncheck.push(this);
-            });
-            $scope.find(ifvaluenameisvalue + "-check").each(function () {
-                if (touncheck.indexOf(this) >= 0) touncheck.splice(touncheck.indexOf(this), 1);
-                if (!this.checked && tocheck.indexOf(this) === -1) tocheck.push(this);
-            });
+        // If it's a radio or checkbox that is not checked, skip the value-specific action:
+        if (!uncheckedCheck) {
+            // Handle ".ifvalue<name>is<value>" classes:
+            var values = sircl.ext.effectiveValue(this);
+            if (values == null) values = [];
+            if (!Array.isArray(values)) values = [values];
+            // Loop over all values (multiselects can have multiple values):
+            for (var v = 0; v < values.length; v++) {
+                // Get value:
+                var value = sircl.ext.cssEscape(values[v]);
+                // Get value-specific class:
+                var ifvaluenameisvalue = ifvaluename + "is" + value;
+                // Handle actions:
+                $scope.find(ifvaluenameisvalue + "-hide").each(function () {
+                    if (actions.toshow.indexOf(this) >= 0) actions.toshow.splice(actions.toshow.indexOf(this), 1);
+                    if (sircl.ext.visible(this) && actions.tohide.indexOf(this) === -1) actions.tohide.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-show").each(function () {
+                    if (actions.tohide.indexOf(this) >= 0) actions.tohide.splice(actions.tohide.indexOf(this), 1);
+                    if (!sircl.ext.visible(this) && actions.toshow.indexOf(this) === -1) actions.toshow.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-disable").each(function () {
+                    if (actions.toenable.indexOf(this) >= 0) actions.toenable.splice(actions.toenable.indexOf(this), 1);
+                    if ($(this).prop("disabled") == false && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-enable").each(function () {
+                    if (actions.todisable.indexOf(this) >= 0) actions.todisable.splice(actions.todisable.indexOf(this), 1);
+                    if ($(this).prop("disabled") == true && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
+                    if (actions.toreadwrite.indexOf(this) >= 0) actions.toreadwrite.splice(actions.toreadwrite.indexOf(this), 1);
+                    if ($(this).prop("readonly") == false && actions.toreadonly.indexOf(this) === -1) action.toreadonly.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-readwrite").each(function () {
+                    if (actions.toreadonly.indexOf(this) >= 0) actions.toreadonly.splice(actions.toreadonly.indexOf(this), 1);
+                    if ($(this).prop("readonly") == true && actions.toreadwrite.indexOf(this) === -1) action.toreadwrite.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-clearvalue").each(function () {
+                    // There is currently no "-keepvalue" to remove items from the clearvalue list
+                    if ($(this).val() != "" && actions.toclearvalue.indexOf(this) === -1) action.toclearvalue.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-uncheck").each(function () {
+                    if (actions.tocheck.indexOf(this) >= 0) actions.tocheck.splice(actions.tocheck.indexOf(this), 1);
+                    if (this.checked && actions.touncheck.indexOf(this) === -1) actions.touncheck.push(this);
+                });
+                $scope.find(ifvaluenameisvalue + "-check").each(function () {
+                    if (actions.touncheck.indexOf(this) >= 0) actions.touncheck.splice(actions.touncheck.indexOf(this), 1);
+                    if (!this.checked && actions.tocheck.indexOf(this) === -1) actions.tocheck.push(this);
+                });
+            }
         }
+        // Perform only net show/hides:
+        actions.toshow.forEach(function (elem) {
+            sircl.ext.visible(elem, true);
+        });
+        actions.tohide.forEach(function (elem) {
+            sircl.ext.visible(elem, false);
+        });
+        // Perform only net enable/disables:
+        actions.toenable.forEach(function (elem) {
+            $(elem).prop("disabled", false);
+        });
+        actions.todisable.forEach(function (elem) {
+            $(elem).prop("disabled", true);
+        });
+        // Perform only net readwrite/readonlies:
+        actions.toreadwrite.forEach(function (elem) {
+            $(elem).prop("readonly", false);
+        });
+        actions.toreadonly.forEach(function (elem) {
+            $(elem).prop("readonly", true);
+        });
+        // Perform only net clearvalues and trigger change event:
+        actions.toclearvalue.forEach(function (elem) {
+            $(elem).val("");
+            $(elem).change();
+        });
         // Perform only net check/unchecks and trigger change event:
-        tocheck.forEach(function (elem) {
+        actions.tocheck.forEach(function (elem) {
             elem.checked = true;
             $(elem).change();
         });
-        touncheck.forEach(function (elem) {
+        actions.touncheck.forEach(function (elem) {
             elem.checked = false;
             $(elem).change();
         });
@@ -2561,6 +2677,25 @@ $$(function () {
         $this.prop("disabled", !$any.filter(":checked").length > 0);
     });
 
+    /// <* show-ifallchecked="selection"> If all of the selection is checked, show, else hide this.
+    $(this).find("[show-ifallchecked]").each(function () {
+        var $this = $(this);
+        var $all = sircl.ext.$select($this, $this.attr("show-ifallchecked"));
+        sircl.ext.$select($this, $this.attr("show-ifallchecked")).on("change", function () {
+            sircl.ext.visible($this, $all.filter(":checked").length == $all.length)
+        });
+        sircl.ext.visible($this, $all.filter(":checked").length == $all.length)
+    });
+
+    /// <* show-ifanychecked="selection"> If any of the selection is checked, show, else hide this.
+    $(this).find("[show-ifanychecked]").each(function () {
+        var $this = $(this);
+        var $any = sircl.ext.$select($this, $this.attr("show-ifanychecked"));
+        sircl.ext.$select($this, $this.attr("show-ifanychecked")).on("change", function () {
+            sircl.ext.visible($this, $all.filter(":checked").length > 0)
+        });
+        sircl.ext.visible($this, $all.filter(":checked").length > 0)
+    });
 });
 
 /// Valid event-actions:
@@ -3059,13 +3194,16 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     // Build data:
     if (value === null || value === undefined) value = [];
     if (!Array.isArray(value)) value = [value];
-    var data = "name=" + encodeURIComponent(name);
+    var data = "";
+    if (name != null && name.toLowerCase() != "name") {
+        data += "name=" + encodeURIComponent(name);
+    }
     for (var i = 0; i < value.length; i++) {
         data += "&value=" + encodeURIComponent(value[i]);
-        if (name != "") data += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(value[i]);
+        if (name != null && name != "" && name.toLowerCase() != "value") data += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(value[i]);
     }
     // If GET, add data to url:
-    if (method === "GET") {
+    if (method === "GET" && data.length > 0) {
         url = url + ((url.indexOf("?") < 0) ? "?" : "&") + data;
         data = null;
     }
