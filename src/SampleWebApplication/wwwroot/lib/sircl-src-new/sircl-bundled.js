@@ -1447,9 +1447,9 @@ $(function () {
     /// <* onclick-closedialog="selector" >
     $(document).on("click", "[onclick-closedialog]", function (event) {
         var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-closedialog"));
-        if ($dlg.length > 0) {
-            // Close dialog:
-            $dlg[0].close();
+        // Close all matching dialogs:
+        for (var i = 0; i < $dlg.length; i++) {
+            $dlg[i].close();
         }
     });
 
@@ -1560,10 +1560,10 @@ $$(function () {
         });
     });
 
-    $(this).find("DIALOG[open-after]").each(function () {
+    $(this).find("DIALOG[oninit-showafter]").each(function () {
         // Parse delay ("seconds" or "[hh:]mm:ss"):
         var delay = 0;
-        var delaypart = $(this).attr("open-after").split(":");
+        var delaypart = $(this).attr("oninit-showafter").split(":");
         for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
         // Set timer:
         setTimeout(function (dlg) {
@@ -1790,7 +1790,7 @@ $(document).ready(function () {
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The file 'sircl-extended' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component should be registered after the 'sircl' component. Please review order of script files.");
 
 //#region Extended event-actions
 
@@ -3126,7 +3126,7 @@ $(function () {
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The file 'sircl-changeactions' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-changeactions' component should be registered after the 'sircl' component. Please review order of script files.");
 
 /**
  * Allow controls to be disabled during action call.
@@ -3163,17 +3163,19 @@ sircl._runChangeActionHandlers = function (phase, subject, req) {
 /**
  * Performs the call to the action url.
  */
-sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, value, event, onJson, onHtml, onFailure, onDone) {
+sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, value, checked, event, onJson, onHtml, onFailure, onDone) {
     // Ignore if change event is issued from a processing section:
     if ($(event.target).closest(".sircl-content-processing").length > 0) return;
     // Get method:
     var method = (($(triggerElement).closest("[method]").attr("method") || "get").toUpperCase() == "POST") ? "POST" : "GET";
+    // In url, substitute {rnd} by a random number:
+    url = url.replace("{rnd}", Math.random());
     // In url, substitute "[...]" by form values:
+    var fieldnames = [];
     if ($scope.hasClass("substitute-fields")) {
         var $formscope = $(triggerElement).closest("FORM");
         if ($formscope.length == 0) $formscope = $(document);
         var fieldparser = new RegExp(/(\[[a-z0-9\.\-\_]+?\])|(\%5B[a-z0-9\.\-\_]+?\%5D)/gi);
-        var fieldnames = [];
         do {
             var fieldname = fieldparser.exec(url);
             if (fieldname !== null) fieldnames.push(fieldname[0]);
@@ -3191,16 +3193,32 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
                 url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
         }
     }
-    // Build data:
+    // Retrieve name and values:
     if (value === null || value === undefined) value = [];
     if (!Array.isArray(value)) value = [value];
-    var data = "";
-    if (name != null && name.toLowerCase() != "name") {
-        data += "name=" + encodeURIComponent(name);
+    var fields = [];
+    var values = [];
+    if (name != null && name != "" && name.toLowerCase() != "name") {
+        fields.push("name");
+        values.push(encodeURIComponent(name));
     }
     for (var i = 0; i < value.length; i++) {
-        data += "&value=" + encodeURIComponent(value[i]);
-        if (name != null && name != "" && name.toLowerCase() != "value") data += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(value[i]);
+        fields.push("value");
+        values.push(encodeURIComponent(value[i]));
+        if (checked === null && name != null && name != "" && name.toLowerCase() != "value") {
+            fields.push(encodeURIComponent(name));
+            values.push(encodeURIComponent(value[i]));
+        }
+    }
+    if (checked != null && fieldnames.indexOf("checked") == -1) {
+        fields.push("checked");
+        values.push(checked);
+    }
+    // Build as data string:
+    var data = "";
+    for (var i = 0; i < fields.length; i++) {
+        if (i > 0) data += "&";
+        data += fields[i] + "=" + values[i];
     }
     // If GET, add data to url:
     if (method === "GET" && data.length > 0) {
@@ -3211,44 +3229,56 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     var cache = false;
     if ($(triggerElement).attr("browser-cache") != null) cache = ($(triggerElement).attr("browser-cache").toLowerCase() == "on");
     var req = { $trigger: $(triggerElement), $subjects: $subjects, $scope: $scope, event: event };
-    var jqxhr = $.ajax({
-        url: url,
-        method: method,
-        data: data,
-        cache: cache,
-        beforeSend: function (xhr, settings) {
-            req.xhr = xhr;
-            sircl._runChangeActionHandlers("beforeSend", triggerElement, req);
-        }
-    }).done(function (data, statusText, xhr) {
+    req.xhr = new XMLHttpRequest();
+    req.xhr.open(method, url);
+    if (method !== "GET") req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    if (cache == false) {
+        req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+        req.xhr.setRequestHeader("Pragma", "no-cache");
+    }
+    req.xhr.setRequestHeader("X-Sircl-Request-Type", "ChangeAction");
+    req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
+
+    var onLoad = function (e) {
+        req.loadEvent = e;
         if (req.xhr.status <= 299) {
             req.succeeded = true;
         } else {
             req.succeeded = false;
         }
-        req.data = data;
+        var contentType = req.xhr.getResponseHeader("Content-Type") || "";
+        if (contentType.indexOf("json") >= 0) {
+            req.data = JSON.parse(req.xhr.responseText);
+        } else if (contentType.indexOf("html") >= 0) {
+            req.data = req.xhr.responseText; 
+        } else {
+            req.data = null;
+        }
         sircl._runChangeActionHandlers("afterSend", triggerElement, req);
         sircl._runChangeActionHandlers("beforeRender", triggerElement, req);
         if (!req.succeeded) sircl._runChangeActionHandlers("onError", triggerElement, req);
         if (req.succeeded) {
-            if ((xhr.getResponseHeader("Content-Type") || "").indexOf("text/html") == 0) {
-                if (onHtml) onHtml.apply(triggerElement, [req]);
-            } else {
+            if (contentType.indexOf("json") >= 0) {
                 if (onJson) onJson.apply(triggerElement, [req]);
+            } else if (contentType.indexOf("html") >= 0) {
+                if (onHtml) onHtml.apply(triggerElement, [req]);
             }
         } else {
             if (onFailure) onFailure.apply(triggerElement);
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
         if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
-    }).fail(function (xhr, statusText, ex) {
+    };
+
+    var onError = function (e) {
+        req.loadEvent = e;
         req.succeeded = false;
         req.data = null;
         sircl._runChangeActionHandlers("afterSend", triggerElement, req);
         sircl._runChangeActionHandlers("beforeRender", triggerElement, req);
         if (!req.succeeded) sircl._runChangeActionHandlers("onError", triggerElement, req);
         if (req.succeeded) {
-            if ((xhr.getResponseHeader("Content-Type") || "").indexOf("text/html") == 0) {
+            if ((req.xhr.getResponseHeader("Content-Type") || "").indexOf("text/html") == 0) {
                 if (onHtml) onHtml.apply(triggerElement, [req]);
             } else {
                 if (onJson) onJson.apply(triggerElement, [req]);
@@ -3258,16 +3288,25 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
         if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
-    }).always(function () {
+    };
+
+    var onLoadEnd = function () {
         if (onDone) onDone.apply(triggerElement);
-    });
+    };
+
+    req.xhr.addEventListener("abort", onError);
+    req.xhr.addEventListener("error", onError);
+    req.xhr.addEventListener("load", onLoad);
+    req.xhr.addEventListener("loadend", onLoadEnd);
+    sircl._runChangeActionHandlers("beforeSend", triggerElement, req);
+    req.xhr.send(data);
 };
 
 $(function () {
     // On change of an ungrouped radio:
     $(document).on("change", "INPUT[type=radio][onchange-action]", function (event) {
         var $this = $(this);
-        sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.prop("checked"), event, function (req) {
+        sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.attr("value"), $this.prop("checked"), event, function (req) {
             this._previousActionValue = $this.prop("checked");
         }, function (req) {
                 sircl.ext.$select(req.$scope, req.$scope.attr("target")).html(req.data);
@@ -3280,7 +3319,7 @@ $(function () {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
         var $subjects = $scope.find("INPUT[type=radio][name='" + this.name + "']:not([onchange-action])");
-        sircl._actionCall(this, $subjects, $scope, $scope.attr("onchange-action"), this.name, jQuery.makeArray($subjects.filter(":checked")).map(function (elem) { return elem.value; }), event, function (req) {
+        sircl._actionCall(this, $subjects, $scope, $scope.attr("onchange-action"), this.name, jQuery.makeArray($subjects.filter(":checked")).map(function (elem) { return elem.value; }), null, event, function (req) {
             var newValue = req.data;
             if (Array.isArray(newValue) && newValue.length > 0) newValue = newValue[0];
             if (newValue === undefined) {
@@ -3306,7 +3345,7 @@ $(function () {
     // On change of an ungrouped checkbox:
     $(document).on("change", "INPUT[type=checkbox][onchange-action]", function (event) {
         var $this = $(this);
-        sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.prop("checked"), event, function (req) {
+        sircl._actionCall(this, $this, $this, $this.attr("onchange-action"), this.name, $this.attr("value"), $this.prop("checked"), event, function (req) {
             this._previousActionValue = $this.prop("checked");
         }, function (req) {
             sircl.ext.$select(req.$scope, req.$scope.attr("target")).html(req.data);
@@ -3319,7 +3358,7 @@ $(function () {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
         var $subjects = $scope.find("INPUT[type=checkbox][name='" + this.name + "']:not([onchange-action])");
-        sircl._actionCall(this, $subjects, $scope, $scope.attr("onchange-action"), this.name, jQuery.makeArray($scope.find("INPUT[type=checkbox][name='" + this.name + "']:checked:not([onchange-action])")).map(function (elem) { return elem.value; }), event, function (req) {
+        sircl._actionCall(this, $subjects, $scope, $scope.attr("onchange-action"), this.name, jQuery.makeArray($scope.find("INPUT[type=checkbox][name='" + this.name + "']:checked:not([onchange-action])")).map(function (elem) { return elem.value; }), null, event, function (req) {
             var newValue = req.data;
             if (typeof newValue === "string") newValue = [newValue];
             if (Array.isArray(newValue)) {
@@ -3338,10 +3377,10 @@ $(function () {
         });
     });
     // On change of other INPUT, TEXTAREA or SELECT:
-    $(document).on("change", "INPUT[onchange-action]:not([type=checkbox]):not([type=radio]), [onchange-action] INPUT:not([type=checkbox]):not([type=radio]):not([onchange-action]), SELECT[onchange-action], [onchange-action] SELECT:not([onchange-action]), TEXTAREA[onchange-action], [onchange-action] TEXTAREA:not([onchange-action])", function (event) {
+    $(document).on("change", "INPUT[onchange-action]:not([type=checkbox]):not([type=radio]):not([type=button]), [onchange-action] INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not([onchange-action]), SELECT[onchange-action], [onchange-action] SELECT:not([onchange-action]), TEXTAREA[onchange-action], [onchange-action] TEXTAREA:not([onchange-action])", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onchange-action]");
-        sircl._actionCall(this, $this, $scope, $scope.attr("onchange-action"), this.name, $this.val(), event, function (req) {
+        sircl._actionCall(this, $this, $scope, $scope.attr("onchange-action"), this.name, $this.val(), null, event, function (req) {
             var newValue = req.data;
             if (newValue) {
                 $this.val(newValue);
@@ -3355,10 +3394,10 @@ $(function () {
     });
 
     // On focus of textual INPUT or TEXTAREA:
-    $(document).on("focusin", "INPUT[onfocusin-action]:not([type=checkbox]):not([type=radio]), [onfocusin-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusin-action], [onfocusin-action] TEXTAREA:not([onfocusout-action])", function (event) {
+    $(document).on("focusin", "INPUT[onfocus-action]:not([type=checkbox]):not([type=radio]):not([type=button]), TEXTAREA[onfocus-action]", function (event) {
         var $this = $(this);
-        var $scope = $this.closest("[onfocusin-action]");
-        sircl._actionCall(this, $this, $scope, $scope.attr("onfocusin-action"), this.name, $this.val(), event, function (req) {
+        var $scope = $this.closest("[onfocus-action]");
+        sircl._actionCall(this, $this, $scope, $scope.attr("onfocus-action"), this.name, $this.val(), null, event, function (req) {
             var newValue = req.data;
             if (newValue) {
                 $this.val(newValue);
@@ -3368,10 +3407,10 @@ $(function () {
             sircl.ext.$select(req.$scope, req.$scope.attr("target")).html(req.data);
         });
     });
-    $(document).on("focusout", "INPUT[onfocusout-action]:not([type=checkbox]):not([type=radio]), [onfocusout-action] INPUT:not([type=checkbox]):not([type=radio]):not([onfocusout-action]), TEXTAREA[onfocusout-action], [onfocusout-action] TEXTAREA:not([onfocusout-action])", function (event) {
+    $(document).on("focusout", "INPUT[onfocusout-action]:not([type=checkbox]):not([type=radio]):not([type=button]), TEXTAREA[onfocusout-action]", function (event) {
         var $this = $(this);
         var $scope = $this.closest("[onfocusout-action]");
-        sircl._actionCall(this, $this, $scope, $scope.attr("onfocusout-action"), this.name, $this.val(), event, function (req) {
+        sircl._actionCall(this, $this, $scope, $scope.attr("onfocusout-action"), this.name, $this.val(), null, event, function (req) {
             var newValue = req.data;
             if (newValue) {
                 $this.val(newValue);
@@ -3455,7 +3494,7 @@ sircl.addChangeActionHandler("afterSend", function (req) {
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The file 'sircl-contextmenu' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-contextmenu' component should be registered after the 'sircl' component. Please review order of script files.");
 
 //#region Handling contextmenus
 

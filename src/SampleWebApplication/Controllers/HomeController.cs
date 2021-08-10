@@ -81,7 +81,7 @@ namespace SampleWebApplication.Controllers
 
         public IActionResult Action(string name, string[] value, bool fail = false, string newValue = null)
         {
-            System.Threading.Thread.Sleep(200);
+            System.Threading.Thread.Sleep(600);
 
             if (fail)
             {

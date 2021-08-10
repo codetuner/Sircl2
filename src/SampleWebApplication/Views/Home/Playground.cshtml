@@ -1,4 +1,65 @@
 ﻿<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+
+@*<style>
+    .action-pending {
+        border: solid 4px green;
+    }
+</style>*@
+<input type="hidden" name="CID" value="345" />
+<input type="text" class="substitute-fields" name="Name" onchange-action="/Query?Id=[CID]" target="#caout5" />
+<div id="caout5"></div>
+
+<hr />
+
+<input class="oninput-change" type="text" list="autoprod2" onchange-action="/Products/AutoComplete" browser-cache="on" target="#autoprod2" />
+<datalist id="autoprod2"></datalist>
+
+<hr />
+
+<select name="Visited" multiple onchange-action="/Query" target="#caout4">
+    <option>New York</option>
+    <option>London</option>
+    <option>Brussels</option>
+    <option>Bangkok</option>
+</select>
+<div id="caout4"></div>
+
+
+<hr />
+
+<input type="email" name="Email" onchange-action="/Query" target="#caout3" />
+<div id="caout3"></div>
+
+<hr />
+
+
+<fieldset onchange-action="/Query" target="#caout2">
+    <legend>Delivery mode</legend>
+    <input type="radio" name="Mode" value="LND" /> Over land </br/>
+    <input type="radio" name="Mode" value="SEA" /> Over sea </br/>
+    <input type="radio" name="Mode" value="AIR" /> In the air </br/>
+    <input type="checkbox" name="Options" value="Refr" /> Refrigerated </br/>
+    <input type="checkbox" name="Options" value="Expr" /> Express delivery
+</fieldset>
+
+<div id="caout2"></div>
+
+<hr />
+
+
+<label>
+    <input type="checkbox" onchange-action="/Query" target="#caout1" name="alfa" value="456" />
+    Subscribe to weekly newsletter
+</label>
+
+<div id="caout1"></div>
+
+
+<hr />
 
 <input id="val01" type="text" />
 <button type="button" onclick="alert(typeof sircl.ext.effectiveValue($('#val01')[0]))">typ</button>
@@ -432,7 +493,7 @@
 
 <p>Issue Edge: when selecting from autofill, posts form twice</p>
 <form default-submit-button="#btnOk" default-cancel-button="#btnCancel">
-    <input type="text" name="Name" value="" class="onchange-submit" autofocus id="fn61" onchange="console.log('\r\n\r\nField value changed: ' + $('#fn61').val())" />
+    <input type="text" name="Name" value="" class="onchange-submit" id="fn61" onchange="console.log('\r\n\r\nField value changed: ' + $('#fn61').val())" />
     <button id="btnOk" type="submit" name="Cmd" value="OK"> OK </button>
     <a id="btnCancel" href="history:back" onclick-confirm="Leave?"> Cancel </a>
 </form>
@@ -441,13 +502,13 @@
 
 
 <form default-submit-button="#btnOk" default-cancel-button="#btnCancel">
-    <input type="text" name="FirstName" autocomplete="given-name" id="fn62" onchange="console.log('FirstName changed: ' + $('#fn62').val())"  /><br />
-    <input type="text" name="LastName" autocomplete="family-name"  /><br />
-    <input type="text" name="Address" autocomplete="address-line1"  /><br />
-    <input type="text" name="ZIP" autocomplete="postal-code"  /><br />
-    <input type="text" name="Town" autocomplete="address-level2"  /><br />
-    <input type="text" name="Email" autocomplete="email"  /><br />
-    <input type="text" name="Code" autocomplete="one-time-code"  /><br />
+    <input type="text" name="FirstName" autocomplete="given-name" id="fn62" onchange="console.log('FirstName changed: ' + $('#fn62').val())" /><br />
+    <input type="text" name="LastName" autocomplete="family-name" /><br />
+    <input type="text" name="Address" autocomplete="address-line1" /><br />
+    <input type="text" name="ZIP" autocomplete="postal-code" /><br />
+    <input type="text" name="Town" autocomplete="address-level2" /><br />
+    <input type="text" name="Email" autocomplete="email" /><br />
+    <input type="text" name="Code" autocomplete="one-time-code" /><br />
     <button id="btnOk" type="submit" name="Cmd" value="OK"> OK </button>
     <a id="btnCancel" href="history:back" onclick-confirm="Leave?"> Cancel </a>
 </form>

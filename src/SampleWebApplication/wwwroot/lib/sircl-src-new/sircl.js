@@ -1447,9 +1447,9 @@ $(function () {
     /// <* onclick-closedialog="selector" >
     $(document).on("click", "[onclick-closedialog]", function (event) {
         var $dlg = sircl.ext.$select($(this), $(this).attr("onclick-closedialog"));
-        if ($dlg.length > 0) {
-            // Close dialog:
-            $dlg[0].close();
+        // Close all matching dialogs:
+        for (var i = 0; i < $dlg.length; i++) {
+            $dlg[i].close();
         }
     });
 
@@ -1560,10 +1560,10 @@ $$(function () {
         });
     });
 
-    $(this).find("DIALOG[open-after]").each(function () {
+    $(this).find("DIALOG[oninit-showafter]").each(function () {
         // Parse delay ("seconds" or "[hh:]mm:ss"):
         var delay = 0;
-        var delaypart = $(this).attr("open-after").split(":");
+        var delaypart = $(this).attr("oninit-showafter").split(":");
         for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
         // Set timer:
         setTimeout(function (dlg) {

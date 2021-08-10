@@ -74,7 +74,7 @@
     </div>
 </dialog>
 
-<dialog class="" open-after="00:10">
+<dialog class="" oninit-showafter="00:03">
     <div>
         <h5>Welcome Dialog</h5>
         <div>
@@ -348,15 +348,15 @@
                 <p>Textboxes:</p>
             </div>
         </div>
-        <div class="row" onfocusin-action="@Url.Action("Unformat", new {  })" onfocusout-action="@Url.Action("Format", new {  })">
+        <div class="row">
             <div class="col">
-                <input type="text" name="nameA" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new {  })" method="GET" />
-            </div>
-            <div class="col" onfocusin-action="@Url.Action("Unformat", new { fail = true })" onfocusout-action="@Url.Action("Format", new { fail = true })">
-                <input type="text" name="nameB" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" />
+                <input type="text" name="nameA" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new {  })" method="GET" onfocus-action="@Url.Action("Unformat", new {  })" onfocusout-action="@Url.Action("Format", new {  })" />
             </div>
             <div class="col">
-                <input type="text" name="nameC" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { newValue = DateTime.Now.Ticks.ToString("#,##0.00") })" method="GET" />
+                <input type="text" name="nameB" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { fail = true })" method="GET" onfocus-action="@Url.Action("Unformat", new { fail = false })" onfocusout-action="@Url.Action("Format", new { fail = false })" />
+            </div>
+            <div class="col">
+                <input type="text" name="nameC" value="@((123456.789).ToString("#,##0.00"))" onchange-action="@Url.Action("Action", new { newValue = DateTime.Now.Ticks.ToString("#,##0.00") })" method="GET" onfocus-action="@Url.Action("Unformat", new {  })" onfocusout-action="@Url.Action("Format", new {  })" />
             </div>
         </div>
         <div class="row">
