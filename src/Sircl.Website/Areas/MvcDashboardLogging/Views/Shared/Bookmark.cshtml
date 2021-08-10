@@ -1,0 +1,9 @@
+﻿@model Sircl.Website.Data.Logging.RequestLog
+@if (Model.IsBookmarked)
+{
+    <i class="fas fa-star" x-onclick-confirm="Remove bookmark ?" onclick-load="@Url.Action("RemoveBookmark", "Logs", new { id = Model.Id })" target=":parent"></i>
+}
+else
+{
+    <i class="far fa-star" x-onclick-confirm="Add bookmark ?" onclick-load="@Url.Action("AddBookmark", "Logs", new { id = Model.Id })" target=":parent"></i>
+}

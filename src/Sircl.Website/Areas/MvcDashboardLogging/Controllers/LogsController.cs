@@ -68,5 +68,25 @@ namespace Sircl.Website.Areas.MvcDashboardLogging.Controllers
         }
 
         #endregion
+
+        #region Bookmarking
+
+        public IActionResult AddBookmark(int id)
+        {
+            var log = context.RequestLogs.Find(id);
+            log.IsBookmarked = true;
+            context.SaveChanges();
+            return PartialView("Bookmark", log);
+        }
+
+        public IActionResult RemoveBookmark(int id)
+        {
+            var log = context.RequestLogs.Find(id);
+            log.IsBookmarked = false;
+            context.SaveChanges();
+            return PartialView("Bookmark", log);
+        }
+
+        #endregion
     }
 }

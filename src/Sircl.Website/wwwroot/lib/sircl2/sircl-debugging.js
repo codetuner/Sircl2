@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The file 'sircl-contextmenu' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-contextmenu' component should be registered after the 'sircl' component. Please review order of script files.");
 
 //#region Add tooltip on hyperlinks and forms displaying the URL
 

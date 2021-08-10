@@ -253,6 +253,8 @@ sircl.ext.$select = function ($context, selector$) {
                 // Ignore
             } else if (sel$ === ":this") {
                 $result = $result.add($context);
+            } else if (sel$ === ":parent") {
+                $result = $result.add($context).parent();
             } else if (sel$ === ":form") {
                 if ($context.hasAttr("form")) {
                     $result = $result.add($("#" + $context.attr("form")));
@@ -921,7 +923,7 @@ $(document).ready(function () {
                 }
             } else {
                 // Forward to the server side rendering handler:
-                sircl._loadUrl($(this), href, (target != null) ? $(target) : sircl.ext.$mainTarget());
+                sircl._loadUrl($(this), href, (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget());
             }
         }
         // If not returned earlier, stop event propagation:

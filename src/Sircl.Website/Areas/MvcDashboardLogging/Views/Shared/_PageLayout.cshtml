@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MvcDashboardContent - @(ViewBag.Title)</title>
+    <title>MvcDashboardLogging - @(ViewBag.Title)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <link rel="stylesheet" href="~/lib/sircl2/sircl.css" />
@@ -128,7 +128,7 @@
         <div class="container-fluid">
             <span>
                 <i class="whileloading-show fas fa-spinner fa-spin" style="color: limegreen; margin-right: 3px;"></i>
-                <a class="navbar-brand" asp-area="MvcDashboardContent" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand" asp-area="MvcDashboardLogging" asp-controller="Home" asp-action="Index">
                     <i class="whileloading-hide fas fa-tachometer-alt"></i>&nbsp;MvcDashboardLogging
                 </a>
                 <span class="btn-group" role="group" oninit-load="@Url.Action("MvcDashboardsDropdown", "Home")"></span>
