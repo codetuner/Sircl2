@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MvcDashboardContent - @(ViewBag.Title)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/sircl2/sircl.css" />
+    <link rel="stylesheet" href="~/lib/sircl2/sircl-contextmenu.css" />
+    <style>
+
+        BODY {
+            background-color: #f8f8f0;
+        }
+
+        .card {
+            background-color: #fafaf8;
+        }
+
+        #body-content {
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            padding-top: 38px;
+            padding-bottom: 28px;
+        }
+
+        h2 {
+            padding-top: 36px;
+            padding-bottom: 24px;
+        }
+
+        .auto-width {
+            width: auto;
+        }
+
+        .pagination .page-item {
+            min-width: 48px;
+            text-align: right;
+        }
+
+            .pagination .page-item input[type=radio] {
+                display: none;
+            }
+
+        .overlay {
+            background: rgba(0,0,0,0.33);
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: .25rem;
+        }
+
+        .validation-summary-valid {
+            display: none;
+        }
+
+        BODY .whileloading-show {
+            display: none;
+        }
+
+        BODY .whileloading-hide {
+            display: inline-block; /* See https://stackoverflow.com/a/17403359 */
+        }
+
+        BODY.body-loading .whileloading-show {
+            display: inline-block; /* See https://stackoverflow.com/a/17403359 */
+        }
+
+        BODY.body-loading .whileloading-hide {
+            display: none;
+        }
+
+        .navbar .active {
+            background-color: dimgray;
+        }
+
+        .state-published {
+            font-weight: bold;
+        }
+
+        .state-deleted {
+            text-decoration: line-through;
+        }
+
+/*        td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }*/
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="~/lib/sircl2/sircl.js"></script>
+    <script src="~/lib/sircl2/sircl-extended.js"></script>
+    <script src="~/lib/sircl2/sircl-changeactions.js"></script>
+    <script src="~/lib/sircl2/sircl-contextmenu.js"></script>
+    <script src="~/lib/sircl2/sircl-bootstrap5.js"></script>
+    @*<script src="~/lib/sircl2/sircl-debugging.js"></script>*@
+    <script type="text/javascript">
+
+        var appId = "MvcDashboardLogging";
+
+        sircl.mainTargetSelector$ = "#body-content";
+               
+        sircl.addRequestHandler("onError", function (req) {
+            if (req.method == "get") {
+                location.href = req.action;
+            } else {
+                alert("An error occured with the request.");
+                this.next(req);
+            }
+        });
+
+    </script>
+    @RenderSection("Scripts", required: false)
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span>
+                <i class="whileloading-show fas fa-spinner fa-spin" style="color: limegreen; margin-right: 3px;"></i>
+                <a class="navbar-brand" asp-area="MvcDashboardContent" asp-controller="Home" asp-action="Index">
+                    <i class="whileloading-hide fas fa-tachometer-alt"></i>&nbsp;MvcDashboardLogging
+                </a>
+                <span class="btn-group" role="group" oninit-load="@Url.Action("MvcDashboardsDropdown", "Home")"></span>
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarMainContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navBarMainContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" ifroute-setactive="\/Logs(\/|$)">
+                        <a class="nav-link" asp-area="MvcDashboardLogging" asp-controller="Logs" asp-action="Index"><i class="fas fa-bug"></i> Logs</a>
+                    </li>
+                </ul>
+                <form class="d-flex" action="/MvcDashboardLogging/Logs" method="get">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="Query">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" target="_self"><i class="fas fa-sign-out-alt"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+
+        <div id="body-content">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <p></p>
+
+</body>
+</html>
+

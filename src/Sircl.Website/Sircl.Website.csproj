@@ -28,9 +28,6 @@
     <Folder Include="Areas\MvcDashboardContent\Views\PropertyType\" />
     <Folder Include="Areas\MvcDashboardContent\Views\Property\" />
     <Folder Include="Areas\MvcDashboardLocalize\Data\" />
-    <Folder Include="Areas\MvcDashboardLogging\Controllers\" />
-    <Folder Include="Areas\MvcDashboardLogging\Models\" />
-    <Folder Include="Areas\MvcDashboardLogging\Views\" />
   </ItemGroup>
 
   <ItemGroup>
