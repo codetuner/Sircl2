@@ -27,7 +27,7 @@ namespace Sircl.Website.Data.Logging.Migrations
                     Method = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Url = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     StatusCode = table.Column<int>(type: "int", nullable: false),
-                    User = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    User = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     Details = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Request = table.Column<string>(type: "nvarchar(max)", nullable: true),

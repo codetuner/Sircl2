@@ -94,7 +94,7 @@ namespace Sircl.Website.Data.Logging
         /// <summary>
         /// User issuing the request.
         /// </summary>
-        [Required, MaxLength(2000)]
+        [MaxLength(2000)]
         public virtual string User { get; set; }
 
         /// <summary>
