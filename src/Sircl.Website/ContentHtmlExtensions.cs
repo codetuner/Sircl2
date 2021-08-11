@@ -19,8 +19,8 @@ namespace Sircl.Website
         public static IHtmlContent Content(this IHtmlHelper<ContentModel> htmlHelper, string propertyName, object additionalViewData = null)
         {
             var property = htmlHelper.ViewData.Model.Document[propertyName];
-            if (property != null)
-            { 
+            if (property != null && property.Type.DataType != null)
+            {
                 return htmlHelper.DisplayFor(m => m.Document[propertyName].Value, property.Type.DataType.Template, additionalViewData);
             }
             else

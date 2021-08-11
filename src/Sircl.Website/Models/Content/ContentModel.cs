@@ -20,5 +20,21 @@ namespace Sircl.Website.Models.Content
         /// Direct children (according to path) of the document rendering content for.
         /// </summary>
         public List<Document> Children { get; internal set; }
+
+        /// <summary>
+        /// All ancesters (according to path) up to the root of the document rendering content for.
+        /// </summary>
+        public List<Document> Ancestors { get; internal set; }
+
+        /// <summary>
+        /// Direct parents (according to path) of the document rendering content for.
+        /// </summary>
+        public IEnumerable<Document> Parents
+        {
+            get
+            {
+                return this.Ancestors.Where(a => a.PathSegmentsCount == this.Document.PathSegmentsCount - 1);
+            }
+        }
     }
 }

@@ -70,15 +70,22 @@ namespace Sircl.Website.Controllers
             }
             else
             {
-                // Retrieve children of document;
+                // Retrieve published ancestors and children of document;
                 if (model.Document.PathSegmentsCount.HasValue)
                 {
-                    var childPathSegmentsCount = model.Document.PathSegmentsCount - 1;
+                    var childPathSegmentsCount = model.Document.PathSegmentsCount + 1;
                     model.Children = await context.ContentDocuments
                         .Include(d => d.Type)
                         .Include(d => d.Properties).ThenInclude(p => p.Type).ThenInclude(t => t.DataType)
                         .Where(d => d.Path.StartsWith(path) && d.PathSegmentsCount == childPathSegmentsCount && d.PublishedOnUtc <= DateTime.UtcNow && d.DeletedOnUtc == null)
                         .Where(d => d.Culture == model.Document.Culture)
+                        .OrderBy(d => d.SortKey).ThenBy(d => d.Name)
+                        .ToListAsync();
+
+                    model.Ancestors = await context.ContentDocuments
+                        .Include(d => d.Type)
+                        .Include(d => d.Properties).ThenInclude(p => p.Type).ThenInclude(t => t.DataType)
+                        .Where(d => path.StartsWith(d.Path) && d.PublishedOnUtc <= DateTime.UtcNow && d.DeletedOnUtc == null)
                         .OrderBy(d => d.SortKey).ThenBy(d => d.Name)
                         .ToListAsync();
                 }
