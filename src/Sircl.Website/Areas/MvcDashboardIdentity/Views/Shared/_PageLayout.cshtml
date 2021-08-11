@@ -148,6 +148,19 @@
 
     <div class="container-fluid">
 
+        @if (typeof(Sircl.Website.Areas.MvcDashboardIdentity.Controllers.BaseController).GetCustomAttributes(typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute), true).Length == 0)
+        {
+            <div class="card text-white bg-danger m-3">
+                <div class="card-header">Security Warning</div>
+                <div class="card-body">
+                    <h5 class="card-title">Your Identity Dashboard is unsecured</h5>
+                    <div class="card-text">
+
+                        <p>Uncomment the <code style="color: aqua;">[Authorize(Roles = "Administrator,IdentityAdministrator")]</code> attribute on the BaseController class of the Identity Dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        }
         <div id="body-content">
             @RenderBody()
         </div>
