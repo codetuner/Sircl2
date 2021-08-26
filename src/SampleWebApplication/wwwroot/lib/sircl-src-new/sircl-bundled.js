@@ -644,8 +644,8 @@ SirclRequestProcessor.prototype._send = function (req) {
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Load");
         // Execute additional reload requests:
         if (reloadSection != null) {
-            $(reloadSection).filter("[oninit-load]").each(function () {
-                $(this).load($(this).attr("oninit-load"));
+            $(reloadSection).filter("[onload-load]").each(function () {
+                $(this).load($(this).attr("onload-load"));
             });
         }
         // Check for abort reload:
@@ -1074,9 +1074,9 @@ sircl._afterLoad = function (scope) {
 //#region Default Content Ready handlers
 
 $$("content", function () {
-    /// <* oninit-moveto="selector"> Moves the content to the given selector.
-    $(this).find("*[oninit-moveto]").each(function () {
-        $($(this).attr("oninit-moveto")).html($(this).html());
+    /// <* onload-moveto="selector"> Moves the content to the given selector.
+    $(this).find("*[onload-moveto]").each(function () {
+        $($(this).attr("onload-moveto")).html($(this).html());
         $(this).html("");
     });
 });
@@ -1459,8 +1459,8 @@ $(function () {
 
 sircl.addRequestHandler("beforeSend", function (req) {
     var processor = this;
-    // Open any non-open dialog holding the initial target and having class "onload-showdialog":
-    req._dialogOpened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
+    // Open any non-open dialog holding the initial target and having class "beforeload-showdialog":
+    req._dialogOpened = req.$initialTarget.closest("DIALOG.beforeload-showdialog:not([open])");
     if (req._dialogOpened.length > 0) {
         // If initial dialog is exclusive, close all other open dialogs:
         if (req._dialogOpened.is(".dialog-exclusive")) {
@@ -1562,10 +1562,10 @@ $$(function () {
         });
     });
 
-    $(this).find("DIALOG[oninit-showafter]").each(function () {
+    $(this).find("DIALOG[onload-showdialogafter]").each(function () {
         // Parse delay ("seconds" or "[hh:]mm:ss"):
         var delay = 0;
-        var delaypart = $(this).attr("oninit-showafter").split(":");
+        var delaypart = $(this).attr("onload-showdialogafter").split(":");
         for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
         // Set timer:
         setTimeout(function (dlg) {
@@ -1682,22 +1682,22 @@ $(function () {
 // Init event-action:
 /////////////////////
 
-sircl.addAttributeAlias(".oninit-click", "oninit-click", ":this");
+sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
 
 $$(function () {
 
-    /// <* oninit-click="selector"> On init, triggers a click event on the selector matches.
-    $(this).find("[oninit-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("oninit-show"))[0].click(); // See: http://goo.gl/lGftqn
+    /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
+    $(this).find("[onload-click]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
     });
 
-    /// <* oninit-load="url" [oninit-reloadafter="seconds"]> Loads the given URL.
-    /// Optionally, a "[oninit-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
+    /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
+    /// Optionally, a "[onload-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
     /// The url can contain a "{rnd}" literal that will then be replaced by a random number to force reloading.
-    /// I.e: <div oninit-load="/Home/News/?x={rnd}" oninit-reloadafter="10"></div>
-    $(this).find("[oninit-load]").each(function () {
-        var url = $(this).attr("oninit-load") + "";
-        var loadRefresh = $(this).attr("oninit-reloadafter");
+    /// I.e: <div onload-load="/Home/News/?x={rnd}" onload-reloadafter="10"></div>
+    $(this).find("[onload-load]").each(function () {
+        var url = $(this).attr("onload-load") + "";
+        var loadRefresh = $(this).attr("onload-reloadafter");
         $(this).load(url.replace("{rnd}", Math.random()));
         if (loadRefresh) {
             // Parse delay ("seconds" or "[hh:]mm:ss"):
@@ -1707,14 +1707,14 @@ $$(function () {
             // Set timer:
             $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, delay * 1000, $(this));
         } else {
-            //$(this).removeAttr("oninit-load"); Do not remove otherwise oninit-reload does not work...
+            //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
         }
     });
 
-    /// <* oninit-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [oninit-load] attribute).
-    $(this).find("[oninit-reload]").each(function () {
-        $($(this).attr("oninit-reload")).filter("[oninit-load]").each(function () {
-            var url = $(this).attr("oninit-load") + "";
+    /// <* onload-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [onload-load] attribute).
+    $(this).find("[onload-reload]").each(function () {
+        $($(this).attr("onload-reload")).filter("[onload-load]").each(function () {
+            var url = $(this).attr("onload-load") + "";
             $(this).load(url.replace("{rnd}", Math.random()));
         });
     });
@@ -1799,29 +1799,29 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component s
 /// Load event-actions:
 ///////////////////////
 
-sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
-sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
+sircl.addAttributeAlias(".beforeload-show", "beforeload-show", ":this");
+sircl.addAttributeAlias(".beforeload-hide", "beforeload-hide", ":this");
 
 sircl.addRequestHandler("beforeSend", function (req) {
 
-    req.$initialTarget.find("[onload-hide]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), false);
+    req.$initialTarget.find("[beforeload-hide]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-hide")), false);
     });
 
-    req.$initialTarget.find("[onload-show]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), true);
+    req.$initialTarget.find("[beforeload-show]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-show")), true);
     });
 
-    req.$initialTarget.find("[onload-removeclass]").each(function () {
-        sircl.ext.removeClass($(this), $(this).attr("onload-removeclass"));
+    req.$initialTarget.find("[beforeload-removeclass]").each(function () {
+        sircl.ext.removeClass($(this), $(this).attr("beforeload-removeclass"));
     });
 
-    req.$initialTarget.find("[onload-addclass]").each(function () {
-        sircl.ext.addClass($(this), $(this).attr("onload-addclass"));
+    req.$initialTarget.find("[beforeload-addclass]").each(function () {
+        sircl.ext.addClass($(this), $(this).attr("beforeload-addclass"));
     });
 
-    req.$initialTarget.find("[onload-toggleclass]").each(function () {
-        sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
+    req.$initialTarget.find("[beforeload-toggleclass]").each(function () {
+        sircl.ext.toggleClass($(this), $(this).attr("beforeload-toggleclass"));
     });
 
     // Move to next handler:
@@ -1831,56 +1831,56 @@ sircl.addRequestHandler("beforeSend", function (req) {
 /// Init event-actions:
 ///////////////////////
 
-sircl.addAttributeAlias(".oninit-show", "oninit-show", ":this");
-sircl.addAttributeAlias(".oninit-hide", "oninit-hide", ":this");
+sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
+sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
 
 $$("enrich", function () {
-    $(this).find(".oninit-setvaluefromquery").each(function () {
-        $(this).attr("oninit-setvaluefromquery", this.name);
+    $(this).find(".onload-setvaluefromquery").each(function () {
+        $(this).attr("onload-setvaluefromquery", this.name);
     });
 });
 
 $$(function () {
 
-    /// <* oninit-hide="selector"> Will make that element invisible on init.
-    $(this).find("[oninit-hide]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("oninit-hide")), false);
+    /// <* onload-hide="selector"> Will make that element invisible on init.
+    $(this).find("[onload-hide]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-hide")), false);
     });
 
-    /// <* oninit-show="selector"> Will make that element visible on init.
-    $(this).find("[oninit-show]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("oninit-show")), true);
+    /// <* onload-show="selector"> Will make that element visible on init.
+    $(this).find("[onload-show]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), true);
     });
 
-    /// <* oninit-removeclass="classname [on selector]"> When initializing, removes the class to self or the given selector.
-    $(this).find("[oninit-removeclass]").each(function () {
-        sircl.ext.removeClass($(this), $(this).attr("oninit-removeclass"));
+    /// <* onload-removeclass="classname [on selector]"> When initializing, removes the class to self or the given selector.
+    $(this).find("[onload-removeclass]").each(function () {
+        sircl.ext.removeClass($(this), $(this).attr("onload-removeclass"));
     });
 
-    /// <* oninit-addclass="classname [on selector]"> When initializing, adds the class to self or the given selector.
-    $(this).find("[oninit-addclass]").each(function () {
-        sircl.ext.addClass($(this), $(this).attr("oninit-addclass"));
+    /// <* onload-addclass="classname [on selector]"> When initializing, adds the class to self or the given selector.
+    $(this).find("[onload-addclass]").each(function () {
+        sircl.ext.addClass($(this), $(this).attr("onload-addclass"));
     });
 
-    /// <* oninit-toggleclass="classname [on selector]"> When initializing, toggles the class to self or the given selector.
-    $(this).find("[oninit-toggleclass]").each(function () {
-        sircl.ext.toggleClass($(this), $(this).attr("oninit-toggleclass"));
+    /// <* onload-toggleclass="classname [on selector]"> When initializing, toggles the class to self or the given selector.
+    $(this).find("[onload-toggleclass]").each(function () {
+        sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
     });
 
-    /// <input oninit-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
-    $(this).find("[oninit-setvaluefromquery]").each(function () {
-        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("oninit-setvaluefromquery")));
+    /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
+    $(this).find("[onload-setvaluefromquery]").each(function () {
+        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
         $(this).change();
     });
 
-    /// <SELECT oninit-defaultselect="value"> When initializing, will automatically select the corresponding item if the select had an empty value.
-    /// The value of the oninit-defaultselect attribute is either:
+    /// <SELECT onload-defaultselect="value"> When initializing, will automatically select the corresponding item if the select had an empty value.
+    /// The value of the onload-defaultselect attribute is either:
     /// - ":singleton" to select the only element with a non-empty value, if there is only one;
     /// - ":first" to select the first non-empty value;
     /// - any other value, to select the item with that value.
-    $(this).find("SELECT[oninit-defaultselect]").each(function () {
+    $(this).find("SELECT[onload-defaultselect]").each(function () {
         if ($(this).val() != "") return; // Select already has a value.
-        var value = $(this).attr("oninit-defaultselect") + "";
+        var value = $(this).attr("onload-defaultselect") + "";
         var options = $("option", this);
         if (value.toLowerCase() == ":singleton") {
             var singleton = -1;
@@ -2615,6 +2615,13 @@ $$(function () {
 //////////////////
 
 $$(function () {
+
+    /// <* hide-ifexists="selection"> If the selection has matches, hide this element, else show it.
+    $(this).find("[hide-ifexists]").each(function () {
+        var $this = $(this);
+        var exists = sircl.ext.$select($this, $this.attr("hide-ifexists")).length > 0;
+        sircl.ext.visible(this, !exists);
+    });
 
     /// <* show-ifexists="selection"> If the selection has matches, show this element, else hide it.
     $(this).find("[show-ifexists]").each(function () {

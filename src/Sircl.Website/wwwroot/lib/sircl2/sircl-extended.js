@@ -13,29 +13,29 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component s
 /// Load event-actions:
 ///////////////////////
 
-sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
-sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
+sircl.addAttributeAlias(".beforeload-show", "beforeload-show", ":this");
+sircl.addAttributeAlias(".beforeload-hide", "beforeload-hide", ":this");
 
 sircl.addRequestHandler("beforeSend", function (req) {
 
-    req.$initialTarget.find("[onload-hide]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), false);
+    req.$initialTarget.find("[beforeload-hide]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-hide")), false);
     });
 
-    req.$initialTarget.find("[onload-show]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), true);
+    req.$initialTarget.find("[beforeload-show]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-show")), true);
     });
 
-    req.$initialTarget.find("[onload-removeclass]").each(function () {
-        sircl.ext.removeClass($(this), $(this).attr("onload-removeclass"));
+    req.$initialTarget.find("[beforeload-removeclass]").each(function () {
+        sircl.ext.removeClass($(this), $(this).attr("beforeload-removeclass"));
     });
 
-    req.$initialTarget.find("[onload-addclass]").each(function () {
-        sircl.ext.addClass($(this), $(this).attr("onload-addclass"));
+    req.$initialTarget.find("[beforeload-addclass]").each(function () {
+        sircl.ext.addClass($(this), $(this).attr("beforeload-addclass"));
     });
 
-    req.$initialTarget.find("[onload-toggleclass]").each(function () {
-        sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
+    req.$initialTarget.find("[beforeload-toggleclass]").each(function () {
+        sircl.ext.toggleClass($(this), $(this).attr("beforeload-toggleclass"));
     });
 
     // Move to next handler:
@@ -45,56 +45,56 @@ sircl.addRequestHandler("beforeSend", function (req) {
 /// Init event-actions:
 ///////////////////////
 
-sircl.addAttributeAlias(".oninit-show", "oninit-show", ":this");
-sircl.addAttributeAlias(".oninit-hide", "oninit-hide", ":this");
+sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
+sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
 
 $$("enrich", function () {
-    $(this).find(".oninit-setvaluefromquery").each(function () {
-        $(this).attr("oninit-setvaluefromquery", this.name);
+    $(this).find(".onload-setvaluefromquery").each(function () {
+        $(this).attr("onload-setvaluefromquery", this.name);
     });
 });
 
 $$(function () {
 
-    /// <* oninit-hide="selector"> Will make that element invisible on init.
-    $(this).find("[oninit-hide]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("oninit-hide")), false);
+    /// <* onload-hide="selector"> Will make that element invisible on init.
+    $(this).find("[onload-hide]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-hide")), false);
     });
 
-    /// <* oninit-show="selector"> Will make that element visible on init.
-    $(this).find("[oninit-show]").each(function () {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("oninit-show")), true);
+    /// <* onload-show="selector"> Will make that element visible on init.
+    $(this).find("[onload-show]").each(function () {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onload-show")), true);
     });
 
-    /// <* oninit-removeclass="classname [on selector]"> When initializing, removes the class to self or the given selector.
-    $(this).find("[oninit-removeclass]").each(function () {
-        sircl.ext.removeClass($(this), $(this).attr("oninit-removeclass"));
+    /// <* onload-removeclass="classname [on selector]"> When initializing, removes the class to self or the given selector.
+    $(this).find("[onload-removeclass]").each(function () {
+        sircl.ext.removeClass($(this), $(this).attr("onload-removeclass"));
     });
 
-    /// <* oninit-addclass="classname [on selector]"> When initializing, adds the class to self or the given selector.
-    $(this).find("[oninit-addclass]").each(function () {
-        sircl.ext.addClass($(this), $(this).attr("oninit-addclass"));
+    /// <* onload-addclass="classname [on selector]"> When initializing, adds the class to self or the given selector.
+    $(this).find("[onload-addclass]").each(function () {
+        sircl.ext.addClass($(this), $(this).attr("onload-addclass"));
     });
 
-    /// <* oninit-toggleclass="classname [on selector]"> When initializing, toggles the class to self or the given selector.
-    $(this).find("[oninit-toggleclass]").each(function () {
-        sircl.ext.toggleClass($(this), $(this).attr("oninit-toggleclass"));
+    /// <* onload-toggleclass="classname [on selector]"> When initializing, toggles the class to self or the given selector.
+    $(this).find("[onload-toggleclass]").each(function () {
+        sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
     });
 
-    /// <input oninit-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
-    $(this).find("[oninit-setvaluefromquery]").each(function () {
-        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("oninit-setvaluefromquery")));
+    /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
+    $(this).find("[onload-setvaluefromquery]").each(function () {
+        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
         $(this).change();
     });
 
-    /// <SELECT oninit-defaultselect="value"> When initializing, will automatically select the corresponding item if the select had an empty value.
-    /// The value of the oninit-defaultselect attribute is either:
+    /// <SELECT onload-defaultselect="value"> When initializing, will automatically select the corresponding item if the select had an empty value.
+    /// The value of the onload-defaultselect attribute is either:
     /// - ":singleton" to select the only element with a non-empty value, if there is only one;
     /// - ":first" to select the first non-empty value;
     /// - any other value, to select the item with that value.
-    $(this).find("SELECT[oninit-defaultselect]").each(function () {
+    $(this).find("SELECT[onload-defaultselect]").each(function () {
         if ($(this).val() != "") return; // Select already has a value.
-        var value = $(this).attr("oninit-defaultselect") + "";
+        var value = $(this).attr("onload-defaultselect") + "";
         var options = $("option", this);
         if (value.toLowerCase() == ":singleton") {
             var singleton = -1;
@@ -829,6 +829,13 @@ $$(function () {
 //////////////////
 
 $$(function () {
+
+    /// <* hide-ifexists="selection"> If the selection has matches, hide this element, else show it.
+    $(this).find("[hide-ifexists]").each(function () {
+        var $this = $(this);
+        var exists = sircl.ext.$select($this, $this.attr("hide-ifexists")).length > 0;
+        sircl.ext.visible(this, !exists);
+    });
 
     /// <* show-ifexists="selection"> If the selection has matches, show this element, else hide it.
     $(this).find("[show-ifexists]").each(function () {

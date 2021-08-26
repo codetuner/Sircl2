@@ -644,8 +644,8 @@ SirclRequestProcessor.prototype._send = function (req) {
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Load");
         // Execute additional reload requests:
         if (reloadSection != null) {
-            $(reloadSection).filter("[oninit-load]").each(function () {
-                $(this).load($(this).attr("oninit-load"));
+            $(reloadSection).filter("[onload-load]").each(function () {
+                $(this).load($(this).attr("onload-load"));
             });
         }
         // Check for abort reload:
@@ -1074,9 +1074,9 @@ sircl._afterLoad = function (scope) {
 //#region Default Content Ready handlers
 
 $$("content", function () {
-    /// <* oninit-moveto="selector"> Moves the content to the given selector.
-    $(this).find("*[oninit-moveto]").each(function () {
-        $($(this).attr("oninit-moveto")).html($(this).html());
+    /// <* onload-moveto="selector"> Moves the content to the given selector.
+    $(this).find("*[onload-moveto]").each(function () {
+        $($(this).attr("onload-moveto")).html($(this).html());
         $(this).html("");
     });
 });
@@ -1459,8 +1459,8 @@ $(function () {
 
 sircl.addRequestHandler("beforeSend", function (req) {
     var processor = this;
-    // Open any non-open dialog holding the initial target and having class "onload-showdialog":
-    req._dialogOpened = req.$initialTarget.closest("DIALOG.onload-showdialog:not([open])");
+    // Open any non-open dialog holding the initial target and having class "beforeload-showdialog":
+    req._dialogOpened = req.$initialTarget.closest("DIALOG.beforeload-showdialog:not([open])");
     if (req._dialogOpened.length > 0) {
         // If initial dialog is exclusive, close all other open dialogs:
         if (req._dialogOpened.is(".dialog-exclusive")) {
@@ -1562,10 +1562,10 @@ $$(function () {
         });
     });
 
-    $(this).find("DIALOG[oninit-showafter]").each(function () {
+    $(this).find("DIALOG[onload-showdialogafter]").each(function () {
         // Parse delay ("seconds" or "[hh:]mm:ss"):
         var delay = 0;
-        var delaypart = $(this).attr("oninit-showafter").split(":");
+        var delaypart = $(this).attr("onload-showdialogafter").split(":");
         for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
         // Set timer:
         setTimeout(function (dlg) {
@@ -1682,22 +1682,22 @@ $(function () {
 // Init event-action:
 /////////////////////
 
-sircl.addAttributeAlias(".oninit-click", "oninit-click", ":this");
+sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
 
 $$(function () {
 
-    /// <* oninit-click="selector"> On init, triggers a click event on the selector matches.
-    $(this).find("[oninit-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("oninit-show"))[0].click(); // See: http://goo.gl/lGftqn
+    /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
+    $(this).find("[onload-click]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
     });
 
-    /// <* oninit-load="url" [oninit-reloadafter="seconds"]> Loads the given URL.
-    /// Optionally, a "[oninit-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
+    /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
+    /// Optionally, a "[onload-reloadafter]" indicates the time (in seconds) after which to continuously refresh the content.
     /// The url can contain a "{rnd}" literal that will then be replaced by a random number to force reloading.
-    /// I.e: <div oninit-load="/Home/News/?x={rnd}" oninit-reloadafter="10"></div>
-    $(this).find("[oninit-load]").each(function () {
-        var url = $(this).attr("oninit-load") + "";
-        var loadRefresh = $(this).attr("oninit-reloadafter");
+    /// I.e: <div onload-load="/Home/News/?x={rnd}" onload-reloadafter="10"></div>
+    $(this).find("[onload-load]").each(function () {
+        var url = $(this).attr("onload-load") + "";
+        var loadRefresh = $(this).attr("onload-reloadafter");
         $(this).load(url.replace("{rnd}", Math.random()));
         if (loadRefresh) {
             // Parse delay ("seconds" or "[hh:]mm:ss"):
@@ -1707,14 +1707,14 @@ $$(function () {
             // Set timer:
             $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, delay * 1000, $(this));
         } else {
-            //$(this).removeAttr("oninit-load"); Do not remove otherwise oninit-reload does not work...
+            //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
         }
     });
 
-    /// <* oninit-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [oninit-load] attribute).
-    $(this).find("[oninit-reload]").each(function () {
-        $($(this).attr("oninit-reload")).filter("[oninit-load]").each(function () {
-            var url = $(this).attr("oninit-load") + "";
+    /// <* onload-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [onload-load] attribute).
+    $(this).find("[onload-reload]").each(function () {
+        $($(this).attr("onload-reload")).filter("[onload-load]").each(function () {
+            var url = $(this).attr("onload-load") + "";
             $(this).load(url.replace("{rnd}", Math.random()));
         });
     });

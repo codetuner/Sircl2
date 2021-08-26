@@ -18,12 +18,12 @@ if ($.isFunction($.fn.fadeIn)) {
         this.next(req);
     });
 
-    // .oninit-showtoastr shows toasts based on following definition:
-    // <div class="oninit-showtoastr" hidden data-toastr-type="info" data-toastr-title="Welcome!">
+    // .onload-showtoastr shows toasts based on following definition:
+    // <div class="onload-showtoastr" hidden data-toastr-type="info" data-toastr-title="Welcome!">
     //   You are on the <b>Products</b> page.
     // </div>
     $$(function () {
-        $(this).find(".oninit-showtoastr").each(function () {
+        $(this).find(".onload-showtoastr").each(function () {
             var toastrType = $(this).data("toastr-type") || "info";
             var toastrArgs = [$(this).html()];
             if ($(this).data("toastr-title") != null) toastrArgs.push($(this).data("toastr-title"));

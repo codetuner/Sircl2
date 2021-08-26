@@ -50,7 +50,7 @@
 </dialog>
 
 
-<dialog class="onload-showdialog dialog-modal dialog-exclusive">
+<dialog class="beforeload-showdialog dialog-modal dialog-exclusive">
     <div>
         <h5>Dialog 3</h5>
         <div id="dlg3">
@@ -61,7 +61,7 @@
     </div>
 </dialog>
 
-<dialog class="onload-showdialog onclose-restore dialog-modal dialog-exclusive dialog-nocancel" id="rd889">
+<dialog class="beforeload-showdialog onclose-restore dialog-modal dialog-exclusive dialog-nocancel" id="rd889">
     <div>
         <h5>RED DIALOG</h5>
         <div id="reddialog" @*download-progress="progress"*@>
@@ -74,7 +74,7 @@
     </div>
 </dialog>
 
-<dialog class="" oninit-showafter="00:03">
+<dialog class="" onload-showdialogafter="00:03">
     <div>
         <h5>Welcome Dialog</h5>
         <div>
@@ -128,7 +128,7 @@
     </div>
 </div>
 
-<div class="modal onload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
+<div class="modal beforeload-showmodal fade" data-backdrop="false" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -148,7 +148,7 @@
     </div>
 </div>
 
-<div class="modal onload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
+<div class="modal beforeload-showmodal onclose-restore fade" data-backdrop="static" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -258,7 +258,7 @@
                     </p>
 
                     <p>
-                        <button id="x5" class="btn btn-primary" onload-toggleclass="btn-primary, btn-dark, alert alert-primary on < p">No formaction</button>
+                        <button id="x5" class="btn btn-primary" beforeload-toggleclass="btn-primary, btn-dark, alert alert-primary on < p">No formaction</button>
                     </p>
 
                     <p>
@@ -826,7 +826,7 @@
                 <label><input type="checkbox" class="ifvalueselcountry3isBE-uncheck" checked /> Uncheck if BE</label>
             </div>
             <div class="col">
-                <select name="selcountry4" class="ifvalue-events" oninit-defaultselect="BE">
+                <select name="selcountry4" class="ifvalue-events" onload-defaultselect="BE">
                     <option value="">-</option>
                     <option value="BE">Belgium</option>
                     <option value="FR">France</option>

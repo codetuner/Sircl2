@@ -55,8 +55,8 @@ sircl.addRequestHandler("beforeSend", function (req) {
 
 sircl.addRequestHandler("beforeSend", function (req) {
     var processor = this;
-    // Close any opened modal that is not the target if target has onload-showmodal class and is not open:
-    var $openedTarget = req.$initialTarget.closest(".modal:not(.onload-showmodal):not(.show)");
+    // Close any opened modal that is not the target if target has beforeload-showmodal class and is not open:
+    var $openedTarget = req.$initialTarget.closest(".modal:not(.beforeload-showmodal):not(.show)");
     var $openModals = $(".modal.show");
     if (req.isForeground == true && $openModals.length > 0 && $openedTarget.length == 0) {
         if (!$.contains($openModals[0], req.$initialTarget[0]) && !$openModals.is(req.$initialTarget)) {
@@ -78,8 +78,8 @@ sircl.addRequestHandler("beforeSend", function (req) {
 
 sircl.addRequestHandler("beforeSend", function (req) {
     var processor = this;
-    // Open any non-open modal holding the initial target and having class "onload-showmodal":
-    req._bsModalOpened = req.$initialTarget.closest(".modal.onload-showmodal:not(.show)");
+    // Open any non-open modal holding the initial target and having class "beforeload-showmodal":
+    req._bsModalOpened = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.show)");
     if (req._bsModalOpened.length > 0) {
         // Delay move to next handler:
         req._bsModalOpened[0]._onOpenOnce = function (e) {
@@ -258,8 +258,8 @@ $(function () {
 //#region Handling Bootstrap Toasts
 
 $$(function () {
-    // Automatically show toasts with .oninit-showtoast on init:
-    $(this).find(".toast.oninit-showtoast").each(function () {
+    // Automatically show toasts with .onload-showtoast on init:
+    $(this).find(".toast.onload-showtoast").each(function () {
         new bootstrap.Toast(this).show();
     });
 });
