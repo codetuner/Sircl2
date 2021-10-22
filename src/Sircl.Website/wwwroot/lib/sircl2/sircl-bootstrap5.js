@@ -86,7 +86,8 @@ sircl.addRequestHandler("beforeSend", function (req) {
             processor.next(req);
         };
         // Open modal:
-        var options = { backdrop: req._bsModalOpened.data("bs-backdrop") || "true", keyboard: false, focus: true };
+        var backdrop = (req._bsModalOpened.data("bs-backdrop") === undefined) ? true : req._bsModalOpened.data("bs-backdrop");
+        var options = { backdrop: backdrop || "true", keyboard: false, focus: true };
         new bootstrap.Modal(req._bsModalOpened[0], options).show();
     } else {
         // Move to next handler:
@@ -155,7 +156,8 @@ sircl.addRequestHandler("afterRender", function (req) {
             processor.next(req);
         };
         // Open modal:
-        var options = { backdrop: $modal.data("bs-backdrop") || "true", keyboard: false, focus: true };
+        var backdrop = ($modal.data("bs-backdrop") === undefined) ? true : $modal.data("bs-backdrop");
+        var options = { backdrop: backdrop, keyboard: false, focus: true };
         new bootstrap.Modal($modal[0], options).show();
     } else {
         // Move to next handler:
@@ -197,7 +199,7 @@ $(function () {
     });
 
     // Dynamically load content on showing modal:
-    $(document).on("show.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         var $container = $(this).find("[onshowmodal-load]");
         if ($container.length > 0) {
             $container.load($container.attr("onshowmodal-load"));
@@ -211,34 +213,24 @@ $$(function () {
         elem._originalContent = $(elem).html();
     });
 
-    // Auto-show modals:
-    var automodalmain = false;
-    var $scope = $(this);
-    $(this).find(".modal.auto-show").each(function () {
-        if ($(this).attr("auto-show-delay") !== undefined) {
-            // Parse delay ("seconds" or "[hh:]mm:ss"):
-            var delaypart = $(this).attr("auto-show-delay").split(":");
-            var delay = 0;
-            for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
-            // Set timer:
-            setTimeout(function ($scope) {
-                var $modal = $scope.find(".modal.auto-show[auto-show-delay]");
-                if ($modal.length > 0) {
-                    // Only show if no other modals shown yet, or if class force-show is set:
-                    if ($(".modal.show").length == 0 || $modal.hasClass("force-show")) {
-                        var options = { backdrop: $modal.data("bs-backdrop") || "true", keyboard: false, focus: true };
-                        new bootstrap.Modal($modal[0], options).show();
-                    }
-                }
-            }, 1000 * delay, $scope);
-        } else if (automodalmain == false) {
-            var options = { backdrop: $(this).data("bs-backdrop") || "true", keyboard: false, focus: true };
-            new bootstrap.Modal(this, options).show();
-            automodalmain = true;
-        } else {
-            sircl.handleError("SBS01", "Multiple auto-show bootstrap modals found. Only the first is shown.");
-        }
-    });
+    // Automatically show modals after load:
+    var $modals = $(this).find(".modal[onload-showmodalafter]");
+    if ($modals.length > 0) {
+        var modal = $modals[0];
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delaypart = $(modal).attr("onload-showmodalafter").split(":");
+        var delay = 0;
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
+        setTimeout(function (mdl) {
+            // Only show if no other modals shown yet:
+            if ($(".modal.show").length == 0) {
+                var backdrop = ($(mdl).data("bs-backdrop") === undefined) ? true : $(mdl).data("bs-backdrop");
+                var options = { backdrop: backdrop, keyboard: false, focus: true };
+                new bootstrap.Modal(mdl, options).show();
+            }
+        }, 1000 * delay, modal);
+    }
 
 });
 
@@ -248,8 +240,45 @@ $$(function () {
 
 $(function () {
     // Dynamically load content on showing tab:
-    $(document).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
-        $(this).load($(this).attr("onshow-load"));
+    $(document).on("show.bs.tab", "[data-bs-toggle='tab'], [data-bs-toggle='pill']", function (event) {
+        // Find target tab:
+        var trigger = event.target;
+        var target$;
+        if (trigger.hasAttribute("data-bs-target")) {
+            target$ = trigger.getAttribute("data-bs-target");
+        } else if (trigger.hasAttribute("href")) {
+            target$ = trigger.getAttribute("href");
+        } else {
+            return;
+        }
+
+        // If target tab has ifactivetab-load attribute, apply it:
+        if ($(target$).hasAttr("ifactivetab-load")) {
+            $(target$).load($(target$).attr("ifactivetab-load"));
+            $(target$).removeAttr("ifactivetab-load");
+        }
+    });
+});
+
+$$(function () {
+    // Dynamically load content on initially shown tab:
+    $(".nav-link.active[data-bs-toggle='tab'], .nav-link.active[data-bs-toggle='pill']").each(function () {
+        // Find target tab:
+        var trigger = this;
+        var target$;
+        if (trigger.hasAttribute("data-bs-target")) {
+            target$ = trigger.getAttribute("data-bs-target");
+        } else if (trigger.hasAttribute("href")) {
+            target$ = trigger.getAttribute("href");
+        } else {
+            return;
+        }
+
+        // If target tab has ifactivetab-load attribute, apply it:
+        if ($(target$).hasAttr("ifactivetab-load")) {
+            $(target$).load($(target$).attr("ifactivetab-load"));
+            $(target$).removeAttr("ifactivetab-load");
+        }
     });
 });
 
@@ -261,6 +290,28 @@ $$(function () {
     // Automatically show toasts with .onload-showtoast on init:
     $(this).find(".toast.onload-showtoast").each(function () {
         new bootstrap.Toast(this).show();
+    });
+});
+
+//#endregion
+
+//#region Handling Bootstrap Collapse
+
+$(function () {
+    // On expand, load content:
+    $(document.body).on("show.bs.collapse", ".collapse[ifexpanded-load]", function (event) {
+        var url = $(this).attr("ifexpanded-load");
+        $(this).removeAttr("ifexpanded-load")
+        $(this).load(url);
+    });
+});
+
+$$(function () {
+    // Load content on initially expanded items:
+    $(".collapse.show[ifexpanded-load]").each(function () {
+        var url = $(this).attr("ifexpanded-load");
+        $(this).removeAttr("ifexpanded-load")
+        $(this).load(url);
     });
 });
 
@@ -374,6 +425,196 @@ sircl.addAfterHistoryHandler(function () {
             $(this).removeClass("active");
         }
     });
+});
+
+//#endregion
+
+//#region Handling Bootstrap Offcanvas
+
+sircl.addRequestHandler("beforeSend", function (req) {
+    var processor = this;
+    // Close any opened offcanvas that is not the target if target has beforeload-showoffcanvas class and is not open:
+    var $openedTarget = req.$initialTarget.closest(".offcanvas:not(.beforeload-showoffcanvas):not(.show)");
+    var $openOffcanvasses = $(".offcanvas.show");
+    if (req.isForeground == true && $openOffcanvasses.length > 0 && $openedTarget.length == 0) {
+        if (!$.contains($openOffcanvasses[0], req.$initialTarget[0]) && !$openOffcanvasses.is(req.$initialTarget)) {
+            // Delay move to next handler:
+            $openOffcanvasses[0]._onCloseOnce = function (e) {
+                processor.next(req);
+            };
+            // Close offcanvas:
+            bootstrap.Offcanvas.getInstance($openOffcanvasses[0]).hide();
+        } else {
+            // Move to next handler:
+            processor.next(req);
+        }
+    } else {
+        // Move to next handler:
+        processor.next(req);
+    }
+});
+
+sircl.addRequestHandler("beforeSend", function (req) {
+    var processor = this;
+    // Open any non-open offcanvas holding the initial target and having class "beforeload-showoffcanvas":
+    req._bsOffcanvasOpened = req.$initialTarget.closest(".offcanvas.beforeload-showoffcanvas:not(.show)");
+    if (req._bsOffcanvasOpened.length > 0) {
+        // Delay move to next handler:
+        req._bsOffcanvasOpened[0]._onOpenOnce = function (e) {
+            processor.next(req);
+        };
+        // Open offcanvas:
+        var backdrop = (req._bsOffcanvasOpened.data("bs-backdrop") === undefined) ? true : req._bsOffcanvasOpened.data("bs-backdrop");
+        var options = { backdrop: backdrop || "true", keyboard: false, focus: true };
+        new bootstrap.Offcanvas(req._bsOffcanvasOpened[0], options).show();
+    } else {
+        // Move to next handler:
+        processor.next(req);
+    }
+});
+
+sircl.addRequestHandler("afterSend", function (req) {
+    var processor = this;
+    // On error, undo opened offvanvasses:
+    if (!req.succeeded && req._bsOffcanvasOpened.length > 0) {
+        // Delay move to next handler:
+        req._bsOffcanvasOpened[0]._onCloseOnce = function (e) {
+            processor.next(req);
+        };
+        // Close offcanvas:
+        bootstrap.Offcanvas.getInstance(req._bsOffcanvasOpened[0]).hide();
+    } else if (req.xhr.status == "204") {
+        // Else, if status "204" (no content), close target offcanvas:
+        var $can = req.$initialTarget.closest(".offcanvas.show");
+        if ($can.length > 0) {
+            // Delay move to next handler:
+            $can[0]._onCloseOnce = function (e) {
+                processor.next(req);
+            };
+            // Close offcanvas:
+            bootstrap.Offcanvas.getInstance($can[0]).hide();
+        } else {
+            // Move to next handler:
+            processor.next(req);
+        }
+    } else {
+        // Move to next handler:
+        processor.next(req);
+    }
+});
+
+sircl.addRequestHandler("beforeRender", function (req) {
+    var processor = this;
+    // Close any opened offcanvas that is not the target:
+    var $openOffcanvasses = $(".offcanvas.show");
+    if (req.isForeground == true && $openOffcanvasses.length > 0) {
+        if (!$.contains($openOffcanvasses[0], req.$finalTarget[0]) && !$openOffcanvasses.is(req.$initialTarget)) {
+            // Delay move to next handler:
+            $openOffcanvasses[0]._onCloseOnce = function (e) {
+                processor.next(req);
+            };
+            // Close offcanvas:
+            bootstrap.Offcanvas.getInstance($openOffcanvasses[0]).hide();
+        } else {
+            // Move to next handler:
+            processor.next(req);
+        }
+    } else {
+        // Move to next handler:
+        processor.next(req);
+    }
+});
+sircl.addRequestHandler("afterRender", function (req) {
+    var processor = this;
+    // Open offcanvas on final target:
+    var $offcanvas = req.$finalTarget.closest(".offcanvas:not(.show)");
+    if ($offcanvas.length > 0) {
+        // Delay move to next handler:
+        $offcanvas[0]._onOpenOnce = function (e) {
+            processor.next(req);
+        };
+        // Open offcanvas:
+        var backdrop = ($offcanvas.data("bs-backdrop") === undefined) ? true : $offcanvas.data("bs-backdrop");
+        var options = { backdrop: backdrop, keyboard: false, focus: true };
+        new bootstrap.Offcanvas($offcanvas[0], options).show();
+    } else {
+        // Move to next handler:
+        processor.next(req);
+    }
+});
+
+$(function () {
+    // Perform onOpen action once:
+    $(document).on("shown.bs.offcanvas", ".offcanvas", function (event) {
+        if (this._onOpenOnce) {
+            var fx = this._onOpenOnce;
+            this._onOpenOnce = undefined;
+            fx();
+        }
+    });
+
+    // Perform onClose action once:
+    $(document).on("hidden.bs.offcanvas", ".offcanvas", function (event) {
+        if (this._onCloseOnce) {
+            var fx = this._onCloseOnce;
+            this._onCloseOnce = undefined;
+            fx();
+        }
+    });
+
+    // When opening offcanvas, set focus:
+    $(document).on("shown.bs.offcanvas", ".offcanvas", function (event) {
+        $(this).find("*[autofocus]:first").each(function (index) {
+            try { this.focus(); } catch (x) { }
+            try { this.select(); } catch (x) { }
+        });
+    });
+
+    // Reset content of a offcanvas with onclose-restore when closing the offcanvas:
+    $(document).on("hidden.bs.offcanvas", ".offcanvas.onclose-restore", function (event) {
+        var originalContent = $(this)[0]._originalContent;
+        if (originalContent !== undefined) $(this).html(originalContent);
+    });
+
+    // Dynamically load content on showing offcanvas:
+    $(document).on("shown.bs.offcanvas", ".offcanvas", function (event) {
+        var $container;
+        if ($(this).hasAttr("onshowoffcanvas-load")) {
+            $container = $(this);
+        } else {
+            $container = $(this).find("[onshowoffcanvas-load]");
+        }
+        if ($container.length > 0) {
+            $container.load($container.attr("onshowoffcanvas-load"));
+        }
+    });
+});
+
+$$(function () {
+    // Backup original content of onclose-restore offcanvasses to be able to reset on close:
+    $(this).find(".offcanvas.onclose-restore").each(function (index, elem) {
+        elem._originalContent = $(elem).html();
+    });
+
+    // Automatically show offcanvasses after load:
+    var $offcanvasses = $(this).find(".offcanvas[onload-showoffcanvasafter]");
+    if ($offcanvasses.length > 0) {
+        var offcanvas = $offcanvasses[0];
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delaypart = $(offcanvas).attr("onload-showoffcanvasafter").split(":");
+        var delay = 0;
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
+        setTimeout(function (can) {
+            // Only show if no other offcanvasses shown yet:
+            if ($(".offcanvas.show").length == 0) {
+                var backdrop = ($(can).data("bs-backdrop") === undefined) ? true : $(can).data("bs-backdrop");
+                var options = { backdrop: backdrop, keyboard: false, focus: true };
+                new bootstrap.Offcanvas(can, options).show();
+            }
+        }, 1000 * delay, offcanvas);
+    }
+
 });
 
 //#endregion

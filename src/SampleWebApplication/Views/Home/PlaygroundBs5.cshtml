@@ -1,0 +1,157 @@
+﻿@{ Layout = null; }
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sircl Starter Template for Bootstrap 5</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link href="~/lib/sircl-src-new/sircl.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+
+
+        <hr />
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#registerCnv">
+            onshowoffcanvas-load
+        </button>
+
+        <a class="btn btn-link" href="/Time?delay=800" target="#cnvbody1">Show from load</a>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#clscnv">
+            Closing canvas
+        </button>
+        
+        <div class="offcanvas offcanvas-start onclose-restore" id="clscnv" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Register</h5>
+            </div>
+            <div class="offcanvas-body">
+                Loading registration form...
+
+                <form target="#clscnv" action="/204">
+                    <button type="submit"><i class="spinner"></i> Close</button>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-start onclose-restore" id="registerCnv" onshowoffcanvas-load="/Time" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Register</h5>
+            </div>
+            <div class="offcanvas-body">
+                Loading registration form...
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-start beforeload-showoffcanvas onclose-restore" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Register</h5>
+            </div>
+            <div class="offcanvas-body" id="cnvbody1">
+                Loading registration form...
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- Modal -->
+        <div class="modal fade onclose-restore" tabindex="-1" onload-showmodalafter="200">
+            <div class="modal-dialog" onshowmodal-load="/Bs5ModalDialogContent?delay=0">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <hr />
+
+        <a href="/Time?delay=1500" target="#t15656">Click me !</a>
+        <div id="t15656" download-progress="#pt15656">
+            Click the link to reload this data.
+        </div>
+        <div class="progress" id="pt15656" hidden>
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+
+        <hr />
+
+        <div>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#cdetails">Details</a>
+        </div>
+
+        <div class="collapse show" id="cdetails" ifexpanded-load="/Time">
+            Loading...
+        </div>
+
+        <hr />
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/" ifroute-setactive="^\/($|Home(\/|$))">Home</a>
+                        <a class="nav-link" href="/Features" ifroute-setactive="^\/Features(\/|$)">Features</a>
+                        <a class="nav-link" href="/Pricing" ifroute-setactive="^\/Pricing(\/|$)">Pricing</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <hr />
+
+
+        <ul class="nav nav-tabs hash-routed">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#intro">Intro</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#details">Details</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#pics">Pictures</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="intro" ifactivetab-load="/Time">Loading...</div>
+            <div class="tab-pane" id="details" ifactivetab-load="/Time">Loading...</div>
+            <div class="tab-pane" id="pics" ifactivetab-load="/Time">Loading...</div>
+        </div>
+
+        <hr />
+
+        <a href="/Bs5ModalDialogContent" target="#nlimdl"> Subscribe to our newsletter </a>
+
+        <div class="modal fade beforeload-showmodal onclose-restore" tabindex="-1">
+            <div class="modal-dialog" id="nlimdl">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+
+        <hr />
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="~/lib/sircl-src-new/sircl.js"></script>
+    <script src="~/lib/sircl-src-new/sircl-extended.js"></script>
+    <script src="~/lib/sircl-src-new/sircl-changeactions.js"></script>
+    <script src="~/lib/sircl-src-new/sircl-bootstrap5.js"></script>
+</body>
+</html>

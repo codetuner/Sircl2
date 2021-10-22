@@ -152,6 +152,11 @@ namespace SampleWebApplication.Controllers
             return View("Playground");
         }
 
+        public IActionResult PlaygroundBs5()
+        {
+            return View("PlaygroundBs5");
+        }
+
         public IActionResult Infinite(int page)
         {
             return View("Infinite", page);

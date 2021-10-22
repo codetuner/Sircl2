@@ -1,0 +1,23 @@
+﻿@page
+@{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"].ToString()));
+    var q = Request.Query["value"].FirstOrDefault();
+    if (String.IsNullOrWhiteSpace(q))
+    {
+        return;
+    }
+    if("Bangladesh".Contains(q, StringComparison.OrdinalIgnoreCase)) {
+        @:<option value="Bangladesh">
+    }
+    if("Bahrain".Contains(q, StringComparison.OrdinalIgnoreCase)) {
+        @:<option value="Bahrain">
+    }
+    if("Belgium".Contains(q, StringComparison.OrdinalIgnoreCase)) {
+        @:<option value="Belgium">
+    }
+    if("Belize".Contains(q, StringComparison.OrdinalIgnoreCase)) {
+        @:<option value="Belize">
+    }
+    if("Benin".Contains(q, StringComparison.OrdinalIgnoreCase)) {
+        @:<option value="Benin">
+    }
+}

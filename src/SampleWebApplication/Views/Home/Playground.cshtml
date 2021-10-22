@@ -1,14 +1,42 @@
 ﻿<hr />
 <hr />
 <hr />
+
+<div>
+    <a class="btn btn-primary" data-toggle="collapse" href="#cdetails">Details</a>
+</div>
+
+<div class="collapse show" id="cdetails" ifexpanded-load="/Time">
+    Loading...
+</div>
+
 <hr />
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" ifactivetab-load="/Time">...1</div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" ifactivetab-load="/Time">...2</div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" ifactivetab-load="/Time">...3</div>
+</div>
+
+
 <hr />
 
 @*<style>
-    .action-pending {
-        border: solid 4px green;
-    }
-</style>*@
+        .action-pending {
+            border: solid 4px green;
+        }
+    </style>*@
 <input type="hidden" name="CID" value="345" />
 <input type="text" class="substitute-fields" name="Name" onchange-action="/Query?Id=[CID]" target="#caout5" />
 <div id="caout5"></div>

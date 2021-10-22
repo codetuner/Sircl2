@@ -145,13 +145,6 @@ $(function () {
 // Click event-actions:
 ///////////////////////
 
-// onclick-load is an alias for href:
-sircl.addContentReadyHandler("enrich", function () {
-    $(this).find("[onclick-load]").each(function () {
-        $(this).attr("href", $(this).attr("onclick-load"));
-    });
-});
-
 $(function () {
 
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.

@@ -52,6 +52,9 @@
                         <li class="nav-item" ifroute-setactive="^\/Home\/Playground(\/|$)">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Playground">Play</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PlaygroundBs5" target="_self">BS5</a>
+                        </li>
                         <li class="nav-item" ifroute-setactive="^\/ToDo(\/|$)">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ToDo" asp-action="Index">ToDos</a>
                         </li>
@@ -118,7 +121,7 @@
         </div>
     </div>
 
-    <div class="modal fade xx-auto-show" auto-show-delay="2" tabindex="-1" role="dialog">
+    <div class="modal fade" onload-showmodalafter="5" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content" id="bs-modal-content">
                 <div class="modal-header">

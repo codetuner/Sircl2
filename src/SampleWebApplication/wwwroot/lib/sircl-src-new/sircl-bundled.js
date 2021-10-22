@@ -854,11 +854,18 @@ $(document).ready(function () {
     sircl.singlePageMode = $(sircl.mainTargetSelector$).length > 0;
     console.info("sircl.singlePageMode = " + sircl.singlePageMode + "");
 
-    /// Any element having a href attribute (and no download attribute):
+    /// Any element having a href attribute (and no download attribute), or an onclick-load attribute:
     /// Handles special href values
-    $(document).on("click", "*[href]:not([download])", function (event) {
+    $(document).on("click", "*[href]:not([download]), [onclick-load]", function (event) {
         // Get href:
-        var href = this.getAttribute("href");
+        var href, canBeHandledByBrowser;
+        if (this.hasAttribute("onclick-load")) {
+            href = this.getAttribute("onclick-load");
+            canBeHandledByBrowser = false;
+        } else {
+            href = this.getAttribute("href");
+            canBeHandledByBrowser = (this.tagName === "A");
+        }
         // In href, substitute "[...]" by form values:
         var hrefHasSubstitutions = false;
         if ($(this).hasClass("substitute-fields")) {
@@ -903,7 +910,7 @@ $(document).ready(function () {
             } else {
                 jQuery.globalEval(href.substr(11));
             }
-        } else if (this.tagName === "A" && href.indexOf("#") === 0) {
+        } else if (canBeHandledByBrowser && href.indexOf("#") === 0) {
             return; // navigate link through default behavior
         } else if (href.indexOf("#") === 0) {
             window.location.hash = href;
@@ -914,7 +921,7 @@ $(document).ready(function () {
                     window.location.href = href;
                 } else if (hrefHasSubstitutions) {
                     window.open(href, target);
-                } else if (this.tagName === "A") {
+                } else if (canBeHandledByBrowser) {
                     return; // navigate link through default behavior
                 } else if (target == null) {
                     window.location.href = href;
@@ -1930,13 +1937,6 @@ $(function () {
 
 // Click event-actions:
 ///////////////////////
-
-// onclick-load is an alias for href:
-sircl.addContentReadyHandler("enrich", function () {
-    $(this).find("[onclick-load]").each(function () {
-        $(this).attr("href", $(this).attr("onclick-load"));
-    });
-});
 
 $(function () {
 

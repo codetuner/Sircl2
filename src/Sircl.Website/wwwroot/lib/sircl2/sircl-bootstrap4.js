@@ -191,7 +191,7 @@ $(function () {
     });
 
     // Dynamically load content on showing modal:
-    $(document).on("show.bs.modal", ".modal", function (event) {
+    $(document).on("shown.bs.modal", ".modal", function (event) {
         var $container = $(this).find("[onshowmodal-load]");
         if ($container.length > 0) {
             $container.load($container.attr("onshowmodal-load"));
@@ -205,32 +205,22 @@ $$(function () {
         elem._originalContent = $(elem).html();
     });
 
-    // Auto-show modals:
-    var automodalmain = false;
-    var $scope = $(this);
-    $(this).find(".modal.auto-show").each(function () {
-        if ($(this).attr("auto-show-delay") !== undefined) {
-            // Parse delay ("seconds" or "[hh:]mm:ss"):
-            var delaypart = $(this).attr("auto-show-delay").split(":");
-            var delay = 0;
-            for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
-            // Set timer:
-            setTimeout(function ($scope) {
-                var $modal = $scope.find(".modal.auto-show[auto-show-delay]");
-                if ($modal.length > 0) {
-                    // Only show if no other modals shown yet, or if class force-show is set:
-                    if ($(".modal.show").length == 0 || $modal.hasClass("force-show")) {
-                        $modal.modal("show");
-                    }
-                }
-            }, 1000 * delay, $scope);
-        } else if (automodalmain == false) {
-            $(this).modal("show");
-            automodalmain = true;
-        } else {
-            sircl.handleError("SBS01", "Multiple auto-show bootstrap modals found. Only the first is shown.");
-        }
-    });
+    // Automatically show modals after load:
+    var $modals = $(this).find(".modal[onload-showmodalafter]");
+    if ($modals.length > 0) {
+        var modal = $modals[0];
+        // Parse delay ("seconds" or "[hh:]mm:ss"):
+        var delaypart = $(modal).attr("onload-showmodalafter").split(":");
+        var delay = 0;
+        for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
+        // Set timer:
+        setTimeout(function (mdl) {
+            // Only show if no other modals shown yet:
+            if ($(".modal.show").length == 0) {
+                $(mdl).modal("show");
+            }
+        }, 1000 * delay, modal);
+    }
 
 });
 
@@ -240,8 +230,45 @@ $$(function () {
 
 $(function () {
     // Dynamically load content on showing tab:
-    $(document).on("show.bs.tab", ".tab-pane[onshowtab-load]", function (event) {
-        $(this).load($(this).attr("onshow-load"));
+    $(document).on("show.bs.tab", "[data-toggle='tab'], [data-toggle='pill']", function (event) {
+        // Find target tab:
+        var trigger = event.target;
+        var target$;
+        if (trigger.hasAttribute("data-target")) {
+            target$ = trigger.getAttribute("data-target");
+        } else if (trigger.hasAttribute("href")) {
+            target$ = trigger.getAttribute("href");
+        } else {
+            return;
+        }
+
+        // If target tab has ifactivetab-load attribute, apply it:
+        if ($(target$).hasAttr("ifactivetab-load")) {
+            $(target$).load($(target$).attr("ifactivetab-load"));
+            $(target$).removeAttr("ifactivetab-load");
+        }
+    });
+});
+
+$$(function () {
+    // Dynamically load content on initially shown tab:
+    $(".nav-link.active[data-toggle='tab'], .nav-link.active[data-toggle='pill']").each(function () {
+        // Find target tab:
+        var trigger = this;
+        var target$;
+        if (trigger.hasAttribute("data-target")) {
+            target$ = trigger.getAttribute("data-target");
+        } else if (trigger.hasAttribute("href")) {
+            target$ = trigger.getAttribute("href");
+        } else {
+            return;
+        }
+
+        // If target tab has ifactivetab-load attribute, apply it:
+        if ($(target$).hasAttr("ifactivetab-load")) {
+            $(target$).load($(target$).attr("ifactivetab-load"));
+            $(target$).removeAttr("ifactivetab-load");
+        }
     });
 });
 
@@ -252,6 +279,28 @@ $(function () {
 $$(function () {
     // Automatically show toasts with .onload-showtoast on init:
     $(this).find(".toast.onload-showtoast").toast("show");
+});
+
+//#endregion
+
+//#region Handling Bootstrap Collapse
+
+$(function () {
+    // On expand, load content:
+    $(document.body).on("show.bs.collapse", ".collapse[ifexpanded-load]", function (event) {
+        var url = $(this).attr("ifexpanded-load");
+        $(this).removeAttr("ifexpanded-load")
+        $(this).load(url);
+    });
+});
+
+$$(function () {
+    // Load content on initially expanded items:
+    $(".collapse.show[ifexpanded-load]").each(function () {
+        var url = $(this).attr("ifexpanded-load");
+        $(this).removeAttr("ifexpanded-load")
+        $(this).load(url);
+    });
 });
 
 //#endregion
