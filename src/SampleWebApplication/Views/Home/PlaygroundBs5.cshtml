@@ -12,6 +12,89 @@
 <body>
     <div class="container">
 
+        <hr />
+
+        <form id="frm4123">
+            <div>
+                <label><input type="checkbox" name="copt" ifchecked-expand="<form|>.one" checked /> Option 1</label>
+            </div>
+            <div class="collapse one" ifexpanded-load="/Time" onexpand-set="ExpState1">
+                Option 1 info
+            </div>
+            <div>
+                <label><input type="checkbox" name="copt" ifchecked-expand="<form|>.two" /> Option 2</label>
+            </div>
+            <div class="collapse two" ifexpanded-load="/Time" onexpand-set="ExpState2">
+                Option 2 info
+            </div>
+            <div>
+                <label><input type="checkbox" name="copt" ifchecked-expand="<form|>.three" /> Option 3</label>
+            </div>
+            <div class="collapse three show" ifexpanded-load="/Time" onexpand-set="ExpState3">
+                Option 3 info
+            </div>
+            <button type="button" class="btn btn-link" onclick-uncheck="<form|>input[type=checkbox], <form|>input[type=radio]">Clear</button>
+            <br />
+            <input type="text" name="ExpState1" value="true" />
+            <input type="text" name="ExpState2" value="" />
+            <input type="text" name="ExpState3" value="" />
+        </form>
+
+        <hr />
+
+        <form id="frm5545">
+            <div>
+                <label><input type="radio" name="copt" ifchecked-expand="<form|>.one" checked /> Option 1</label>
+            </div>
+            <div class="collapse one" ifexpanded-load="/Time" onexpand-set="ExpState1">
+                Option 1 info
+            </div>
+            <div>
+                <label><input type="radio" name="copt" ifchecked-expand="<form|>.two" /> Option 2</label>
+            </div>
+            <div class="collapse two" ifexpanded-load="/Time" onexpand-set="ExpState2">
+                Option 2 info
+            </div>
+            <div>
+                <label><input type="radio" name="copt" ifchecked-expand="<form|>.three" /> Option 3</label>
+            </div>
+            <div class="collapse three show" ifexpanded-load="/Time" onexpand-set="ExpState3">
+                Option 3 info
+            </div>
+            <button type="button" class="btn btn-link" onclick-uncheck="<form|>input[type=checkbox], <form|>input[type=radio]">Clear</button>
+            <br />
+            <input type="text" name="ExpState1" value="true" />
+            <input type="text" name="ExpState2" value="" />
+            <input type="text" name="ExpState3" value="" />
+        </form>
+
+        <hr />
+
+        <form>
+            <div>
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#cdetails1">Details</a>
+            </div>
+            <div class="collapse" id="cdetails1" onexpand-set="ExpState1">
+                Details 1
+            </div>
+            <div>
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#cdetails2">Details</a>
+            </div>
+            <div class="collapse" id="cdetails2" onexpand-set="ExpState2">
+                Details 2
+            </div>
+            <div>
+                <a class="btn btn-primary" data-bs-toggle="collapse" href="#cdetails3">Details</a>
+            </div>
+            <div class="collapse show" id="cdetails3" onexpand-set="ExpState3">
+                Details 3
+            </div>
+
+            <input type="text" name="ExpState1" value="true" />
+            <input type="text" name="ExpState2" value="" />
+            <input type="text" name="ExpState3" value="" />
+        </form>
+
 
         <hr />
 
@@ -24,7 +107,7 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#clscnv">
             Closing canvas
         </button>
-        
+
         <div class="offcanvas offcanvas-start onclose-restore" id="clscnv" tabindex="-1">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title">Register</h5>

@@ -241,9 +241,6 @@ sircl.ext.isExternalTarget = function (targetValue) { return !sircl.ext.isIntern
 sircl.ext.$select = function ($context, selector$) {
     if (selector$ === undefined || selector$ === null) {
         return $([]);
-    } else if (selector$.indexOf("|") >= 0 && selector$.indexOf("|=") < selector$.indexOf("|")) { // Break on "|" but not on "|=" as in https://api.jquery.com/attribute-contains-prefix-selector/
-        var breakpos = selector$.indexOf("|");
-        return sircl.ext.$select(sircl.ext.$select($context, selector$.substr(0, breakpos)), selector$.substr(breakpos + 1));
     } else {
         var selectorParts$ = selector$.split(",");
         var $result = $([]);
@@ -251,6 +248,9 @@ sircl.ext.$select = function ($context, selector$) {
             var sel$ = selectorParts$[i].trim();
             if (sel$.length == 0) {
                 // Ignore
+            } else if (sel$.indexOf("|") >= 0 && sel$.indexOf("|=") < sel$.indexOf("|")) { // Break on "|" but not on "|=" as in https://api.jquery.com/attribute-contains-prefix-selector/
+                var breakpos = sel$.indexOf("|");
+                $result = $result.add(sircl.ext.$select(sircl.ext.$select($context, sel$.substr(0, breakpos)), sel$.substr(breakpos + 1)));
             } else if (sel$ === ":this") {
                 $result = $result.add($context);
             } else if (sel$ === ":parent") {
