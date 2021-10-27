@@ -286,6 +286,79 @@ $$(function () {
 //#region Handling Bootstrap Collapse
 
 $(function () {
+
+    // On check checkbox, expand, else collapse:
+    $(document.body).on("change", "INPUT[type=checkbox][ifchecked-expand]", function (event) {
+        var $this = $(this);
+        var $target = sircl.ext.$select($this, $this.attr("ifchecked-expand"));
+        if ($target.hasClass("collapse")) {
+            if ($this.prop('checked')) {
+                $target.collapse('show');
+            } else {
+                $target.collapse('hide');
+            }
+        }
+    });
+
+    // On check radio, expand, else collapse for all radios with same name in same form:
+    $(document.body).on("change", "INPUT[type=radio][ifchecked-expand]", function (event) {
+        var $this = $(this);
+        var $all;
+        if ($this.attr("name").length > 0) {
+            $all = $this.closest("FORM").length > 0
+                ? $this.closest("FORM").find("INPUT[type=radio][ifchecked-expand][name='" + $this.attr("name") + "']")
+                : $("INPUT[type=radio][ifchecked-expand][name='" + $this.attr("name") + "']");
+        } else {
+            $all = $this;
+        }
+        $all.each(function () {
+            var $target = sircl.ext.$select($(this), $(this).attr("ifchecked-expand"));
+            if ($target.hasClass("collapse")) {
+                if ($(this).prop('checked')) {
+                    $target.collapse('show');
+                } else {
+                    $target.collapse('hide');
+                }
+            }
+        });
+    });
+
+    // On expand, set state:
+    $(document.body).on("show.bs.collapse", ".collapse[onexpand-set]", function (event) {
+        var $this = $(this);
+        var name = $(this).attr("onexpand-set");
+        var $input;
+        if (name == null || name.length == 0) {
+            return;
+        } else if ($this.closest("FORM").length > 0) {
+            $input = $this.closest("FORM").find("INPUT[name='" + name + "']");
+        } else {
+            $input = $("INPUT[name='" + name + "']");
+        }
+        if (["true", "on"].indexOf($input.val().toLowerCase()) < 0) {
+            $input.val("true");
+            $input.change();
+        }
+    });
+
+    // On collapse, set state:
+    $(document.body).on("hide.bs.collapse", ".collapse[onexpand-set]", function (event) {
+        var $this = $(this);
+        var name = $(this).attr("onexpand-set");
+        var $input;
+        if (name == null || name.length == 0) {
+            return;
+        } else if ($this.closest("FORM").length > 0) {
+            $input = $this.closest("FORM").find("INPUT[name='" + name + "']");
+        } else {
+            $input = $("INPUT[name='" + name + "']");
+        }
+        if (["false", "off"].indexOf($input.val().toLowerCase()) < 0) {
+            $input.val("false");
+            $input.change();
+        }
+    });
+
     // On expand, load content:
     $(document.body).on("show.bs.collapse", ".collapse[ifexpanded-load]", function (event) {
         var url = $(this).attr("ifexpanded-load");
@@ -295,6 +368,20 @@ $(function () {
 });
 
 $$(function () {
+
+    // If checked, expand, else collapse:
+    $("INPUT[type=checkbox][ifchecked-expand], INPUT[type=radio][ifchecked-expand]").each(function () {
+        var $this = $(this);
+        var $target = sircl.ext.$select($this, $this.attr("ifchecked-expand"));
+        if ($target.hasClass("collapse")) {
+            if ($this.prop('checked')) {
+                $target.collapse('show');
+            } else {
+                $target.collapse('hide');
+            }
+        }
+    });
+
     // Load content on initially expanded items:
     $(".collapse.show[ifexpanded-load]").each(function () {
         var url = $(this).attr("ifexpanded-load");

@@ -140,6 +140,13 @@ $(function () {
             }
         });
     });
+
+    // <* onchange-click="selector"> On change, triggers a click event on the elements matching the given selector.
+    $(document).on("change", "*[onchange-click]", function (event) {
+        var targetSelector = $(this).attr("onchange-click");
+        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        //event.preventDefault();
+    });
 });
 
 // Click event-actions:
