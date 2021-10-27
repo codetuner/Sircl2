@@ -1,7 +1,16 @@
 ﻿<hr />
+
 <hr />
 
-<select onload-load="/SelectCountries?delay=800" style="min-width: 200px;"></select>
+<p>
+    <select onload-load="/SelectCountries?delay=800" style="min-width: 200px;" onchange-click="#cmdocc"></select>
+</p>
+<p>
+    <button id="cmdocc" type="button" class="btn btn-primary" onclick-load="/Time" target="#cmdocctarget"><i class="spinner"></i> Clicked on change country</button>
+</p>
+<div id="cmdocctarget">
+    Time here on click
+</div>
 
 <hr />
 
