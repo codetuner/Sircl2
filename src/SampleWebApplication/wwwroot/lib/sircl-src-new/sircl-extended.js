@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.0 - Core extension
+// Sircl 2.x - Core extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -433,6 +433,22 @@ $(function () {
 
     $(document).on("change", "[ifchecked-readwrite]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
+    });
+
+    $(document).on("change", "[ifchecked-removeclass]", function (event) {
+        if (this.checked) {
+            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+        } else {
+            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+        }
+    });
+
+    $(document).on("change", "[ifchecked-addclass]", function (event) {
+        if (!this.checked) {
+            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+        } else {
+            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+        }
     });
 
     $(document).on("change", "[ifchecked-clearvalue]", function (event) {
@@ -1330,8 +1346,10 @@ $(function () {
             var text = $target.attr("data-share-text") || $target.text();
             navigator.share({
                 title: title,
-                url: url,
-                text: text
+                text: text,
+                url: url
+            }).then(function () {
+            }).catch(function () {
             });
         }
     });

@@ -1,0 +1,4 @@
+﻿@page
+@{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"].ToString())); }
+@{ Response.StatusCode = 500; } 
+<h2>This page is meant to fail.</h2>

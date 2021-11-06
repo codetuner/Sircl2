@@ -1,23 +1,9 @@
 /////////////////////////////////////////////////////////////////
-// Sircl 2.0 - Core
+// Sircl 2.x - Core
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
-
-// Key features:
-// - Leverages serverside coding with any language/framework
-// - Easy learning
-// - Designer friendly, no coding in design, separation of concerns
-//   Required skills: html, adding classes and attributes, urls, css selectors
-// - No Javascript coding required
-// - SPA support, loading via Ajax
-// - Routing / browser history support
-// - Dirty forms support
-// - Dialogs support
-// - Bootstrap 4 & 5
-// - Extensible
-// - 
 
 // Coding conventions:
 // - Within selectors, write tagnames capitalized, i.e: "A[href]".
@@ -26,11 +12,8 @@
 // - Strings are surrounded by double-quotes.
 
 // Todo:
-// - Bootstrap 5 sidebar
-// - Bootstrap on expand(/collapse): load URL
 // - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
 // - Character count feedback (as counter, remaining counter or progressbar)
-// - Error handling
 // - 
 // - 
 // Examples for extensions:
@@ -133,6 +116,8 @@ console.info("Sircl v." + sircl.version + " running.");
 //#region Miscellaneous settings
 
 sircl.html_spinner = '<i class="sircl-spinner sircl-spinning"></i> ';
+
+sircl.max_redirects = 20;
 
 sircl.mainTargetSelector$ = ".main-target";
 
@@ -324,7 +309,9 @@ sircl.ext.scopedDo = function ($scope, expression, action) {
             }
         });
     } catch (ex) {
-        sircl.handleError("S100", "Error evaluating class action value \"" + expression + "\" : " + ex, { exception: ex, element: $scope[0] });
+        var el = null;
+        if ($scope != null && $scope.length > 0) el = $scope[0];
+        sircl.handleError("S151", "Error evaluating class action value \"" + expression + "\" : " + ex, { exception: ex, element: el });
     }
 };
 
@@ -665,8 +652,8 @@ SirclRequestProcessor.prototype._send = function (req) {
                 // Else, check redirect count (avoid endless redirection loops):
                 if (req.redirects === undefined) req.redirects = 0;
                 req.redirects++;
-                if (req.redirects > 20) {
-                    sircl.handleError("S104", "Too many redirects.", req);
+                if (req.redirects > sircl.max_redirects) {
+                    sircl.handleError("S141", "Too many redirects.", { request: req });
                     req.aborted = true;
                     req.succeeded = false;
                     processor.next(req);
@@ -707,6 +694,8 @@ SirclRequestProcessor.prototype._send = function (req) {
             req.documentLanguage = req.xhr.getResponseHeader("X-Sircl-Document-Language");
             // Then for alert message header:
             req.alertMsg = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
+            // Then for render mode:
+            req.renderMode = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
             // Then for history header:
             var history = req.xhr.getResponseHeader("X-Sircl-History");
             if (history == "back") {
@@ -776,7 +765,7 @@ SirclRequestProcessor.prototype._process = function (req) {
             this.next(req);
         }
     } else {
-        sircl.handleError("S100", "Error processing request.", req);
+        sircl.handleError("S111", "Error processing request.", { request: req });
     }
 };
 
@@ -807,7 +796,6 @@ SirclRequestProcessor.prototype._render = function (req) {
         $("HTML").attr("lang", req.documentLanguage);
     }
     // Render, applying correct render mode:
-    req.renderMode = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
     if (req.renderMode === "append") {
         // If append mode, append responseText and force afterLoad:
         $realTarget.append(realResponseText);
@@ -831,12 +819,12 @@ SirclRequestProcessor.prototype.next = function (req) {
             step.apply(this, arguments);
         } catch (ex) {
             console.error(ex);
-            sircl.handleError("S100", "Error executing a RequestProcessor step: " + ex, { exception: ex, fx: step });
+            sircl.handleError("S131", "Error executing a RequestProcessor step: " + ex, { exception: ex, fx: step });
             this.next(req);
         }
     } else if (this._loadComplete) {
         // Else, if loadComplete defined, execute it:
-        this._loadComplete(req.xhr.responseText, req.xhr.statusText, req.xhr);
+        this._loadComplete(req.responseText, req.statusText, req.xhr);
     }
 };
 
@@ -1033,7 +1021,7 @@ sircl._beforeUnload = function (scope) {
         handler.call(scope);
         } catch (ex) {
             console.error(ex);
-            sircl.handleError("S100", "Error executing a BeforeUnLoad handler: " + ex, { exception: ex, fx: handler });
+            sircl.handleError("S121", "Error executing a BeforeUnLoad handler: " + ex, { exception: ex, fx: handler });
         }
     });
 };
@@ -1051,7 +1039,7 @@ sircl._afterLoad = function (scope) {
             handler.call(scope);
         } catch (ex) {
             console.error(ex);
-            sircl.handleError("S100", "Error executing an AfterLoad content handler: " + ex, { exception: ex, fx: handler });
+            sircl.handleError("S122", "Error executing an AfterLoad content handler: " + ex, { exception: ex, fx: handler });
         }
     });
     // Execute all "enrich" afterLoad handlers:
@@ -1060,7 +1048,7 @@ sircl._afterLoad = function (scope) {
         handler.call(scope);
         } catch (ex) {
             console.error(ex);
-            sircl.handleError("S100", "Error executing an AfterLoad enrich handler: " + ex, { exception: ex, fx: handler });
+            sircl.handleError("S123", "Error executing an AfterLoad enrich handler: " + ex, { exception: ex, fx: handler });
         }
     });
     // Execute all "process" afterLoad handlers:
@@ -1069,7 +1057,7 @@ sircl._afterLoad = function (scope) {
         handler.call(scope);
         } catch (ex) {
             console.error(ex);
-            sircl.handleError("S100", "Error executing an AfterLoad process handler: " + ex, { exception: ex, fx: handler });
+            sircl.handleError("S124", "Error executing an AfterLoad process handler: " + ex, { exception: ex, fx: handler });
         }
     });
     // Remove "sircl-content-processing" class:
@@ -1339,49 +1327,51 @@ $(document).ready(function () {
 sircl.addRequestHandler("beforeSend", function (req) {
     req._progressToResetAfterSend = []
     req._progressToHideAfterSend = []
-    // Show and add event handler to upload progresses:
-    var $uploadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("upload-progress")).filter("PROGRESS");
-    if ($uploadProgresses.length > 0) {
-        $uploadProgresses.each(function () {
-            // Set initial value:
-            this.removeAttribute("value");
-            req._progressToResetAfterSend.push(this);
-            // Make hidden progresses visible:
-            if (!sircl.ext.visible(this)) {
-                req._progressToHideAfterSend.push(this);
-                sircl.ext.visible(this, true);
-            }
-        });
-        // Add event handler to show upload progress:
-        req.xhr.upload.addEventListener("progress", function (e) {
-            if (e.lengthComputable) {
-                $uploadProgresses.each(function () {
-                    this.value = e.loaded / e.total;
-                });
-            }
-        });
-    }
-    // Show and add event handler to download progresses:
-    var $downloadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("download-progress")).filter("PROGRESS");
-    if ($downloadProgresses.length > 0) {
-        $downloadProgresses.each(function () {
-            // Set initial value:
-            this.removeAttribute("value");
-            req._progressToResetAfterSend.push(this);
-            // Make hidden progresses visible:
-            if (!sircl.ext.visible(this)) {
-                req._progressToHideAfterSend.push(this);
-                sircl.ext.visible(this, true);
-            }
-        });
-        // Add event handler to show download progress:
-        req.xhr.addEventListener("progress", function (e) {
-            if (e.lengthComputable) {
-                $downloadProgresses.each(function () {
-                    this.value = e.loaded / e.total;
-                });
-            }
-        });
+    if (req.xhr != null) {
+        // Show and add event handler to upload progresses:
+        var $uploadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("upload-progress")).filter("PROGRESS");
+        if ($uploadProgresses.length > 0) {
+            $uploadProgresses.each(function () {
+                // Set initial value:
+                this.removeAttribute("value");
+                req._progressToResetAfterSend.push(this);
+                // Make hidden progresses visible:
+                if (!sircl.ext.visible(this)) {
+                    req._progressToHideAfterSend.push(this);
+                    sircl.ext.visible(this, true);
+                }
+            });
+            // Add event handler to show upload progress:
+            req.xhr.upload.addEventListener("progress", function (e) {
+                if (e.lengthComputable) {
+                    $uploadProgresses.each(function () {
+                        this.value = e.loaded / e.total;
+                    });
+                }
+            });
+        }
+        // Show and add event handler to download progresses:
+        var $downloadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("download-progress")).filter("PROGRESS");
+        if ($downloadProgresses.length > 0) {
+            $downloadProgresses.each(function () {
+                // Set initial value:
+                this.removeAttribute("value");
+                req._progressToResetAfterSend.push(this);
+                // Make hidden progresses visible:
+                if (!sircl.ext.visible(this)) {
+                    req._progressToHideAfterSend.push(this);
+                    sircl.ext.visible(this, true);
+                }
+            });
+            // Add event handler to show download progress:
+            req.xhr.addEventListener("progress", function (e) {
+                if (e.lengthComputable) {
+                    $downloadProgresses.each(function () {
+                        this.value = e.loaded / e.total;
+                    });
+                }
+            });
+        }
     }
     // Move to next handler:
     this.next(req);
@@ -1405,16 +1395,18 @@ sircl.addRequestHandler("afterSend", function (req) {
 //#region Reload by server
 
 sircl.addRequestHandler("afterRender", function (req) {
-    // If reloadAfter header is set with value > 0, reload after timeout:
-    var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
-    if (reloadAfter) {
-        // Parse delay (in seconds):
-        var delay = parseFloat(reloadAfter);
-        // Set timer:
-        if (reloadAfter > 0 && req.method == "get") {
-            setTimeout(function () {
-                req.$finalTarget.load(req.url)
-            }, delay * 1000);
+    if (req.xhr != null) {
+        // If reloadAfter header is set with value > 0, reload after timeout:
+        var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
+        if (reloadAfter) {
+            // Parse delay (in seconds):
+            var delay = parseFloat(reloadAfter);
+            // Set timer:
+            if (reloadAfter > 0 && req.method == "get") {
+                setTimeout(function () {
+                    req.$finalTarget.load(req.url)
+                }, delay * 1000);
+            }
         }
     }
     // Move to next handler:
@@ -1496,7 +1488,7 @@ sircl.addRequestHandler("afterSend", function (req) {
         // Close dialog:
         req._dialogOpened[0].close();
         req._dialogOpened = $([]);
-    } else if (req.xhr.status == "204") {
+    } else if (req.status == "204") {
         // Else, if status "204" (no content), close target dialog:
         var $dlg = req.$initialTarget.closest("DIALOG[open]");
         if ($dlg.length > 0) {
@@ -1792,7 +1784,7 @@ $(document).ready(function () {
 //#endregion
 
 /////////////////////////////////////////////////////////////////
-// Sircl 2.0 - Core extension
+// Sircl 2.x - Core extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -2226,6 +2218,22 @@ $(function () {
 
     $(document).on("change", "[ifchecked-readwrite]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
+    });
+
+    $(document).on("change", "[ifchecked-removeclass]", function (event) {
+        if (this.checked) {
+            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+        } else {
+            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+        }
+    });
+
+    $(document).on("change", "[ifchecked-addclass]", function (event) {
+        if (!this.checked) {
+            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+        } else {
+            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+        }
     });
 
     $(document).on("change", "[ifchecked-clearvalue]", function (event) {
@@ -3123,8 +3131,10 @@ $(function () {
             var text = $target.attr("data-share-text") || $target.text();
             navigator.share({
                 title: title,
-                url: url,
-                text: text
+                text: text,
+                url: url
+            }).then(function () {
+            }).catch(function () {
             });
         }
     });
@@ -3135,7 +3145,7 @@ $(function () {
 
 
 /////////////////////////////////////////////////////////////////
-// Sircl 2.0 - ChangeActions extension
+// Sircl 2.x - ChangeActions extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -3283,7 +3293,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             if (onFailure) onFailure.apply(triggerElement);
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
-        if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
+        if (!req.succeeded) sircl.handleError("S311", "Change action request failed.", { request: req });
     };
 
     var onError = function (e) {
@@ -3303,7 +3313,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             if (onFailure) onFailure.apply(triggerElement);
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
-        if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
+        if (!req.succeeded) sircl.handleError("S311", "Change action request failed.", { request: req });
     };
 
     var onLoadEnd = function () {
@@ -3503,7 +3513,7 @@ sircl.addChangeActionHandler("afterSend", function (req) {
 });
 
 /////////////////////////////////////////////////////////////////
-// Sircl 2.0 - ContextMenu extension
+// Sircl 2.x - ContextMenu extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt

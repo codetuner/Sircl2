@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.0 - ChangeActions extension
+// Sircl 2.x - ChangeActions extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -147,7 +147,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             if (onFailure) onFailure.apply(triggerElement);
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
-        if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
+        if (!req.succeeded) sircl.handleError("S311", "Change action request failed.", { request: req });
     };
 
     var onError = function (e) {
@@ -167,7 +167,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             if (onFailure) onFailure.apply(triggerElement);
         }
         sircl._runChangeActionHandlers("afterRender", triggerElement, req);
-        if (!req.succeeded) sircl.handleError("S101", "Change action request failed.", req);
+        if (!req.succeeded) sircl.handleError("S311", "Change action request failed.", { request: req });
     };
 
     var onLoadEnd = function () {

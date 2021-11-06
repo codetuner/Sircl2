@@ -1,4 +1,11 @@
-﻿// Initialize sircl lib:
+﻿/////////////////////////////////////////////////////////////////
+// Sircl 2.x - Toastr extension
+// www.getsircl.com
+// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Sircl is released under the MIT license, see sircl-license.txt
+/////////////////////////////////////////////////////////////////
+
+// Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-toastr' component should be registered after the 'sircl' component. Please review order of script files.");
 if (typeof toastr === "undefined") console.warn("The 'sircl-toastr' component requires the 'toastr.js' component. See https://github.com/CodeSeven/toastr");
 if (typeof jQuery !== "undefined" &&  $.isFunction($.fn.fadeIn) == false) console.warn("The 'sircl-toastr' component requires the full edition of jQuery. The slim edition is not sufficient.");
@@ -8,13 +15,16 @@ if ($.isFunction($.fn.fadeIn)) {
 
     // X-Sircl-Toastr response header support:
     sircl.addRequestHandler("afterSend", function (req) {
-        var toastrHeader = req.xhr.getResponseHeader("X-Sircl-Toastr");
-        if (toastrHeader != null && toastrHeader.indexOf("|") > 1) {
-            var toastrHeaderParts = toastrHeader.split("|");
-            var toastrType = toastrHeaderParts[0];
-            toastrHeaderParts.splice(0, 1);
-            toastr[toastrType].apply(null, toastrHeaderParts);
+        if (req.xhr != null) {
+            var toastrHeader = req.xhr.getResponseHeader("X-Sircl-Toastr");
+            if (toastrHeader != null && toastrHeader.indexOf("|") > 1) {
+                var toastrHeaderParts = toastrHeader.split("|");
+                var toastrType = toastrHeaderParts[0];
+                toastrHeaderParts.splice(0, 1);
+                toastr[toastrType].apply(null, toastrHeaderParts);
+            }
         }
+        // Move to next handler:
         this.next(req);
     });
 

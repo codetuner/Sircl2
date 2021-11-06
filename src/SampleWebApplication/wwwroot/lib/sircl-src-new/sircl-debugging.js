@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.0 - Debugging & Diagnostics extension
+// Sircl 2.x - Debugging & Diagnostics extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -13,6 +13,9 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-contextmenu' componen
 $$("enrich", function () {
     $(this).find("BODY [href]:not([title])").each(function () {
         if (this.tagName != "LINK") $(this).attr("title", $(this).attr("href"));
+    });
+    $(this).find("BODY [onclick-load]:not([title])").each(function () {
+        $(this).attr("title", $(this).attr("onclick-load"));
     });
     $(this).find("BODY [action]:not([title])").each(function () {
         $(this).attr("title", $(this).attr("action"));

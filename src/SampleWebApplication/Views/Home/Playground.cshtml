@@ -1,12 +1,14 @@
 ﻿<hr />
 
+<div class="onload-showtoastr" data-toastr-type="success" data-toastr-title="Added to cart" hidden>  The item has been added to your shopping cart.</div>
+
 <hr />
 
 <p>
     <select onload-load="/SelectCountries?delay=800" style="min-width: 200px;" onchange-click="#cmdocc"></select>
 </p>
 <p>
-    <button id="cmdocc" type="button" class="btn btn-primary" onclick-load="/Time" target="#cmdocctarget"><i class="spinner"></i> Clicked on change country</button>
+    <button id="cmdocc" type="button" class="btn btn-primary" onclick-load="/Fail" target="#cmdocctarget"><i class="spinner"></i> Clicked on change country</button>
 </p>
 <div id="cmdocctarget">
     Time here on click

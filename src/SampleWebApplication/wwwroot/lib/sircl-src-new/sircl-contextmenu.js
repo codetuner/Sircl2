@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.0 - ContextMenu extension
+// Sircl 2.x - ContextMenu extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt

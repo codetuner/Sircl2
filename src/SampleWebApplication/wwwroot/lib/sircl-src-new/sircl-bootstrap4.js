@@ -1,5 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.0 - Bootstrap4 extension
+// Sircl 2.x - Bootstrap4 extension
 // www.getsircl.com
 // Copyright (c) 2019-2021 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
@@ -99,7 +99,7 @@ sircl.addRequestHandler("afterSend", function (req) {
         };
         // Close modal:
         req._bsModalOpened.modal("hide");
-    } else if (req.xhr.status == "204") {
+    } else if (req.status == "204") {
         // Else, if status "204" (no content), close target modal:
         var $dlg = req.$initialTarget.closest(".modal.show");
         if ($dlg.length > 0) {
@@ -397,49 +397,51 @@ $$(function () {
 sircl.addRequestHandler("beforeSend", function (req) {
     req._bsProgressToResetAfterSend = []
     req._bsProgressToHideAfterSend = []
-    // Show and add event handler to upload progresses:
-    var $uploadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("upload-progress")).filter(".progress");
-    if ($uploadProgresses.length > 0) {
-        $uploadProgresses.each(function () {
-            // Set initial value:
-            $(this).find(".progress-bar").css("width", "0%");
-            req._bsProgressToResetAfterSend.push(this);
-            // Make hidden progresses visible:
-            if (!sircl.ext.visible(this)) {
-                req._bsProgressToHideAfterSend.push(this);
-                sircl.ext.visible(this, true);
-            }
-        });
-        // Add event handler to show upload progress:
-        req.xhr.upload.addEventListener("progress", function (e) {
-            if (e.lengthComputable) {
-                $uploadProgresses.each(function () {
-                    $(this).find(".progress-bar").css("width", Math.ceil(100 * e.loaded / e.total) + "%");
-                });
-            }
-        });
-    }
-    // Show and add event handler to download progresses:
-    var $downloadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("download-progress")).filter(".progress");
-    if ($downloadProgresses.length > 0) {
-        $downloadProgresses.each(function () {
-            // Set initial value:
-            $(this).find(".progress-bar").css("width", "0%");
-            req._bsProgressToResetAfterSend.push(this);
-            // Make hidden progresses visible:
-            if (!sircl.ext.visible(this)) {
-                req._bsProgressToHideAfterSend.push(this);
-                sircl.ext.visible(this, true);
-            }
-        });
-        // Add event handler to show download progress:
-        req.xhr.addEventListener("progress", function (e) {
-            if (e.lengthComputable) {
-                $downloadProgresses.each(function () {
-                    $(this).find(".progress-bar").css("width", Math.ceil(100 * e.loaded / e.total) + "%");
-                });
-            }
-        });
+    if (req.xhr != null) {
+        // Show and add event handler to upload progresses:
+        var $uploadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("upload-progress")).filter(".progress");
+        if ($uploadProgresses.length > 0) {
+            $uploadProgresses.each(function () {
+                // Set initial value:
+                $(this).find(".progress-bar").css("width", "0%");
+                req._bsProgressToResetAfterSend.push(this);
+                // Make hidden progresses visible:
+                if (!sircl.ext.visible(this)) {
+                    req._bsProgressToHideAfterSend.push(this);
+                    sircl.ext.visible(this, true);
+                }
+            });
+            // Add event handler to show upload progress:
+            req.xhr.upload.addEventListener("progress", function (e) {
+                if (e.lengthComputable) {
+                    $uploadProgresses.each(function () {
+                        $(this).find(".progress-bar").css("width", Math.ceil(100 * e.loaded / e.total) + "%");
+                    });
+                }
+            });
+        }
+        // Show and add event handler to download progresses:
+        var $downloadProgresses = sircl.ext.$select(req.$initialTarget, req.$initialTarget.attr("download-progress")).filter(".progress");
+        if ($downloadProgresses.length > 0) {
+            $downloadProgresses.each(function () {
+                // Set initial value:
+                $(this).find(".progress-bar").css("width", "0%");
+                req._bsProgressToResetAfterSend.push(this);
+                // Make hidden progresses visible:
+                if (!sircl.ext.visible(this)) {
+                    req._bsProgressToHideAfterSend.push(this);
+                    sircl.ext.visible(this, true);
+                }
+            });
+            // Add event handler to show download progress:
+            req.xhr.addEventListener("progress", function (e) {
+                if (e.lengthComputable) {
+                    $downloadProgresses.each(function () {
+                        $(this).find(".progress-bar").css("width", Math.ceil(100 * e.loaded / e.total) + "%");
+                    });
+                }
+            });
+        }
     }
     // Move to next handler:
     this.next(req);
