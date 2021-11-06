@@ -16,7 +16,7 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component s
 sircl.addAttributeAlias(".beforeload-show", "beforeload-show", ":this");
 sircl.addAttributeAlias(".beforeload-hide", "beforeload-hide", ":this");
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_ext_beforeSend_requestHandler (req) {
 
     req.$initialTarget.find("[beforeload-hide]").each(function () {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-hide")), false);
@@ -48,13 +48,13 @@ sircl.addRequestHandler("beforeSend", function (req) {
 sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
 sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
 
-$$("enrich", function () {
+$$("enrich", function sircl_ext_onload_enrichHandler () {
     $(this).find(".onload-setvaluefromquery").each(function () {
         $(this).attr("onload-setvaluefromquery", this.name);
     });
 });
 
-$$(function () {
+$$(function sircl_ext_onload_processHandler () {
 
     /// <* onload-hide="selector"> Will make that element invisible on init.
     $(this).find("[onload-hide]").each(function () {
@@ -631,7 +631,7 @@ $(function () {
     });
 });
 
-$$(function () {
+$$(function sircl_ext_ifchecked_processHandler () {
 
     $(this).find("[ifchecked-hide]").each(function () {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked);
@@ -649,15 +649,15 @@ $$(function () {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")).prop("disabled", !this.checked);
     });
 
-    $(this).find("[ifchecked-readonly]", function (event) {
+    $(this).find("[ifchecked-readonly]").each(function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly")).prop("readonly", this.checked);
     });
 
-    $(this).find("[ifchecked-readwrite]", function (event) {
+    $(this).find("[ifchecked-readwrite]").each(function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
     });
 
-    $(this).find("[ifchecked-removeclass]", function (event) {
+    $(this).find("*[ifchecked-removeclass]").each(function (event) {
         if (this.checked) {
             sircl.ext.removeClass($(this), this.getAttribute("ifchecked-removeclass"));
         } else {
@@ -665,7 +665,7 @@ $$(function () {
         }
     });
 
-    $(this).find("[ifchecked-addclass]", function (event) {
+    $(this).find("*[ifchecked-addclass]").each(function (event) {
         if (this.checked) {
             sircl.ext.addClass($(this), this.getAttribute("ifchecked-addclass"));
         } else {
@@ -673,14 +673,14 @@ $$(function () {
         }
     });
 
-    $(this).find("[ifchecked-clearvalue]", function (event) {
+    $(this).find("[ifchecked-clearvalue]").each(function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
         });
     });
 
-    $(this).find("[ifunchecked-clearvalue]", function (event) {
+    $(this).find("[ifunchecked-clearvalue]").each(function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-clearvalue")).each(function () {
             $(this).val("");
             $(this).change();
@@ -860,7 +860,7 @@ $$(function () {
 /// Action-events:
 //////////////////
 
-$$(function () {
+$$(function sircl_ext_actionEvents_processHandler () {
 
     /// <* hide-ifexists="selection"> If the selection has matches, hide this element, else show it.
     $(this).find("[hide-ifexists]").each(function () {
@@ -972,7 +972,7 @@ sircl.ext.isValid = function ($scope) {
     return true;
 };
 
-$$(function () {
+$$(function sircl_ext_ifvalid_processHandler() {
     $(this).find("[ifvalid-show]").each(function () {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
     });
@@ -1094,7 +1094,7 @@ $(function () {
     });
 });
 
-$$(function () {
+$$(function sircl_ext_ifinview_processHandler () {
     /// <* ifinview-load="url"> Loads the given URL and places the result in the element when the element is visible in the view.
     $("[ifinview-load]").each(function () {
         if (sircl.isElementInView(this)) {
@@ -1151,7 +1151,7 @@ $(function () {
     });
 });
 
-$$(function () {
+$$(function sircl_ext_onchangeConfirm_processHandler () {
     // Store initial value of input or select having onchange-confirm, to be able to restore if not confirmed:
     $(this).find("INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]").each(function () {
         this._beforeConfirmValue = $(this).val();
@@ -1345,7 +1345,7 @@ $(function () {
 //#region Sharing
 
 // Hide sharing elements when sharing is not available:
-$$(function () {
+$$(function sircl_ext_onclickShare_processHandler () {
     if (navigator.share) { } else {
         $("[onclick-share]").each(function () {
             sircl.ext.visible(this, false);

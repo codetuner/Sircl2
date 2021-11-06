@@ -17,6 +17,168 @@
         <hr />
         <hr />
 
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Launch demo modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Download Sircl files</h5>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="container">
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <b>Bundled (incl. extended &amp; changeactions):</b>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" checked class="bundle" ifchecked-check="#bundle-css" ifunchecked-uncheck="#bundle-css" ifchecked-uncheck=".bundle-part" ifchecked-disable=".bundle-part-plus" ifunchecked-check=".core" ifchecked-removeclass="disabled on <.row|>a"> sircl-bundled<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Includes sircl.js, sircl-extended.js and sircl-changeactions.js.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bundled.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bundled.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" id="bundle-css" class="bundle" ifchecked-removeclass="disabled on <.row|>a" disabled> sircl-bundled<span class="min">.min</span>.css</label>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bundled.min.css" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bundled.css" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <b>Separate files &amp; additions:</b>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" id="core" class="core bundle-part" ifchecked-check="#core-css" ifunchecked-uncheck="#core-css" ifchecked-uncheck=".bundle" ifunchecked-check=".bundle" ifchecked-removeclass="disabled on <.row|>a"> sircl<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Core library of Sircl.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" id="core-css" class="core bundle-part" ifchecked-removeclass="disabled on <.row|>a" disabled> sircl<span class="min">.min</span>.css</label>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl.min.css" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl.css" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" class="bundle-part bundle-part-plus" ifchecked-removeclass="disabled on <.row|>a"> sircl-extended<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Extends Sircl with extra features (event-actions).">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-extended.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-extended.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" class="bundle-part bundle-part-plus" ifchecked-removeclass="disabled on <.row|>a"> sircl-changeactions<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Adds support for change-actions.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-changeactions.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-changeactions.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" id="bs4" ifchecked-uncheck="#bs5" ifchecked-removeclass="disabled on <.row|>a"> sircl-bootstrap4<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Integrates with Bootstrap 4.x.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bootstrap4.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bootstrap4.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" id="bs5" ifchecked-uncheck="#bs4" ifchecked-removeclass="disabled on <.row|>a"> sircl-bootstrap5<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Integrates with Bootstrap 5.x.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bootstrap5.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-bootstrap5.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" ifchecked-removeclass="disabled on <.row|>a"> sircl-fa<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Integrates with Font Awesome.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-fa.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-fa.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" ifchecked-removeclass="disabled on <.row|>a"> sircl-toastr<span class="min">.min</span>.js</label>
+                                    <i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Integrates with toastr component.">&zwnj;</i>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-toastr.min.js" dowload>Download</a>
+                                    <a class="btn btn-primary btn-sm not-min" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-toastr.js" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <b>Miscellaneous:</b>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" checked> README.md</label>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/README.md" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <label><input type="checkbox" checked> sircl-license.txt</label>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary btn-sm" href="https://raw.githubusercontent.com/codetuner/Sircl2/main/dist/sircl-latest/sircl-license.txt" dowload>Download</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col alert alert-info">
+                                    <label><input type="checkbox" checked ifchecked-show=".min" ifchecked-hide=".not-min"> Minified version</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <i>The interactions in this dialog are completely implemented with Sircl.</i><br />
+                                <a class="btn btn-info btn-sm" href="https://codepen.io/codetuner-the-lessful/pen/PoKRPaJ">View the CodePen of this modal</a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <hr />
 
         <form id="frm4123">

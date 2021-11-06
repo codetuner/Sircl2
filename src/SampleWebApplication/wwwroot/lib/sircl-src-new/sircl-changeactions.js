@@ -301,7 +301,7 @@ $(function () {
     });
 });
 
-$$(function () {
+$$(function sircl_changeActions_processHandler () {
     // On load, store the initial value of the input element having [onchange-action]:
     // For grouped radio's, store the value of the checked element on the first memeber of the group.
     // For all checkboxes and ungrouped radios, store the checked state.

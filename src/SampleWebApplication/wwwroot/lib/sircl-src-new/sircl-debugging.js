@@ -10,7 +10,7 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-contextmenu' componen
 
 //#region Add tooltip on hyperlinks and forms displaying the URL
 
-$$("enrich", function () {
+$$("enrich", function sircl_debugging_enrichHandler () {
     $(this).find("BODY [href]:not([title])").each(function () {
         if (this.tagName != "LINK") $(this).attr("title", $(this).attr("href"));
     });
@@ -55,7 +55,7 @@ sircl.addRequestHandler("onError", function (req) {
 });
 
 // AfterLoad handler to register context menu event handlers:
-$$(function () {
+$$(function sircl_debugging_processHandler () {
     console.log("Sircl-Debugging: afterLoad");
     var initialBorder = "";
     try { initialBorder = $(this).css("border"); } catch (ex) { };

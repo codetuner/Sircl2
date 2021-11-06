@@ -14,7 +14,7 @@ if (typeof jQuery !== "undefined" &&  $.isFunction($.fn.fadeIn) == false) consol
 if ($.isFunction($.fn.fadeIn)) {
 
     // X-Sircl-Toastr response header support:
-    sircl.addRequestHandler("afterSend", function (req) {
+    sircl.addRequestHandler("afterSend", function sircl_toastr_afterSend_requestHandler (req) {
         if (req.xhr != null) {
             var toastrHeader = req.xhr.getResponseHeader("X-Sircl-Toastr");
             if (toastrHeader != null && toastrHeader.indexOf("|") > 1) {
@@ -32,7 +32,7 @@ if ($.isFunction($.fn.fadeIn)) {
     // <div class="onload-showtoastr" hidden data-toastr-type="info" data-toastr-title="Welcome!">
     //   You are on the <b>Products</b> page.
     // </div>
-    $$(function () {
+    $$(function sircl_toastr_processHandler () {
         $(this).find(".onload-showtoastr").each(function () {
             var toastrType = $(this).data("toastr-type") || "info";
             var toastrArgs = [$(this).html()];

@@ -1003,7 +1003,7 @@ function $$() {
  * @param {any} attributeValue The default attribute value.
  */
 sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue) {
-    sircl.addContentReadyHandler("enrich", function () {
+    sircl.addContentReadyHandler("enrich", function sircl_addAttributeAlias () {
         $(this).find(aliasClass$).each(function () {
             $(this).attr(attributeName, attributeValue);
         });
@@ -1045,7 +1045,7 @@ sircl._afterLoad = function (scope) {
     // Execute all "enrich" afterLoad handlers:
     sircl._contentReadyHandlers.enrich.forEach(function (handler) {
         try {
-        handler.call(scope);
+            handler.call(scope);
         } catch (ex) {
             console.error(ex);
             sircl.handleError("S123", "Error executing an AfterLoad enrich handler: " + ex, { exception: ex, fx: handler });
@@ -1054,7 +1054,7 @@ sircl._afterLoad = function (scope) {
     // Execute all "process" afterLoad handlers:
     sircl._contentReadyHandlers.process.forEach(function (handler) {
         try {
-        handler.call(scope);
+            handler.call(scope);
         } catch (ex) {
             console.error(ex);
             sircl.handleError("S124", "Error executing an AfterLoad process handler: " + ex, { exception: ex, fx: handler });
@@ -1068,7 +1068,7 @@ sircl._afterLoad = function (scope) {
 
 //#region Default Content Ready handlers
 
-$$("content", function () {
+$$("content", function sircl_default_contentHandler () {
     /// <* onload-moveto="selector"> Moves the content to the given selector.
     $(this).find("*[onload-moveto]").each(function () {
         $($(this).attr("onload-moveto")).html($(this).html());
@@ -1076,7 +1076,7 @@ $$("content", function () {
     });
 });
 
-$$(function () {
+$$(function sircl_default_processHandler () {
     /// <* document-title="document title"> Sets the document title.
     var documentTitleElement = $(this).find("[document-title]");
     if (documentTitleElement.length > 0) {
@@ -1132,7 +1132,7 @@ sircl.handleError = function (code, message, data) {
 /**
  * Add a default error handler logging to console.
  */
-sircl.addErrorHandler(function (code, message, data) {
+sircl.addErrorHandler(function sircl_defaultLogging_errorHandler (code, message, data) {
     console.error("Sircl " + code + " - " + message, data);
 });
 
@@ -1159,7 +1159,7 @@ sircl._afterHistory = function () {
     });
 };
 
-sircl.addRequestHandler("beforeRender", function (req) {
+sircl.addRequestHandler("beforeRender", function sircl_history_beforeRender_requestHandler (req) {
     // If request is a "get" request on the main target and history handling is not to be skipped:
     if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
         // Store the current state in history:
@@ -1175,7 +1175,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
     this.next(req);
 });
 
-sircl.addRequestHandler("afterRender", function (req) {
+sircl.addRequestHandler("afterRender", function sircl_history_afterRender_requestHandler (req) {
     if (req._historyMode) {
         // Push or replace new state in history:
         var finalState = {
@@ -1247,7 +1247,7 @@ $(function () {
 
 //#region Spinner handling
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler (req) {
     // Show spinner if any:
     req._spinner = false;
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
@@ -1261,7 +1261,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHandler (req) {
     // Hide spinner if any:
     if (req._spinner_to_restore) {
         req.$trigger[0].innerHTML = req._spinner_to_restore;
@@ -1274,7 +1274,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 //#region Overlay handling
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestHandler (req) {
     // Make overlays visible:
     req.$initialTarget.find(".overlay").each(function () {
         $(this).parent().css("position", "relative");
@@ -1284,7 +1284,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHandler (req) {
     // Make overlays visible:
     req.$initialTarget.find(".overlay").each(function () {
         sircl.ext.visible(this, false);
@@ -1297,7 +1297,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 //#region Loading status handling
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_requestHandler (req) {
     // Set classes to loading state:
     $(document).addClass("body-loading");
     req.$initialTarget.addClass("loading");
@@ -1305,7 +1305,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_loadingStatus_afterSend_requestHandler (req) {
     // Reset classes to loading state:
     $(document).removeClass("body-loading");
     req.$initialTarget.removeClass("loading");
@@ -1324,7 +1324,7 @@ $(document).ready(function () {
 
 //#region Load progress handling
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_requestHandler (req) {
     req._progressToResetAfterSend = []
     req._progressToHideAfterSend = []
     if (req.xhr != null) {
@@ -1377,7 +1377,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_requestHandler (req) {
     // Hide progresses that were hidden before send:
     req._progressToHideAfterSend.forEach(function (elem) {
         sircl.ext.visible(elem, false);
@@ -1394,7 +1394,7 @@ sircl.addRequestHandler("afterSend", function (req) {
 
 //#region Reload by server
 
-sircl.addRequestHandler("afterRender", function (req) {
+sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_requestHandler (req) {
     if (req.xhr != null) {
         // If reloadAfter header is set with value > 0, reload after timeout:
         var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
@@ -1456,7 +1456,7 @@ $(function () {
 
 });
 
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_dialogs_beforeSend_requestHandler (req) {
     var processor = this;
     // Open any non-open dialog holding the initial target and having class "beforeload-showdialog":
     req._dialogOpened = req.$initialTarget.closest("DIALOG.beforeload-showdialog:not([open])");
@@ -1481,7 +1481,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     processor.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_dialogs_afterSend_requestHandler (req) {
     var processor = this;
     // On error, undo opened dialogs:
     if (!req.succeeded && req._dialogOpened.length > 0) {
@@ -1500,7 +1500,7 @@ sircl.addRequestHandler("afterSend", function (req) {
     processor.next(req);
 });
 
-sircl.addRequestHandler("beforeRender", function (req) {
+sircl.addRequestHandler("beforeRender", function sircl_dialogs_beforeRender_requestHandler (req) {
     var processor = this;
     // Undo opened dialog if target has changed:
     if (req.targetHasChanged && req._dialogOpened.length > 0) {
@@ -1524,7 +1524,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
     processor.next(req);
 });
 
-sircl.addRequestHandler("afterRender", function (req) {
+sircl.addRequestHandler("afterRender", function sircl_dialogs_afterRender_requestHandler (req) {
     var processor = this;
     // Open modal on final target:
     var $dlg = req.$finalTarget.closest("DIALOG:not([open])");
@@ -1539,7 +1539,7 @@ sircl.addRequestHandler("afterRender", function (req) {
     processor.next(req);
 });
 
-$$(function () {
+$$(function sircl_dialogs_processHandler () {
     // Disable cancelling of dialog with .dialog-nocancel:
     $(this).find("DIALOG").each(function (index, elem) {
         elem.addEventListener("cancel", function (event) {
@@ -1642,7 +1642,7 @@ $(function () {
 sircl.addAttributeAlias(".onsubmit-disable", "onsubmit-disable", ">:submit");
 
 /// <form onsubmit-disable="selector"> On submit of the form, disable selector elements.
-sircl.addRequestHandler("beforeSend", function (req) {
+sircl.addRequestHandler("beforeSend", function sircl_submit_beforeSend_requestHandler (req) {
     // Disable requested elements:
     if (req.$form) {
         if (req.$form.hasAttr("onsubmit-disable")) {
@@ -1656,7 +1656,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
     // Move to next handler:
     this.next(req);
 });
-sircl.addRequestHandler("afterSend", function (req) {
+sircl.addRequestHandler("afterSend", function sircl_submit_afterSend_requestHandler (req) {
     // Re-enable previously disabled elements:
     if (req._formSubmitsToReenable) {
         req._formSubmitsToReenable.forEach(function (elem) {
@@ -1683,7 +1683,7 @@ $(function () {
 
 sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
 
-$$(function () {
+$$(function sircl_onload_processHandler () {
 
     /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
     $(this).find("[onload-click]").each(function () {
@@ -1724,7 +1724,7 @@ $$(function () {
 //#region Form changed state handling
 
 // On initial load, if onchange-set input is true, add .form-changed class to form:
-$$(function () {
+$$(function sircl_formState_processHandler () {
     $(this).find("FORM[onchange-set]").each(function () {
         var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {

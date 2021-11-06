@@ -19,7 +19,7 @@ sircl.addRequestHandler("beforeSend", function (req) {
 });
 
 // AfterLoad handler to register context menu event handlers:
-$$(function () {
+$$(function contextMenu_processHandler () {
     // Add handler on parent of a .contextmenu element to show/hide context menu:
     $(this).find(".contextmenu").each(function () {
         var cm = $(this);
