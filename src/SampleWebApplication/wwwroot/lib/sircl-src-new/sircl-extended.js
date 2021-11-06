@@ -407,7 +407,7 @@ $(function () {
 $(function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
     $(document).on("change", "*[onchecked-click]:checked", function (event) {
-        var targetSelector = $(this).attr("onchecked-click");
+        var targetSelector = this.getAttribute("onchecked-click");
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
     });
 
@@ -437,17 +437,17 @@ $(function () {
 
     $(document).on("change", "[ifchecked-removeclass]", function (event) {
         if (this.checked) {
-            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+            sircl.ext.removeClass($(this), this.getAttribute("ifchecked-removeclass"));
         } else {
-            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+            sircl.ext.addClass($(this), this.getAttribute("ifchecked-removeclass"));
         }
     });
 
     $(document).on("change", "[ifchecked-addclass]", function (event) {
-        if (!this.checked) {
-            sircl.ext.removeClass($(this), $(this).attr("ifchecked-removeclass"));
+        if (this.checked) {
+            sircl.ext.addClass($(this), this.getAttribute("ifchecked-addclass"));
         } else {
-            sircl.ext.addClass($(this), $(this).attr("ifchecked-removeclass"));
+            sircl.ext.removeClass($(this), this.getAttribute("ifchecked-addclass"));
         }
     });
 
@@ -655,6 +655,22 @@ $$(function () {
 
     $(this).find("[ifchecked-readwrite]", function (event) {
         sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
+    });
+
+    $(this).find("[ifchecked-removeclass]", function (event) {
+        if (this.checked) {
+            sircl.ext.removeClass($(this), this.getAttribute("ifchecked-removeclass"));
+        } else {
+            sircl.ext.addClass($(this), this.getAttribute("ifchecked-removeclass"));
+        }
+    });
+
+    $(this).find("[ifchecked-addclass]", function (event) {
+        if (this.checked) {
+            sircl.ext.addClass($(this), this.getAttribute("ifchecked-addclass"));
+        } else {
+            sircl.ext.removeClass($(this), this.getAttribute("ifchecked-addclass"));
+        }
     });
 
     $(this).find("[ifchecked-clearvalue]", function (event) {
