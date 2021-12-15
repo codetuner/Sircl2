@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The 'sircl-contextmenu' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof sircl === "undefined") console.warn("The 'sircl-debugging' component should be registered after the 'sircl' component. Please review order of script files.");
 
 //#region Add tooltip on hyperlinks and forms displaying the URL
 
@@ -54,7 +54,7 @@ sircl.addRequestHandler("onError", function (req) {
     this.next(req);
 });
 
-// AfterLoad handler to register context menu event handlers:
+// AfterLoad handler adds a temporary border to loaded parts:
 $$(function sircl_debugging_processHandler () {
     console.log("Sircl-Debugging: afterLoad");
     var initialBorder = "";

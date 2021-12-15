@@ -344,28 +344,23 @@ sircl.ext.toggleClass = function ($scope, classExpression) {
 
 /**
  * Shows an alert message.
- * @param {any} $subject Sender of the alert request.
+ * @param {any} subject Sender of the alert request.
  * @param {any} message Message to show.
  * @param {any} event Event that triggered the confirm request.
- * @param {any} allowAsync Whether async handling (returning before the alert is closed) is allowed.
  */
-sircl.ext.alert = function ($subject, message, event, allowAsync) {
+sircl.ext.alert = function (subject, message, event) {
     window.alert(message);
 };
 
 /**
  * Shows a confirm message.
- * @param {any} $subject Sender of the confirm request.
+ * @param {any} subject Sender element of the confirm request.
  * @param {any} message Message to show.
  * @param {any} event Event that triggered the confirm request.
  * @returns True if confirmed, false otherwise.
  */
-sircl.ext.confirm = function ($subject, message, event, callback) {
-    if (window.confirm(message)) {
-        return true;
-    } else {
-        return false;
-    }
+sircl.ext.confirm = function (subject, message, event) {
+    return window.confirm(message);
 };
 
 /**
@@ -735,7 +730,7 @@ SirclRequestProcessor.prototype._process = function (req) {
         window.history.replaceState(state, document.title, req.historyReplace);
     }
     // Handle 'Alert-Message' header if any:
-    if (req.alertMsg) sircl.ext.alert(req.$trigger, req.alertMsg, null, false);
+    if (req.alertMsg) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), req.alertMsg, null);
     // Only proceed with next (rendering) if succeeded and not "204":
     if (req.succeeded) {
         // Check for history navigation:
@@ -765,7 +760,7 @@ SirclRequestProcessor.prototype._process = function (req) {
             this.next(req);
         }
     } else {
-        sircl.handleError("S111", "Error processing request.", { request: req });
+        // Do not proceed with next: abort the pipeline.
     }
 };
 
@@ -818,8 +813,7 @@ SirclRequestProcessor.prototype.next = function (req) {
         try {
             step.apply(this, arguments);
         } catch (ex) {
-            console.error(ex);
-            sircl.handleError("S131", "Error executing a RequestProcessor step: " + ex, { exception: ex, fx: step });
+            sircl.handleError("S131", "Error executing a RequestProcessor step: " + ex, { exception: ex, fx: step, request: req });
             this.next(req);
         }
     } else if (this._loadComplete) {
@@ -890,7 +884,7 @@ $(document).ready(function () {
         } else if (href === "history:refresh") {
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
-            sircl.ext.alert($(this), href.substr(6), null, true);
+            sircl.ext.alert(this, href.substr(6), event);
         } else if (href.indexOf("javascript:") === 0) {
             var nonce = this.getAttribute("nonce");
             if (nonce) {
@@ -1018,9 +1012,8 @@ sircl._beforeUnload = function (scope) {
     // Execute all "before" content ready handlers:
     sircl._contentReadyHandlers.before.forEach(function (handler) {
         try {
-        handler.call(scope);
+            handler.call(scope);
         } catch (ex) {
-            console.error(ex);
             sircl.handleError("S121", "Error executing a BeforeUnLoad handler: " + ex, { exception: ex, fx: handler });
         }
     });
@@ -1038,7 +1031,6 @@ sircl._afterLoad = function (scope) {
         try {
             handler.call(scope);
         } catch (ex) {
-            console.error(ex);
             sircl.handleError("S122", "Error executing an AfterLoad content handler: " + ex, { exception: ex, fx: handler });
         }
     });
@@ -1047,7 +1039,6 @@ sircl._afterLoad = function (scope) {
         try {
             handler.call(scope);
         } catch (ex) {
-            console.error(ex);
             sircl.handleError("S123", "Error executing an AfterLoad enrich handler: " + ex, { exception: ex, fx: handler });
         }
     });
@@ -1056,7 +1047,6 @@ sircl._afterLoad = function (scope) {
         try {
             handler.call(scope);
         } catch (ex) {
-            console.error(ex);
             sircl.handleError("S124", "Error executing an AfterLoad process handler: " + ex, { exception: ex, fx: handler });
         }
     });
@@ -1121,7 +1111,9 @@ sircl.handleError = function (code, message, data) {
     this._errorHandlers.forEach(function (handler) {
         try {
             handler(code, message, data);
-        } catch (ex) { }
+        } catch (ex) {
+            console.error("Sircl S999 - Error in error handler.", { exception: ex, fx: handler });
+        }
     });
 };
 
@@ -1155,7 +1147,11 @@ sircl.addAfterHistoryHandler = function (handler) {
  */
 sircl._afterHistory = function () {
     this._afterHistoryHandlers.forEach(function (handler) {
-        handler();
+        try {
+            handler();
+        } catch (ex) {
+            sircl.handleError("S125", "Error executing an After history handler: " + ex, { exception: ex, fx: handler });
+        }
     });
 };
 
@@ -1751,7 +1747,7 @@ $(function () {
         var $changedForm = $("FORM.form-changed[onunloadchanged-confirm]");
         if ($changedForm.length > 0) {
             var confirmMessage = $changedForm[0].getAttribute("onunloadchanged-confirm");
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 event.stopPropagation();
                 event.preventDefault();
             }
@@ -1761,7 +1757,7 @@ $(function () {
     // A click on an element within the form triggers the onclickchanged-confirm:
     $(document.body).on("click", "FORM.form-changed *[onclickchanged-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclickchanged-confirm");
-        if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+        if (!sircl.ext.confirm(this, confirmMessage, event)) {
             event.stopPropagation();
             event.preventDefault();
         }
@@ -2060,7 +2056,7 @@ $(function () {
         } else if (href === "history:refresh") {
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
-            sircl.ext.alert($(this), href.substr(6), null, true);
+            sircl.ext.alert(this, href.substr(6), event);
         } else if (href.indexOf("javascript:") === 0) {
             var nonce = this.getAttribute("nonce");
             if (nonce) {
@@ -2900,7 +2896,7 @@ $(function () {
     $(document.body).on("click", "*[onclick-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclick-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 event.stopPropagation();
                 event.preventDefault();
             }
@@ -2912,7 +2908,7 @@ $(function () {
     $(document.body).on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 $this.prop("checked", !$this.prop("checked"));
                 event.stopPropagation();
                 event.preventDefault();
@@ -2925,7 +2921,7 @@ $(function () {
     $(document.body).on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 $(this).val(this._beforeConfirmValue);
                 event.stopPropagation();
                 event.preventDefault();
@@ -2999,9 +2995,9 @@ $(function () {
             }
         }
         if (validFileIndexes.length > maxFileCount && tooManyFilesMsg != null) {
-            sircl.ext.alert($this, tooManyFilesMsg, event, false);
+            sircl.ext.alert(this, tooManyFilesMsg, event);
         } else if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length && invalidFileMsg != null) {
-            sircl.ext.alert($this, invalidFileMsg, event, false);
+            sircl.ext.alert(this, invalidFileMsg, event);
         }
         if (validFileIndexes.length > 0) {
             if (validFileIndexes.length > maxFileCount) {
@@ -3500,7 +3496,7 @@ $$(function sircl_changeActions_processHandler () {
  */
 sircl.addChangeActionHandler("afterSend", function (req) {
     var alertMessage = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
-    if (alertMessage) sircl.ext.alert(req.$trigger, alertMessage, null, true);
+    if (alertMessage) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), alertMessage, null);
 });
 
 /**

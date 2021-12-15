@@ -20,8 +20,9 @@ if (typeof sircl === "undefined") console.warn("The file 'sircl-samples-extensib
 // </div>
 // #endregion
 
-sircl.ext.confirm = function ($subject, message, event) {
+sircl.ext.confirm = function (subject, message, event) {
     // If called for first time, show the confirm modal:
+    var $subject = $(subject);
     if ($subject[0]._skipConfirmOnce != true) {
         $("#confirm-modal .modal-body").html(message);
         $("#confirm-modal")[0]._confirmAction = function () {

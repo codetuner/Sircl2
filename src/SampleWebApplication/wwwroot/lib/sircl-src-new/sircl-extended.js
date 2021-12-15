@@ -275,7 +275,7 @@ $(function () {
         } else if (href === "history:refresh") {
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
-            sircl.ext.alert($(this), href.substr(6), null, true);
+            sircl.ext.alert(this, href.substr(6), event);
         } else if (href.indexOf("javascript:") === 0) {
             var nonce = this.getAttribute("nonce");
             if (nonce) {
@@ -1115,7 +1115,7 @@ $(function () {
     $(document.body).on("click", "*[onclick-confirm]", function (event) {
         var confirmMessage = $(this).attr("onclick-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 event.stopPropagation();
                 event.preventDefault();
             }
@@ -1127,7 +1127,7 @@ $(function () {
     $(document.body).on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 $this.prop("checked", !$this.prop("checked"));
                 event.stopPropagation();
                 event.preventDefault();
@@ -1140,7 +1140,7 @@ $(function () {
     $(document.body).on("change", "INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]", function (event) {
         var confirmMessage = $(this).attr("onchange-confirm");
         if (confirmMessage) {
-            if (!sircl.ext.confirm($(this), confirmMessage, event)) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 $(this).val(this._beforeConfirmValue);
                 event.stopPropagation();
                 event.preventDefault();
@@ -1214,9 +1214,9 @@ $(function () {
             }
         }
         if (validFileIndexes.length > maxFileCount && tooManyFilesMsg != null) {
-            sircl.ext.alert($this, tooManyFilesMsg, event, false);
+            sircl.ext.alert(this, tooManyFilesMsg, event);
         } else if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length && invalidFileMsg != null) {
-            sircl.ext.alert($this, invalidFileMsg, event, false);
+            sircl.ext.alert(this, invalidFileMsg, event);
         }
         if (validFileIndexes.length > 0) {
             if (validFileIndexes.length > maxFileCount) {
