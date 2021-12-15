@@ -1,6 +1,8 @@
 ﻿@model IndexModel
 @{
     ViewBag.Title = "Users";
+    // Uses <!--email_off--> to prevent email obfuscation by Cloudflare
+    // https://support.cloudflare.com/hc/en-us/articles/200170016-What-is-Email-Address-Obfuscation-
 }
 
 <h1>Users</h1>
@@ -40,7 +42,7 @@
                                     <i class="fa fa-lock"></i>
                                 }
                             </td>
-                            <td>@item.Email</td>
+                            <td><!--email_off-->@item.Email<!--/email_off--></td>
                             <td>@item.PhoneNumber</td>
                         </tr>
                     }
