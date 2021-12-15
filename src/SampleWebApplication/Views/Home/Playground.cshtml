@@ -1,5 +1,35 @@
 ﻿<hr />
 
+<table class="table">
+    <tr>
+        <td><a href="/Time" browser-cache="off" target="#t554121">Time Uncached</a></td>
+        <td><a href="/Time" browser-cache="on" target="#t554122">Time Cached</a></td>
+        <td><a href="javascript:cachedTime('#t554123')">Time Cached</a></td>
+    </tr>
+    <tr>
+        <td id="t554121"></td>
+        <td id="t554122"></td>
+        <td id="t554123"></td>
+    </tr>
+</table>
+<script>
+    function cachedTime(target) {
+        var jqxhr = $.ajax("/Time")
+            .done(function (data) {
+                $(target).html(data);
+            })
+            .fail(function () {
+                alert("error");
+            })
+            .always(function () {
+                //alert("complete");
+            });
+    }
+</script>
+
+
+<hr />
+
 <div class="onload-showtoastr" data-toastr-type="success" data-toastr-title="Added to cart" hidden>  The item has been added to your shopping cart.</div>
 
 <hr />

@@ -1,3 +1,4 @@
 ﻿@page
 @{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"].ToString())); }
+@{ Response.Headers["Cache-Control"] = "public, max-age=10"; }
 @DateTime.Now
