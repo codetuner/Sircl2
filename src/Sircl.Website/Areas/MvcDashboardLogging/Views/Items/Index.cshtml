@@ -39,7 +39,7 @@
                             <td>@item.Host</td>
                             <td>
                                 @Html.Raw(item.Aspect.HtmlIcon)
-                                @if (item.Aspect == Sircl.Website.Logging.LogAspect.Error) { <b>@(item.Message ?? item.AspectName)</b> } else { <span>@(item.Message ?? item.AspectName)</span> }
+                                @if (item.Aspect == LogAspect.Error) { <b>@(item.Message ?? item.AspectName)</b> } else { <span>@(item.Message ?? item.AspectName)</span> }
                             </td>
                             <td>
                                 @if (item.StatusCode >= 500) {<span class="badge rounded-pill bg-danger">@item.StatusCode</span>}
