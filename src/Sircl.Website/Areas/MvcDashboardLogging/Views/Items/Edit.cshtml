@@ -1,0 +1,94 @@
+﻿@model EditModel
+@{
+    ViewBag.Title = "Request Log Detail";
+    var item = Model.Item;
+}
+
+<div class="mt-3 mb-3 align-content-end">
+    <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
+</div>
+
+<div class="mt-4 mb-1">
+    <span class="float-end">
+        Trace identifier: <b>@item.TraceIdentifier</b>
+    </span>
+    <b>@item.Timestamp</b>
+</div>
+<div class="mb-1">
+    <font size="6">
+        <span class="float-end">
+            <partial name="Bookmark" model="item" />
+        </span>
+        @Html.Raw(item.Aspect.HtmlIcon)
+        <b>@(item.Message ?? item.AspectName)</b>
+    </font>
+</div>
+<div class="mb-3">
+    <span class="float-end">
+        <b>@item.DurationMs</b> ms
+    </span>
+    @if (item.StatusCode >= 500)
+    {<span class="badge rounded-pill bg-danger">@item.StatusCode</span>}
+else if (item.StatusCode >= 400)
+{<span class="badge rounded-pill bg-warning">@item.StatusCode</span>}
+else
+{<span class="badge rounded-pill bg-success">@item.StatusCode</span>}
+    <small>@item.Method</small>
+    <b><a href="@item.Url" target="_blank">@item.Url</a></b>
+</div>
+
+@if (!String.IsNullOrWhiteSpace(item.Details))
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h3>Details:</h3>
+            <pre>@item.Details</pre>
+        </div>
+    </div>
+}
+
+@if (item.Data.Any())
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h3>Data:</h3>
+            <div class="table-responsive">
+                <table class="table table-hover mt-3">
+                    <tbody>
+                        @foreach (var pair in item.Data.OrderBy(p => p.Key))
+                        {
+                            <tr>
+                                <th class="text-nowrap">@pair.Key</th>
+                                <td>@pair.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h3>Request:</h3>
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <tbody>
+                    @foreach (var pair in item.Request.OrderBy(p => p.Key))
+                    {
+                        <tr>
+                            <th class="text-nowrap">@pair.Key</th>
+                            <td>@pair.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
+</div>
