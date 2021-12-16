@@ -268,6 +268,30 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
         }
 
         [HttpPost]
+        public IActionResult SavePropertyValue(int id, int propertyId, string value)
+        {
+            if (!CanEdit(id)) return Forbid();
+
+            var property = context.ContentProperties.Find(propertyId);
+            if (property != null && value != null)
+            {
+                property.Value = value;
+
+                var document = context.ContentDocuments.Find(property.DocumentId);
+                document.ModifiedOnUtc = DateTime.UtcNow;
+                document.ModifiedBy = this.HttpContext.User?.Identity?.Name;
+
+                context.SaveChanges();
+
+                return Ok();
+            }
+            else
+            {
+                return this.NoContent();
+            }
+        }
+
+        [HttpPost]
         public IActionResult Delete(int id, EditModel model)
         {
             if (!CanEdit(id)) return Forbid();

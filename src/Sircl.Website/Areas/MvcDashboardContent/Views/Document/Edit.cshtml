@@ -83,6 +83,8 @@
                     }
                     var data = property.CombinedSettings;
                     data["Name"] = item.Name;
+                    data["DocumentId"] = Model.Item.Id;
+                    data["PropertyId"] = property.Id;
                     <div class="mb-3">
                         @Html.EditorFor(m => m.Item.Properties[propertyIndex].Value, item.DataType.Template, data)
                         <input type="hidden" asp-for="Item.Properties[propertyIndex].Id" />

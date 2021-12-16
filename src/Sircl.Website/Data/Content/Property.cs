@@ -63,7 +63,7 @@ namespace Sircl.Website.Data.Content
         /// Json settings for this data type.
         /// The settings are passed to the ViewData of the EditorTemplates and DisplayTemplates.
         /// </summary>
-        public virtual string Settings { get; set; }
+        public virtual Dictionary<string, string> Settings { get; set; }
 
         /// <summary>
         /// Settings of this property combined with the settings of its type and datatype.
@@ -74,9 +74,12 @@ namespace Sircl.Website.Data.Content
             get
             {
                 var settings = this.Type?.CombinedSettings ?? new Dictionary<string, object>();
-                foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, object>>("{" + this.Settings + "}"))
+                if (this.Settings != null)
                 {
-                    settings[pair.Key] = pair.Value;
+                    foreach (var pair in this.Settings)
+                    {
+                        settings[pair.Key] = pair.Value;
+                    }
                 }
                 return settings;
             }

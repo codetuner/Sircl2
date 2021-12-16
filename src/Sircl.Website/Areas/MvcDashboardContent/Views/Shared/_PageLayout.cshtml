@@ -6,6 +6,7 @@
     <title>MvcDashboardContent - @(ViewBag.Title)</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl.css" />
     <style>
 
@@ -90,10 +91,12 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl-extended.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl-changeactions.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl-bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl-toastr.js"></script>
     @*<script src="https://cdn.jsdelivr.net/npm/sircl@2.1.4/sircl-debugging.js"></script>*@
     <script type="text/javascript" src="//cdn.tiny.cloud/1/zmtxfbers7u7pi0pav8l4ih0v4bwyvrdlqpi5zun0r6z0jsm/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     @*<script type="text/javascript" src="//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>*@
@@ -104,7 +107,7 @@
         sircl.mainTargetSelector$ = "#body-content";
 
         var tinymcy_defaults = {
-            plugins: "link code fullscreen image charmap lists table hr paste preview print",
+            plugins: "link code fullscreen image charmap lists table hr paste preview print save",
             _removed_from_plugins: 'imagetools',
             toolbar: 'fullscreen | styleselect bold italic alignleft aligncenter alignright | bullist numlist outdent indent | table link image',
             _removed_from_toolbar: 'undo redo | hr | charmap | code',
@@ -114,6 +117,14 @@
             image_list: [],
             charmap_append: [["0x2713", "Checkmark"], ["0x2714", "Checkmark2"], ["0x2715", "Cross"], ["0x2716", "Cross2"], ["0x2717", "Cross3"], ["0x2718", "Cross4"], ["0x200C", "ZWNJ"]],
             //extended_valid_elements: "script[src|async|defer|type|charset]"
+            save_onsavecallback: function (editor) {
+                var saveUrl = editor.targetElm.getAttribute("save-url");
+                if (saveUrl != null) {
+                    jQuery.post(saveUrl, { value: editor.targetElm.value }, function (data, textStatus, jqXHR) {
+                        if (jqXHR.status == "200") toastr["success"]("Editor value saved.");
+                    });
+                }
+            }
         };
         $$("before", function () {
             console.log("TinyMCE: removing editors");
