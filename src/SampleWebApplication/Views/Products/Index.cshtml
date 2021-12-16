@@ -3,7 +3,8 @@
 <form asp-action="Index" method="get" onchange-submit=":form" history="replace" sub-target="#variable-part">
 
     <div class="text-right">
-        <input type="text" class="oninput-change onload-setvaluefromquery" name="Query" style="max-width: 250px;" />
+        <span onkeydown-click="/" onclick-focus="<DIV|>INPUT"></span>
+        <input type="text" class="oninput-change onload-setvaluefromquery onfocus-select" name="Query" style="max-width: 250px;" placeholder="/ for focus" />
         <a asp-action="Update" class="btn btn-primary">New</a>
     </div>
 
@@ -44,7 +45,7 @@
         <ul class="pagination">
             @for (int i = 1; i <= Model.PageCount; i++)
             {
-                <li class="page-item @(Model.Page == i ? "active" : null)"><label class="page-link"><input type="radio" name="Page" value="@i" />@i</label></li>
+                <li class="page-item @(Model.Page == i ? "active" : null)"><label class="page-link"><input type="radio" name="Page" value="@i" onkeydown-click="@((Model.Page == (i+1)) ? "ArrowLeft" : (Model.Page == (i-1)) ? "ArrowRight" : null)" />@i</label></li>
             }
         </ul>
 

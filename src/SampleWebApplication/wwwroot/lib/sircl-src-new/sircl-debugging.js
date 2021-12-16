@@ -30,37 +30,61 @@ $$("enrich", function sircl_debugging_enrichHandler () {
 //#region Log request handler
 
 sircl.addRequestHandler("beforeSend", function (req) {
-    console.log("Sircl-Debugging: beforeSend");
+    console.log("Sircl-Debugging: req.beforeSend", req);
     setTimeout(function (thisArg, req) { thisArg.next(req); }, 200, this, req);
 });
 
 sircl.addRequestHandler("afterSend", function (req) {
-    console.log("Sircl-Debugging: afterSend");
+    console.log("Sircl-Debugging: req.afterSend", req);
     setTimeout(function (thisArg, req) { thisArg.next(req); }, 200, this, req);
 });
 
 sircl.addRequestHandler("beforeRender", function (req) {
-    console.log("Sircl-Debugging: beforeRender");
+    console.log("Sircl-Debugging: req.beforeRender", req);
     this.next(req);
 });
 
 sircl.addRequestHandler("afterRender", function (req) {
-    console.log("Sircl-Debugging: afterRender");
+    console.log("Sircl-Debugging: req.afterRender", req);
     this.next(req);
 });
 
 sircl.addRequestHandler("onError", function (req) {
-    console.log("Sircl-Debugging: onError");
+    console.log("Sircl-Debugging: req.onError", req);
     this.next(req);
 });
 
-// AfterLoad handler adds a temporary border to loaded parts:
-$$(function sircl_debugging_processHandler () {
-    console.log("Sircl-Debugging: afterLoad");
+//#endregion
+
+//#region Log Content Ready Handlers
+
+$$("before", function sircl_debugging_beforeHandler() {
+    console.log("Sircl-Debugging: load.before", this);
+});
+
+$$("content", function sircl_debugging_contentHandler() {
+    console.log("Sircl-Debugging: load.content", this);
+});
+
+$$("enrich", function sircl_debugging_enrichHandler() {
+    console.log("Sircl-Debugging: load.enrich", this);
+});
+
+// Process handler adds a temporary border to loaded parts:
+$$(function sircl_debugging_processHandler() {
+    console.log("Sircl-Debugging: load.process", this);
     var initialBorder = "";
     try { initialBorder = $(this).css("border"); } catch (ex) { };
     $(this).css("border", "solid 1px blue");
     window.setTimeout(function ($this, initialBorder) { $this.css("border", initialBorder); }, 500, $(this), initialBorder);
+});
+
+//#endregion
+
+//#region Log errors
+
+sircl.addErrorHandler(function (code, message, data) {
+    console.log("Sircl-Debugging: error " + code + " - " + message, data);
 });
 
 //#endregion

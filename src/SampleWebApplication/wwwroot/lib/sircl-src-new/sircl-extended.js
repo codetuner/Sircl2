@@ -160,9 +160,18 @@ $(function () {
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
         if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
-        if (e.target.nodeName === "BODY" || e.key === "F1") { // Ignore keys in form control elements, except for F1
+        if (["BODY", "A", "BUTTON"].indexOf(e.target.nodeName) != -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12
             var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
-            $("[onkeydown-click='" + key + "' i]").each(function () {
+            if (e.key == "F1") console.log(key, e.target);
+            var $targets;
+            try {
+                $targets = $("[onkeydown-click='" + key + "' i]");
+            } catch (e) {
+                // In case of failure with the case-insensitive selector, try case sensitive version:
+                // (case insensitive selectors not supported on all browsers: https://caniuse.com/css-case-insensitive)
+                $targets = $("[onkeydown-click='" + key + "']");
+            }
+            $targets.each(function () {
                 this.click();
                 e.preventDefault();
             });
@@ -275,6 +284,11 @@ $(function () {
     $(document).on("click", "[onclick-scrollintoview]", function (event) {
         var $target = sircl.ext.$select($(this), $(this).attr("onclick-scrollintoview"));
         if ($target.length > 0) $target[0].scrollIntoView();
+    });
+
+    // <* onclick-focus="selector"> On click gives the elements matching the given selector the focus.
+    $(document).on("click", "[onclick-focus]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onclick-focus")).focus();
     });
 });
 
