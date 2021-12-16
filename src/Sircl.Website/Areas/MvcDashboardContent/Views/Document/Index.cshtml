@@ -12,7 +12,7 @@
     <div class="d-flex justify-content-between">
         @if (Model.CanCreate)
         {
-            <a href="@Url.Action("NewModal")" class="btn btn-primary" target="#newDocumentModal"><i class="spinner fas fa-plus"></i> New</a>
+            <a href="@Url.Action("NewModal")" class="btn btn-primary" target="#newDocumentModal" onkeydown-click="+"><i class="spinner fas fa-plus"></i> New</a>
         }
 
         <div class="flex-grow-1"></div>

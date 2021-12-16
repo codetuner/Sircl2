@@ -45,7 +45,7 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.TagHelpers
 
             var builder = new StringBuilder();
             builder.Append("<ul class=\"pagination\">");
-            WritePage(builder, name, value, (value == Min ? Min - 1 : value - 1), "&laquo;");
+            WritePage(builder, name, value, (value == Min ? Min - 1 : value - 1), "&laquo;", "ArrowLeft");
             if ((Max - Min) < 7)
             {
                 for (int p = Min; p <= Max; p++)
@@ -81,18 +81,18 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.TagHelpers
                     WritePage(builder, name, value, pages[i]);
                 }
             }
-            WritePage(builder, name, value, (value == Max ? Min - 1 : value + 1), "&raquo;");
+            WritePage(builder, name, value, (value == Max ? Min - 1 : value + 1), "&raquo;", "ArrowRight");
             builder.Append("</ul>");
 
             output.Content.SetHtmlContent(builder.ToString());
         }
 
-        private void WritePage(StringBuilder builder, string name, int value, int page, string text = null)
+        private void WritePage(StringBuilder builder, string name, int value, int page, string text = null, string shortCut = null)
         {
             var active = (page == value);
             builder.Append($"<li class=\"page-item{(active ? " active" : "")}{((page < Min) ? " disabled" : "")}\">");
             builder.Append($"<label class=\"page-link\">");
-            if (page >= Min) builder.Append($"<input type=\"radio\" name=\"{name}\" value=\"{page}\" />");
+            if (page >= Min) builder.Append($"<input type=\"radio\" name=\"{name}\" value=\"{page}\"{ ((shortCut == null) ? "" : $" onkeydown-click=\"{ shortCut }\"") } />");
             if (text != null) builder.Append(text);
             else if (page < Min) builder.Append("...");
             else builder.Append(page);

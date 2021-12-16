@@ -8,7 +8,7 @@
 <form class="card p-3 bg-white onchange-submit" action="@Url.Action("Index")" method="get" history="replace" sub-target="#subTarget">
 
     <div class="d-flex justify-content-between">
-        <a href="@Url.Action("New")" class="btn btn-primary"><i class="spinner fas fa-plus"></i> New</a>
+        <a href="@Url.Action("New")" class="btn btn-primary" onkeydown-click="+"><i class="spinner fas fa-plus"></i> New</a>
         <div class="flex-grow-1"></div>
         <div class="">
             <input type="search" class="form-control oninput-change" asp-for="Query" style="max-width: 280px;" autocomplete="off" placeholder="Search" />
