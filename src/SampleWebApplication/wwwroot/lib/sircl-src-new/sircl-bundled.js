@@ -1930,6 +1930,27 @@ $(function () {
     });
 });
 
+// Key event-actions:
+/////////////////////
+
+// Key event-actions take as value the pressed key in the format "[Alt+][Ctrl+][Shift+]Key".
+// I.e: "a", "+", "Ctrl+ArrowLeft", "Enter", "Escape" or "F1"
+
+$(function () {
+    // <* onkeydown-click="<key>"> On key down of the given key on the page (not a form element), clicks the decorated element.
+    $(document).on("keydown", function (e) {
+        if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
+        if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
+        if (e.target.nodeName === "BODY" || e.key === "F1") { // Ignore keys in form control elements, except for F1
+            var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
+            $("[onkeydown-click='" + key + "']").each(function () {
+                this.click();
+                e.preventDefault();
+            });
+        }
+    });
+});
+
 // Click event-actions:
 ///////////////////////
 
