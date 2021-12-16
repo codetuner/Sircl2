@@ -162,7 +162,7 @@ $(function () {
         if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
         if (e.target.nodeName === "BODY" || e.key === "F1") { // Ignore keys in form control elements, except for F1
             var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
-            $("[onkeydown-click='" + key + "']").each(function () {
+            $("[onkeydown-click='" + key + "' i]").each(function () {
                 this.click();
                 e.preventDefault();
             });
