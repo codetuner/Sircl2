@@ -191,8 +191,8 @@ namespace Sircl.Website.Areas.MvcDashboardContent.Controllers
                     if (entry.State == EntityState.Added)
                     {
                         // Set created fields:
-                        model.Item.CreatedOnUtc = utcNow;
-                        model.Item.CreatedBy = this.HttpContext.User?.Identity?.Name;
+                        model.Item.ModifiedOnUtc = model.Item.CreatedOnUtc = utcNow;
+                        model.Item.ModifiedBy = model.Item.CreatedBy = this.HttpContext.User?.Identity?.Name;
                     }
                     else
                     {

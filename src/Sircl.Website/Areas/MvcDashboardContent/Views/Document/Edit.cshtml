@@ -126,9 +126,9 @@
 
     <p class="mt-3">
         <div class="float-end">
+            <button type="submit" asp-action="Save" asp-route-id="@Model.Item.Id" class="btn btn-primary" name="andcopy" value="true"><i class="spinner fas fa-copy"></i> Save &amp; Copy</button>
             @if (Model.Item.Id != 0)
             {
-                <button type="submit" asp-action="Save" asp-route-id="@Model.Item.Id" class="btn btn-primary" name="andcopy" value="true"><i class="spinner fas fa-copy"></i> Save &amp; Copy</button>
                 <button type="submit" asp-action="Delete" asp-route-id="@Model.Item.Id" class="btn btn-danger" onclick-confirm="Are you sure ?"><i class="spinner fas fa-trash-alt"></i> Delete</button>
             }
         </div>
