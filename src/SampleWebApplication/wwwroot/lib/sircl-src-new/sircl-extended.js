@@ -160,7 +160,7 @@ $(function () {
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
         if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
-        if (["BODY", "A", "BUTTON"].indexOf(e.target.nodeName) != -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12
+        if (e.altKey || e.ctrlKey || ["BODY", "A", "BUTTON"].indexOf(e.target.nodeName) != -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12
             var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
             if (e.key == "F1") console.log(key, e.target);
             var $targets;
@@ -1114,6 +1114,17 @@ $(function () {
                 $(this).load(url);
             }
         });
+
+        /// <* ifinview-click="selector"> Clicks the given element when this element is visible in the view.
+        $("[ifinview-click]").each(function () {
+            if (sircl.isElementInView(this)) {
+                var selector$ = $(this).attr("ifinview-click");
+                $(this).removeAttr("ifinview-click");
+                sircl.ext.$select($(this), selector$).each(function () {
+                    this.click();
+                });
+            }
+        });
     });
 
     /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animated way).
@@ -1136,6 +1147,17 @@ $$(function sircl_ext_ifinview_processHandler () {
             var url = $(this).attr("ifinview-load");
             $(this).removeAttr("ifinview-load");
             $(this).load(url);
+        }
+    });
+
+    /// <* ifinview-click="selector"> Clicks the given element when this element is visible in the view.
+    $("[ifinview-click]").each(function () {
+        if (sircl.isElementInView(this)) {
+            var selector$ = $(this).attr("ifinview-click");
+            $(this).removeAttr("ifinview-click");
+            sircl.ext.$select($(this), selector$).each(function () {
+                this.click();
+            });
         }
     });
 });

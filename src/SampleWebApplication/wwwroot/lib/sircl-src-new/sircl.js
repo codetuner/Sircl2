@@ -920,6 +920,14 @@ $(document).ready(function () {
         event.stopPropagation();
     });
 
+    /// Performs a reload of an element having an onload-load attribute:
+    $(document).on("click", "*[onclick-reload]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onclick-reload")).filter("[onload-load]").each(function () {
+            var url = $(this).attr("onload-load") + "";
+            $(this).load(url.replace("{rnd}", Math.random()));
+        });
+    });
+
     /// Clicking a submit element may submit a form:
     $(document).on("click", "form *:submit, *:submit[form]", function (event) {
         // To not interfer with form validation, we let default behavior happen.
@@ -1059,10 +1067,17 @@ sircl._afterLoad = function (scope) {
 //#region Default Content Ready handlers
 
 $$("content", function sircl_default_contentHandler () {
+    /// <* onload-copyto="selector"> Copies the content to the given selector.
+    $(this).filter("[onload-copyto]").add($(this).find("*[onload-copyto]")).each(function () {
+        var html = $(this).html();
+        sircl.ext.$select($(this), $(this).attr("onload-copyto")).html(html);
+    });
+
     /// <* onload-moveto="selector"> Moves the content to the given selector.
-    $(this).find("*[onload-moveto]").each(function () {
-        $($(this).attr("onload-moveto")).html($(this).html());
-        $(this).html("");
+    $(this).filter("[onload-moveto]").add($(this).find("*[onload-moveto]")).each(function () {
+        var html = $(this).html();
+        $(this).html(null);
+        sircl.ext.$select($(this), $(this).attr("onload-moveto")).html(html);
     });
 });
 
@@ -1281,7 +1296,7 @@ sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestH
 });
 
 sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHandler (req) {
-    // Make overlays visible:
+    // Make overlays hidden:
     req.$initialTarget.find(".overlay").each(function () {
         sircl.ext.visible(this, false);
     });
