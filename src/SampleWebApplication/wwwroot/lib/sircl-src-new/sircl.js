@@ -1287,7 +1287,7 @@ sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHan
 
 sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestHandler (req) {
     // Make overlays visible:
-    req.$initialTarget.find(".overlay").each(function () {
+    req.$initialTarget.find(".overlay").first().each(function () {
         $(this).parent().css("position", "relative");
         sircl.ext.visible(this, true);
     });
@@ -1297,7 +1297,7 @@ sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestH
 
 sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHandler (req) {
     // Make overlays hidden:
-    req.$initialTarget.find(".overlay").each(function () {
+    req.$initialTarget.find(".overlay").first().each(function () {
         sircl.ext.visible(this, false);
     });
     // Move to next handler:
