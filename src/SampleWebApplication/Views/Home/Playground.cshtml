@@ -30,8 +30,33 @@
 
 <hr />
 
+<div class="target">
+    <div id="o1" class="overlay" hidden></div>
+    <form action="/Time" method="get">
+        <h4>Form with 2 overlays</h4>
+        <div class="target">
+            <div id="o2" class="overlay" hidden></div>
+            <p>As this contains a second overlay.</p>
+            <p>
+                <button type="submit" class="btn btn-secondary" formaction="/Time">Refresh</button>
+            </p>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <p>-</p>
+    <div class="target">
+        <div id="o3" class="overlay" hidden></div>
+        <p>As this contains a second overlay.</p>
+        <p>
+            <a href="/Time" target="<.target">Get time</a>
+        </p>
+    </div>
+</div>
+
+<hr />
+
 <div>
-    
+
     <div onload-load="/Time">Current time...</div>
     <button type="button" class="btn btn-secondary" onclick-reload="<DIV|>DIV"><i class="spinner"></i> Onclick-Reload</button>
     <br />

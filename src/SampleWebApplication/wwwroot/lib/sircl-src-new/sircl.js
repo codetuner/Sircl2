@@ -1285,21 +1285,57 @@ sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHan
 
 //#region Overlay handling
 
-sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestHandler (req) {
-    // Make overlays visible:
-    req.$initialTarget.find(".overlay").first().each(function () {
-        $(this).parent().css("position", "relative");
-        sircl.ext.visible(this, true);
-    });
+sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestHandler(req) {
+    // Search for overlays:
+    var $overlays = req.$initialTarget.find(".overlay");
+    if ($overlays.length > 0) {
+        // Only take "root overlays" into account, ignore nested overlays:
+        var $rootoverlays = $overlays.first();
+        for (var o = 1; o < $overlays.length; o++) {
+            var isroot = true;
+            var $oparents = $($overlays[o]).parents();
+            for (var r = 0; r < $rootoverlays.length; r++) {
+                var $rparent = $($rootoverlays[r]).parent();
+                if ($oparents.is($rparent)) {
+                    isroot = false;
+                    break;
+                }
+            }
+            if (isroot) $rootoverlays = $rootoverlays.add($overlays[o]);
+        }
+        // Make rootoverlays visible:
+        $rootoverlays.each(function () {
+            $(this).parent().css("position", "relative");
+            sircl.ext.visible(this, true);
+        });
+    }
     // Move to next handler:
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHandler (req) {
-    // Make overlays hidden:
-    req.$initialTarget.find(".overlay").first().each(function () {
-        sircl.ext.visible(this, false);
-    });
+sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHandler(req) {
+    // Search for overlays:
+    var $overlays = req.$initialTarget.find(".overlay");
+    if ($overlays.length > 0) {
+        // Only take "root overlays" into account, ignore nested overlays:
+        var $rootoverlays = $overlays.first();
+        for (var o = 1; o < $overlays.length; o++) {
+            var isroot = true;
+            var $oparents = $($overlays[o]).parents();
+            for (var r = 0; r < $rootoverlays.length; r++) {
+                var $rparent = $($rootoverlays[r]).parent();
+                if ($oparents.is($rparent)) {
+                    isroot = false;
+                    break;
+                }
+            }
+            if (isroot) $rootoverlays = $rootoverlays.add($overlays[o]);
+        }
+        // Make rootoverlays hidden:
+        $rootoverlays.each(function () {
+            sircl.ext.visible(this, false);
+        });
+    }
     // Move to next handler:
     this.next(req);
 });
