@@ -147,6 +147,17 @@ $(function () {
         sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
         //event.preventDefault();
     });
+
+    // <* onchange-enable="selector"> On change, enables the elements matching the given selector.
+    $(document).on("change", "*[onchange-enable]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onchange-enable")).prop("disabled", false);
+    });
+
+    // <* onchange-show="selector"> On change, shows the elements matching the given selector.
+    $(document).on("change", "*[onchange-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-show")), true);
+    });
+
 });
 
 // Key event-actions:
