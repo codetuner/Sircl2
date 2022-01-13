@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////
 // Sircl 2.x - Core
 // www.getsircl.com
-// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Copyright (c) 2019-2022 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
@@ -13,12 +13,6 @@
 
 // Todo:
 // - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
-// - Character count feedback (as counter, remaining counter or progressbar)
-// - 
-// - 
-// Examples for extensions:
-// - Extension to return timezone/local time and number formatting in headers (only on POST requests?)
-// - Countdown timer with timer action
 // - 
 // - 
 
@@ -1833,7 +1827,7 @@ $(document).ready(function () {
 /////////////////////////////////////////////////////////////////
 // Sircl 2.x - Core extension
 // www.getsircl.com
-// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Copyright (c) 2019-2022 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
@@ -3278,7 +3272,7 @@ $(function () {
 /////////////////////////////////////////////////////////////////
 // Sircl 2.x - ChangeActions extension
 // www.getsircl.com
-// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Copyright (c) 2019-2022 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 

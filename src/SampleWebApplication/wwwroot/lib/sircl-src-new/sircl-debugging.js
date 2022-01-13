@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Debugging & Diagnostics extension
 // www.getsircl.com
-// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Copyright (c) 2019-2022 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
