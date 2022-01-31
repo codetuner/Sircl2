@@ -11,11 +11,6 @@
 // - Variablenames holding jQuery selection objects start with '$', i.e: var $selection = $(".class");
 // - Strings are surrounded by double-quotes.
 
-// Todo:
-// - Collapse "notch" to change with hidden/unhidden style. Also support Bootstraps "Collapse".
-// - 
-// - 
-
 //#region Prerequisites
 
 // Check JQuery is installed:
@@ -48,6 +43,10 @@ HTMLFormElement.prototype.submit = function (event) {
             // Forward to the server side rendering handler:
             var $target = (target != null) ? sircl.ext.$select($targetScope, target) : sircl.ext.$mainTarget();
             sircl._submitForm($trigger, $(this), $target, event);
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
         } else {
             // Navigate link through default behavior
             sircl_originalSubmit.apply(this, arguments);
@@ -789,6 +788,11 @@ SirclRequestProcessor.prototype._render = function (req) {
         // If append mode, append responseText and force afterLoad:
         $realTarget.append(realResponseText);
         $realTarget.each(function () { sircl._afterLoad(this); });
+    } else if (req.renderMode === "replace") {
+        // If replace mode, replaces responseText and force afterLoad on the parents:
+        $realtargetParent = $realTarget.parent();
+        $realTarget.replaceWith(realResponseText);
+        $realtargetParent.each(function () { sircl._afterLoad(this); });
     } else {
         // Else, replace html of target:
         $realTarget.html(realResponseText);
@@ -854,15 +858,27 @@ $(document).ready(function () {
                 if (fieldname !== null) fieldnames.push(fieldname[0]);
                 else break;
             } while (true);
+            var fieldvalue;
             for (var f = 0; f < fieldnames.length; f++) {
                 hrefHasSubstitutions = true;
-                var fieldvalue = (fieldnames[f].charAt(0) === "[")
-                    ? $formscope.find("[name='" + fieldnames[f].substr(1, fieldnames[f].length - 2) + "']").val()
-                    : $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
-                if (fieldvalue === undefined)
+                var fieldname = (fieldnames[f].charAt(0) === "[")
+                    ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
+                    : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
+                var fields = $formscope.find("[name='" + fieldname + "']");
+                if (fields.length == 1) {
+                    fieldvalue = sircl.ext.effectiveValue(fields[0]);
+                } else if (fields.length > 1) {
+                    fieldvalue = [];
+                    for (var v = 0; v < fields.length; v++) {
+                        var vval = sircl.ext.effectiveValue(fields[v]);
+                        if (vval != "") fieldvalue.push(vval);
+                    }
+                    fieldvalue = fieldvalue.join();
+                } else {
+                    fieldvalue = null;
+                }
+                if (fieldvalue === null)
                     href = href.replace(fieldnames[f], "");
-                else if (fieldnames[f].charAt(0) === "[")
-                    href = href.replace(fieldnames[f], fieldvalue);
                 else
                     href = href.replace(fieldnames[f], encodeURIComponent(fieldvalue));
             }
@@ -934,11 +950,30 @@ $(document).ready(function () {
 
     /// Submitting a form:
     $(document).on("submit", "form:not([download]):not([method=dialog])", function (event) {
-        this.submit();
-        event.preventDefault();
-        event.stopPropagation();
+        this.submit(event);
     });
 
+    /// Handle onkeyenter-click:
+    $(document).on("keydown", "[onkeyenter-click]", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            var $this = $(this);
+            var $target = sircl.ext.$select($this, $this.attr("onkeyenter-click"));
+            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
+        }
+    });
+
+    /// Handle onkeyescape-click:
+    $(document).on("keydown", "[onkeyescape-click]", function (event) {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            var $this = $(this);
+            var $target = sircl.ext.$select($this, $this.attr("onkeyescape-click"));
+            if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
+        }
+    });
+
+    /// DEPRECATED: replaced by onkeyenter-click and onkeycancel-click:
     /// Defines default submit or cancel buttons.
     /// Pass an empty selector to disable default form submission.
     /// I.e:
@@ -1746,8 +1781,8 @@ $$(function sircl_onload_processHandler () {
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
             // Set timer:
             $(this)[0]._onloadInterval = window.setInterval(function ($target) { $target.load(url.replace("{rnd}", Math.random())); }, delay * 1000, $(this));
-        } else {
-            //$(this).removeAttr("onload-load"); Do not remove otherwise onload-reload does not work...
+        } else if ($(this).is(".noreload")) {
+            $(this).removeAttr("onload-load"); // Note: onload-reload will not work anymore...
         }
     });
 

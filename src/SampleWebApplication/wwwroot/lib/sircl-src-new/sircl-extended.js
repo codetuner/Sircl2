@@ -204,7 +204,7 @@ $(function () {
 
     // <* onclick-clear="selector"> On click clears the elements matching the given selector.
     $(document).on("click", "[onclick-clear]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-clear")).html("");
+        sircl.ext.$select($(this), $(this).attr("onclick-clear")).html(null);
     });
 
     // <* onclick-hide="selector"> On click hides the elements matching the given selector.
@@ -359,7 +359,7 @@ $(function () {
 
     // <* ondblclick-clear="selector"> On doubleclick clears the elements matching the given selector.
     $(document).on("dblclick", "[ondblclick-clear]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("ondblclick-clear")).html("");
+        sircl.ext.$select($(this), $(this).attr("ondblclick-clear")).html(null);
     });
 
     // <* ondblclick-hide="selector"> On doubleclick hides the elements matching the given selector.

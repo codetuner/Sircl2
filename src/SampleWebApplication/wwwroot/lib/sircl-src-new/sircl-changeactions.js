@@ -61,14 +61,26 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
             if (fieldname !== null) fieldnames.push(fieldname[0]);
             else break;
         } while (true);
+        var fieldvalue;
         for (var f = 0; f < fieldnames.length; f++) {
-            var fieldvalue = (fieldnames[f].charAt(0) === "[")
-                ? $formscope.find("[name='" + fieldnames[f].substr(1, fieldnames[f].length - 2) + "']").val()
-                : $formscope.find("[name='" + fieldnames[f].substr(3, fieldnames[f].length - 6) + "']").val();
-            if (fieldvalue === undefined)
+            var fieldname = (fieldnames[f].charAt(0) === "[")
+                ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
+                : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
+            var fields = $formscope.find("[name='" + fieldname + "']");
+            if (fields.length == 1) {
+                fieldvalue = sircl.ext.effectiveValue(fields[0]);
+            } else if (fields.length > 1) {
+                fieldvalue = [];
+                for (var v = 0; v < fields.length; v++) {
+                    var vval = sircl.ext.effectiveValue(fields[v]);
+                    if (vval != "") fieldvalue.push(vval);
+                }
+                fieldvalue = fieldvalue.join();
+            } else {
+                fieldvalue = null;
+            }
+            if (fieldvalue === null)
                 url = url.replace(fieldnames[f], "");
-            else if (fieldnames[f].charAt(0) === "[")
-                url = url.replace(fieldnames[f], fieldvalue);
             else
                 url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
         }
@@ -83,10 +95,16 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
         values.push(encodeURIComponent(name));
     }
     for (var i = 0; i < value.length; i++) {
-        fields.push("value");
-        values.push(encodeURIComponent(value[i]));
         if (checked === null && name != null && name != "" && name.toLowerCase() != "value") {
+            fields.push("value");
+            values.push(encodeURIComponent(value[i]));
             fields.push(encodeURIComponent(name));
+            values.push(encodeURIComponent(value[i]));
+        } else if (name.toLowerCase() != "value") {
+            fields.push("value");
+            values.push(encodeURIComponent(value[i]));
+        } else {
+            fields.push(name);
             values.push(encodeURIComponent(value[i]));
         }
     }

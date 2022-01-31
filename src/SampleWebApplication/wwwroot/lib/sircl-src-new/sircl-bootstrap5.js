@@ -203,6 +203,7 @@ $(function () {
         var $container = $(this).find("[onshowmodal-load]");
         if ($container.length > 0) {
             $container.load($container.attr("onshowmodal-load"));
+            if ($container.is(".noreload")) $container.removeAttr("onshowmodal-load");
         }
     });
 });

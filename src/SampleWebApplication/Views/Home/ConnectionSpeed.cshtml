@@ -1,0 +1,10 @@
+﻿@model int
+@{
+    Layout = null;
+}
+@if (Model >= 5)
+{
+    <div class="alert alert-warning" role="alert">
+        You are using your connection at top speed. This may drain you battery.
+    </div>
+}

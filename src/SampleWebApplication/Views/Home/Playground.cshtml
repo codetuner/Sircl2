@@ -1,5 +1,46 @@
 ﻿<hr />
 
+
+<hr />
+
+<fieldset onchange-action="/Home/ConnectionMode?Speed=[csp]" class="substitute-fields">
+    <legend>Connection mode</legend>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="cm1" name="cm" value="WIFI" checked>
+        <label class="form-check-label" for="cm1">WIFI</label>
+    </div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="cm2" name="cm" value="BT" checked>
+        <label class="form-check-label" for="cm2">Bluetooth</label>
+    </div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="cm3" name="cm" value="NFC" checked>
+        <label class="form-check-label" for="cm3">NFC &amp; Contactless payments</label>
+    </div>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="cm4" name="cm" value="FM">
+        <label class="form-check-label" for="cm4">Flight mode</label>
+    </div>
+</fieldset>
+<fieldset>
+    <legend>Connection speed</legend>
+    <label for="csp" class="form-label">Select speed:</label><br />
+    <input id="csp" name="csp" type="range" class="form-range substitute-fields"
+           onchange-action="/Home/ConnectionSpeed?Modes=[cm]"
+           target="#speedinfo"
+           min="1" max="5" value="3"
+           style="max-width: 250px;">
+    <label for="csp" class="form-label">Select speed (no name):</label><br />
+    <input id="csp" type="range" class="form-range substitute-fields"
+           onchange-action="/Home/ConnectionSpeed?Modes=[cm]"
+           target="#speedinfo"
+           min="1" max="5" value="3"
+           style="max-width: 250px;">
+    <div id="speedinfo"></div>
+</fieldset>
+
+<hr />
+
 <table class="table">
     <tr>
         <td><a href="/Time" browser-cache="off" target="#t554121">Time Uncached</a></td>
