@@ -1389,15 +1389,16 @@ $(function () {
             : $this.closest("FORM");
         if ($form.length > 0) {
             // Copy drop-value to .drop-value input element:
+            var dropvalue = event.originalEvent.dataTransfer.getData("any");
             $form.find("INPUT.drop-value").each(function () {
-                $(this).val(event.originalEvent.dataTransfer.getData("any"));
+                $(this).val(dropvalue);
             });
             // Prevent default browser behavior:
             event.preventDefault();
             // Submit form (add a submit button, then click that button):
             var btnid = "sircl-autoid-" + new Date().getTime();
             var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
-            if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
+            if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction").replaceAll("{drop-value}", dropvalue || "") + "\" ";
             if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
             if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
             if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
