@@ -162,6 +162,11 @@ namespace SampleWebApplication.Controllers
             return View("Infinite", page);
         }
 
+        public IActionResult InfiniteRows(int page)
+        {
+            return View("InfiniteRows", page);
+        }
+
         public IActionResult ConnectionMode(string[] cm)
         {
             var result = new List<string>(cm);

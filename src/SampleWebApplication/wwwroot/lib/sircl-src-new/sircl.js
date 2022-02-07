@@ -806,9 +806,9 @@ SirclRequestProcessor.prototype._render = function (req) {
     // Render, applying correct render mode:
     if (req.targetMethod === "append") {
         // If append mode, append responseText and force afterLoad:
-        var initialLength = $realTarget.length;
+        var initialLength = $realTarget.children().length;
         $realTarget.append(realResponseText);
-        $realTarget.slice(initialLength).each(function () { sircl._afterLoad(this); });
+        $realTarget.children().slice(initialLength).each(function () { sircl._afterLoad(this); });
     } else if (req.targetMethod === "replace") {
         // If replace mode, replaces responseText and force afterLoad on the parents:
         var $realTargetParent = $realTarget.parent();
@@ -827,7 +827,7 @@ SirclRequestProcessor.prototype._render = function (req) {
         var finalLength = $realTargetParent.children().length;
         if (pos > -1 && finalLength >= initialLength) {
             // If if replaced by one or more elements, apply afterLoad to the new elements:
-            $realTargetParent.children().slice(pos, pos + finalLength - initialLength).each(function () { sircl._afterLoad(this); });
+            $realTargetParent.children().slice(pos, pos + finalLength - initialLength + 1).each(function () { sircl._afterLoad(this); });
             // Otherwise, replace just removed the element, no afterLoad needed.
         }
     } else {

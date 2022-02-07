@@ -1,0 +1,13 @@
+﻿@model int
+@{ Layout = null; }
+@for (int i = Model; i < Model + 5; i++)
+{
+    <tr>
+        <td>@i</td>
+        <td>@DateTime.Now.ToString()</td>
+    </tr>
+}
+<tr>
+    @*<td colspan="2" href="/Home/InfiniteRows?Page=@(Model+5)" target=":parent" target-method="replace">Click here to load more...</td>*@
+    <td colspan="2" href="/Home/InfiniteRows?Page=@(Model+5)" target="<tbody" target-method="append">Click here to load more...</td>
+</tr>
