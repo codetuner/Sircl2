@@ -1,11 +1,11 @@
 ﻿@model int
 <p>@DateTime.Now.ToString()</p>
-@for (int i = Model; i < Model + 10; i++)
+@for (int i = Model; i < Model + 5; i++)
 {
     <h1>Line @i</h1>
     <p>...</p>
 }
 
-<div ifinview-load="/Home/Infinite?Page=@(Model+10)">
+<div ifinview-load="/Home/Infinite?Page=@(Model+5)" target-method="replace">
     Wait for loading...
 </div>
