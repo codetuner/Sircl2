@@ -31,18 +31,21 @@ HTMLFormElement.prototype.submit = function (event) {
         // Find target of submit request:
         var $trigger = (this._formTrigger) ? $(this._formTrigger) : $(this);
         var target = null;
+        var targetMethod = null;
         var $targetScope = $(this);
         if ($trigger.hasAttr("formtarget")) {
-            target = $trigger.attr("formtarget");
             $targetScope = $trigger;
+            target = $targetScope.attr("formtarget");
+            targetMethod = $targetScope.attr("target-method");
         } else if ($trigger.closest("[target]").length > 0) {
-            target = $trigger.closest("[target]").attr("target");
             $targetScope = $trigger.closest("[target]");
+            target = $targetScope.attr("target");
+            targetMethod = $targetScope.attr("target-method");
         }
         if ((target != null && sircl.ext.isInternalTarget(target)) || (target == null && sircl.singlePageMode == true)) {
             // Forward to the server side rendering handler:
             var $target = (target != null) ? sircl.ext.$select($targetScope, target) : sircl.ext.$mainTarget();
-            sircl._submitForm($trigger, $(this), $target, event);
+            sircl._submitForm($trigger, $(this), $target, targetMethod, event);
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -79,6 +82,7 @@ $.fn.load = function (url, data, callback) {
     var req = {
         $trigger: $(this),
         $initialTarget: $(this),
+        targetMethod: $(this).attr("target-method") || null,
         action: url,
         method: "get",
         enctype: null,
@@ -396,13 +400,15 @@ sircl.addRequestHandler = function (phase, handler) {
  * @param {any} $trigger The href holding element triggering the request.
  * @param {any} url The URL to be requested.
  * @param {any} $target The initial target of the request.
+ * @param [any] targetMethod The method to use to fill the target.
  * @param {any} loadComplete Optional. Called when load is complete.
  */
-sircl._loadUrl = function ($trigger, url, $target, loadComplete) {
+sircl._loadUrl = function ($trigger, url, $target, targetMethod, loadComplete) {
     // Build request data:
     var req = {
         $trigger: $trigger,
         $initialTarget: $target,
+        targetMethod: targetMethod,
         action: url,
         method: "get",
         accept: $trigger.attr("type"),
@@ -418,15 +424,17 @@ sircl._loadUrl = function ($trigger, url, $target, loadComplete) {
  * @param {any} $trigger The trigger (submit button) triggering the request.
  * @param {any} $form The form to be submitted.
  * @param {any} $target The initial target of the request.
+ * @param {any} targetMethod The method to use to fill the target.
  * @param {any} event The submit event.
  * @param {any} loadComplete Optional. Called when load is complete.
  */
-sircl._submitForm = function ($trigger, $form, $target, event, loadComplete) {
+sircl._submitForm = function ($trigger, $form, $target, targetMethod, event, loadComplete) {
     // Build request data:
     var req = {
         $form: $form,
         $trigger: $trigger,
         $initialTarget: $target,
+        targetMethod: targetMethod,
         event: event,
         action: ($trigger.attr("formaction") || $form.attr("action") || window.location.href),
         method: ($trigger.attr("formmethod") || $form.attr("method") || "get").toLowerCase(),
@@ -665,15 +673,18 @@ SirclRequestProcessor.prototype._send = function (req) {
             if (newTarget$ == "_self") {
                 if (req.method == "get") {
                     req.$finalTarget = null;
+                    req.targetMethod = null;
                     req.targetHasChanged = true;
                 } else {
                     console.warn("X-Sircl-Target response header value '_self' is only vaid for 'get' requests.");
                 }
             } else if (newTarget$ == "main") {
                 req.$finalTarget = sircl.ext.$mainTarget();
+                req.targetMethod = null;
                 req.targetHasChanged = true;
             } else if (newTarget$ != null) {
                 req.$finalTarget = sircl.ext.$select(req.$trigger, newTarget$);
+                req.targetMethod = null;
                 req.targetHasChanged = true;
             }
             // Then for document title:
@@ -682,8 +693,16 @@ SirclRequestProcessor.prototype._send = function (req) {
             req.documentLanguage = req.xhr.getResponseHeader("X-Sircl-Document-Language");
             // Then for alert message header:
             req.alertMsg = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
-            // Then for render mode:
-            req.renderMode = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
+            // Then for target method:
+            if (req.xhr.getResponseHeader("X-Sircl-Target-Method") !== null) {
+                req.targetMethod = req.xhr.getResponseHeader("X-Sircl-Target-Method");
+            } else if (req.xhr.getResponseHeader("X-Sircl-Render-Mode") !== null) {
+                // DEPRECATED: "X-Sircl-Render-Mode" has been replaced by "X-Sircl-Target-Method":
+                req.targetMethod = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
+                console.warn("X-Sircl-Render-Mode response header is deprecated and replaced by X-Sircl-Target-Method.");
+            } else if (req.targetMethod == null && req.$finalTarget != null) {
+                req.targetMethod = req.$finalTarget.attr("target-method");
+            }
             // Then for history header:
             var history = req.xhr.getResponseHeader("X-Sircl-History");
             if (history == "back") {
@@ -742,6 +761,7 @@ SirclRequestProcessor.prototype._process = function (req) {
                 sircl._processRequest({
                     $trigger: null,
                     $initialTarget: sircl.ext.$mainTarget(),
+                    targetMethod: null,
                     action: window.location.href,
                     method: "get",
                     isForeground: true,
@@ -784,17 +804,33 @@ SirclRequestProcessor.prototype._render = function (req) {
         $("HTML").attr("lang", req.documentLanguage);
     }
     // Render, applying correct render mode:
-    if (req.renderMode === "append") {
+    if (req.targetMethod === "append") {
         // If append mode, append responseText and force afterLoad:
+        var initialLength = $realTarget.length;
         $realTarget.append(realResponseText);
-        $realTarget.each(function () { sircl._afterLoad(this); });
-    } else if (req.renderMode === "replace") {
+        $realTarget.slice(initialLength).each(function () { sircl._afterLoad(this); });
+    } else if (req.targetMethod === "replace") {
         // If replace mode, replaces responseText and force afterLoad on the parents:
         $realtargetParent = $realTarget.parent();
+        var initialLength = $realtargetParent.children().length;
+        // Retrieve position of element to be replaced:
+        var id = sircl.ext.getId($realTarget, true);
+        var pos = -1;
+        for (var i = 0; i < initialLength; i++) {
+            if ($realTarget[i].id === id) {
+                pos = i;
+                break;
+            }
+        }
         $realTarget.replaceWith(realResponseText);
-        $realtargetParent.each(function () { sircl._afterLoad(this); });
+        var finalLength = $realtargetParent.children().length;
+        if (pos > -1 && finalLength >= initialLength) {
+            // If if replaced by one or more elements, apply afterLoad to the new elements:
+            $realtargetParent.children().slice(pos, pos + finalLength - initialLength).each(function () { sircl._afterLoad(this); });
+            // Otherwise, replace just removed the element, no afterLoad needed.
+        }
     } else {
-        // Else, replace html of target:
+        // Else, replace inner html of target:
         $realTarget.html(realResponseText);
     }
     // Make sure target is visible:
@@ -922,7 +958,9 @@ $(document).ready(function () {
                 }
             } else {
                 // Forward to the server side rendering handler:
-                sircl._loadUrl($(this), href, (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget());
+                var $target = (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget();
+                var targetMethod = this.getAttribute("target-method") || null;
+                sircl._loadUrl($(this), href, $target, targetMethod);
             }
         }
         // If not returned earlier, stop event propagation:
@@ -1269,6 +1307,7 @@ $(function () {
                 sircl._processRequest({
                     $trigger: null,
                     $initialTarget: sircl.ext.$mainTarget(),
+                    targetMethod: null,
                     action: state.url,
                     method: "get",
                     isForeground: true,
@@ -2202,8 +2241,10 @@ $(function () {
                 }
             } else {
                 // Forward to the server side rendering handler:
-                sircl._loadUrl($(this), href, $(target));
-            }
+                var $target = (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget();
+                var targetMethod = this.getAttribute("target-method") || null;
+                sircl._loadUrl($(this), href, $target, targetMethod);
+           }
         }
         // If not returned earlier, stop event propagation:
         event.preventDefault();

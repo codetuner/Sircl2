@@ -341,8 +341,10 @@ $(function () {
                 }
             } else {
                 // Forward to the server side rendering handler:
-                sircl._loadUrl($(this), href, $(target));
-            }
+                var $target = (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget();
+                var targetMethod = this.getAttribute("target-method") || null;
+                sircl._loadUrl($(this), href, $target, targetMethod);
+           }
         }
         // If not returned earlier, stop event propagation:
         event.preventDefault();
