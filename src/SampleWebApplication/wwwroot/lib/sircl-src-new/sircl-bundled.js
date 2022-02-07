@@ -1802,7 +1802,9 @@ $$(function sircl_onload_processHandler () {
 
     /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
     $(this).find("[onload-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), $(this).attr("onload-click")).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
     });
 
     /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
@@ -2044,7 +2046,9 @@ $(function () {
     // <* onchange-click="selector"> On change, triggers a click event on the elements matching the given selector.
     $(document).on("change", "*[onchange-click]", function (event) {
         var targetSelector = $(this).attr("onchange-click");
-        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
         //event.preventDefault();
     });
 
@@ -2098,7 +2102,9 @@ $(function () {
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.
     $(document).on("click", "*[onclick-click]", function (event) {
         var targetSelector = $(this).attr("onclick-click");
-        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
         //event.preventDefault();
     });
 
@@ -2254,7 +2260,9 @@ $(function () {
     // <* ondblclick-click="selector"> On doubleclick, triggers a click event on the elements matching the given selector.
     $(document).on("dblclick", "*[ondblclick-click]", function (event) {
         var targetSelector = $(this).attr("ondblclick-click");
-        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
         //event.preventDefault();
     });
 
@@ -2356,7 +2364,9 @@ $(function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
     $(document).on("change", "*[onchecked-click]:checked", function (event) {
         var targetSelector = this.getAttribute("onchecked-click");
-        sircl.ext.$select($(this), targetSelector)[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
     });
 
     $(document).on("change", "[ifchecked-hide]", function (event) {

@@ -1802,7 +1802,9 @@ $$(function sircl_onload_processHandler () {
 
     /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
     $(this).find("[onload-click]").each(function () {
-        sircl.ext.$select($(this), $(this).attr("onload-click"))[0].click(); // See: http://goo.gl/lGftqn
+        sircl.ext.$select($(this), $(this).attr("onload-click")).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
     });
 
     /// <* onload-load="url" [onload-reloadafter="seconds"]> Loads the given URL.
