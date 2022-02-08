@@ -36,7 +36,7 @@
                         <tr href="@Url.Action("Edit", new { id = item.Id })">
                             <td class="onchange-nosubmit" onclick-propagate="off"><input type="checkbox" /></td>
                             <td>
-                                @item.UserName
+                                <!--email_off-->@item.UserName<!--/email_off-->
                                 @if (item.IsLockedout())
                                 {
                                     <i class="fa fa-lock"></i>
