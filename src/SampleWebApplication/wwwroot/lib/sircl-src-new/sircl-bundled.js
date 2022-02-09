@@ -2208,6 +2208,11 @@ $(function () {
     $(document).on("click", "[onclick-focus]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-focus")).focus();
     });
+
+    // <* onclick-copyto="selector"> On click copies the content of the current element to the target.
+    $(document).on("click", "[onclick-copyto]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onclick-copyto")).html($(this).html());
+    });
 });
 
 // Dblclick event-actions:
