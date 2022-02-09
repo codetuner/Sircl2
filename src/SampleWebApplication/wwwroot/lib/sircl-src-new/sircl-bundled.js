@@ -2115,6 +2115,11 @@ $(function () {
         //event.preventDefault();
     });
 
+    // <* onclick-remove="selector"> On click removes the elements matching the given selector.
+    $(document).on("click", "[onclick-remove]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onclick-remove")).remove();
+    });
+
     // <* onclick-clear="selector"> On click clears the elements matching the given selector.
     $(document).on("click", "[onclick-clear]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-clear")).html(null);
@@ -2278,6 +2283,11 @@ $(function () {
         //event.preventDefault();
     });
 
+
+    // <* ondblclick-remove="selector"> On doubleclick removes the elements matching the given selector.
+    $(document).on("dblclick", "[ondblclick-remove]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("ondblclick-remove")).remove();
+    });
 
     // <* ondblclick-clear="selector"> On doubleclick clears the elements matching the given selector.
     $(document).on("dblclick", "[ondblclick-clear]", function (event) {
