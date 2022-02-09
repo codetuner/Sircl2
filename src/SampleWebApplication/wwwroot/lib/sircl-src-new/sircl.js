@@ -817,6 +817,7 @@ SirclRequestProcessor.prototype._render = function (req) {
         $realTarget.children().slice(0, finalLength - initialLength).each(function () { sircl._afterLoad(this); });
     } else if (req.targetMethod === "replace") {
         // If replace mode, replaces responseText and force afterLoad on the parents:
+        var realTargetId = ($realTarget.length == 1) ? sircl.ext.getId($realTarget[0], false) : null;
         var $realTargetParent = $realTarget.parent();
         var $realTargetSiblings = $realTargetParent.children();
         var initialLength = $realTargetSiblings.length;
@@ -829,10 +830,16 @@ SirclRequestProcessor.prototype._render = function (req) {
                 break;
             }
         }
+        // Perform replacement:
         $realTarget.replaceWith(realResponseText);
         var finalLength = $realTargetParent.children().length;
+        // If replaced by a single element with no id, copy id from original:
+        if (pos > -1 && initialLength === finalLength && realTargetId !== null) {
+            var elem = $realTargetParent.children()[pos];
+            if (elem.id == null || elem.id == "") elem.id = realTargetId;
+        }
+        // If if replaced by one or more elements, apply afterLoad to the new elements:
         if (pos > -1 && finalLength >= initialLength) {
-            // If if replaced by one or more elements, apply afterLoad to the new elements:
             $realTargetParent.children().slice(pos, pos + finalLength - initialLength + 1).each(function () { sircl._afterLoad(this); });
             // Otherwise, replace just removed the element, no afterLoad needed.
         }
