@@ -124,7 +124,7 @@ sircl.addRequestHandler("beforeRender", function sircl_bs4_modal_beforeRender_re
     // Close any opened modal that is not the target:
     var $openModals = $(".modal.show");
     if (req.isForeground == true && $openModals.length > 0) {
-        if (!$.contains($openModals[0], req.$finalTarget[0]) && !$openModals.is(req.$initialTarget)) {
+        if (!$.contains($openModals[0], req.$finalTarget[0]) && !$openModals.is(req.$finalTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {
                 processor.next(req);

@@ -192,6 +192,13 @@ namespace SampleWebApplication.Controllers
             }
         }
 
+        public IActionResult TargetResult(string target, string targetMethod)
+        {
+            if (target != null) Response.Headers.Add("X-Sircl-Target", target);
+            if (targetMethod != null) Response.Headers.Add("X-Sircl-Target-Method", targetMethod);
+            return View("TargetResult");
+        }
+
         //[Route("/{**catchAll}")]
         //public IActionResult CatchAll(string catchAll)
         //{

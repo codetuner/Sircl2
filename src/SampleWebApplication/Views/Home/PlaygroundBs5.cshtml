@@ -1,4 +1,6 @@
-﻿@{ Layout = null; }
+﻿@{
+    Layout = null;
+}
 
 <!doctype html>
 <html lang="en">
@@ -14,6 +16,78 @@
 
         <hr />
         <hr />
+        <hr />
+
+        <div id="tmtar">
+            #tmtar
+        </div>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tmtarmodal">
+            Launch tmtar modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade target" id="tmtarmodal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/Home/TargetResult" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <select class="form-select form-select-lg mb-3" name="target">
+                                <option></option>
+                                <option selected>#tmtar</option>
+                            </select>
+                            <br />
+                            <select class="form-select form-select-lg mb-3" name="targetMethod">
+                                <option value="">content</option>
+                                <option selected>append</option>
+                                <option>prepend</option>
+                                <option>replace</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <hr />
+
+        <div id="tmtard">
+            #tmtar
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick-showdialog="#tmtardlg">
+            Launch tmtar dialog
+        </button>
+
+        <!-- Modal -->
+        <dialog class="target dialog-modal" id="tmtardlg">
+            <form action="/Home/TargetResult" method="post">
+                    <select class="form-select form-select-lg mb-3" name="target">
+                        <option></option>
+                        <option selected>#tmtard</option>
+                    </select>
+                    <br />
+                    <select class="form-select form-select-lg mb-3" name="targetMethod">
+                        <option value="">content</option>
+                        <option selected>append</option>
+                        <option>prepend</option>
+                        <option>replace</option>
+                    </select>
+                <div>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </dialog>
+
+
         <hr />
 
         <form action="/Time" onkeyenter-click="" onkeyescape-click=">[type='reset']">

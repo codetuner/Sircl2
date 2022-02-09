@@ -1642,6 +1642,10 @@ sircl.addRequestHandler("beforeRender", function sircl_dialogs_beforeRender_requ
             }
         });
     }
+    // If trigger of foreground request is in dialog, but target not, close dialog:
+    if (req.isForeground == true && $targetDlg.length == 0 && req.$trigger != null && req.$trigger.length > 0 && req.$trigger.closest("DIALOG").length > 0) {
+        req.$trigger.closest("DIALOG")[0].close();
+    }
     // Move to next handler:
     processor.next(req);
 });
