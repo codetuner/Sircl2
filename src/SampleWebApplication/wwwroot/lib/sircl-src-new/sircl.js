@@ -809,6 +809,12 @@ SirclRequestProcessor.prototype._render = function (req) {
         var initialLength = $realTarget.children().length;
         $realTarget.append(realResponseText);
         $realTarget.children().slice(initialLength).each(function () { sircl._afterLoad(this); });
+    } else if (req.targetMethod === "prepend") {
+        // If prepend mode, prepend responseText and force afterLoad:
+        var initialLength = $realTarget.children().length;
+        $realTarget.prepend(realResponseText);
+        var finalLength = $realTarget.children().length;
+        $realTarget.children().slice(0, finalLength - initialLength).each(function () { sircl._afterLoad(this); });
     } else if (req.targetMethod === "replace") {
         // If replace mode, replaces responseText and force afterLoad on the parents:
         var $realTargetParent = $realTarget.parent();
