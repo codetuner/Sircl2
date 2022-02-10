@@ -1,5 +1,31 @@
 ﻿<hr />
 
+<div>
+    <a href="/Time?delay=2000" target="#disabledtime" target-method="append" class="onclick-disable">Hyperlink to disable</a>
+</div>
+
+<div>
+    <button onclick-load="/Time?delay=2000" target="#disabledtime" target-method="append" class="onclick-disable">Button to disable</button>
+</div>
+
+<div>
+    <form action="/Time?delay=2000" target="#disabledtime" target-method="append">
+        <button type="submit" class="onclick-disable">Submit to disable</button>
+    </form>
+</div>
+
+<div>
+    <form action="/Time?delay=2000" target="#disabledtime" target-method="append" class="onsubmit-disable">
+        <button type="submit">Form to disable</button>
+    </form>
+</div>
+
+<div id="disabledtime">
+</div>
+
+<style>
+    .disabled { color: gray; background-color: lightgray; }
+</style>
 
 <hr />
 
@@ -37,13 +63,15 @@
 </fieldset>
 <fieldset>
     <legend>Connection speed</legend>
-    <label for="csp" class="form-label">Select speed:</label><br />
+    <label for="csp" class="form-label">Select speed:</label>
+    <br />
     <input id="csp" name="csp" type="range" class="form-range substitute-fields"
            onchange-action="/Home/ConnectionSpeed?Modes=[cm]"
            target="#speedinfo"
            min="1" max="5" value="3"
            style="max-width: 250px;">
-    <label for="csp" class="form-label">Select speed (no name):</label><br />
+    <label for="csp" class="form-label">Select speed (no name):</label>
+    <br />
     <input id="csp" type="range" class="form-range substitute-fields"
            onchange-action="/Home/ConnectionSpeed?Modes=[cm]"
            target="#speedinfo"
@@ -162,7 +190,6 @@
 </form>
 
 <div id="latest555">
-
 </div>
 
 <hr />
@@ -263,9 +290,9 @@
 <hr />
 
 @*<style>
-        .action-pending {
-            border: solid 4px green;
-        }
+    .action-pending {
+    border: solid 4px green;
+    }
     </style>*@
 <input type="hidden" name="CID" value="345" />
 <input type="text" class="substitute-fields" name="Name" onchange-action="/Query?Id=[CID]" target="#caout5" />

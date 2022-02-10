@@ -884,9 +884,22 @@ $(document).ready(function () {
     sircl.singlePageMode = $(sircl.mainTargetSelector$).length > 0;
     console.info("sircl.singlePageMode = " + sircl.singlePageMode + "");
 
+    // Disable disabled hyperlinks:
+    $(document).on("click", "*[href].disabled, [onclick-load].disabled", function (event) {
+        // If not returned earlier, stop event propagation:
+        event.preventDefault();
+        event.stopPropagation();
+    });
+
     /// Any element having a href attribute (and no download attribute), or an onclick-load attribute:
     /// Handles special href values
     $(document).on("click", "*[href]:not([download]), [onclick-load]", function (event) {
+        // Check disabled:
+        if ($(this).is(".disabled")) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
         // Get href:
         var href, canBeHandledByBrowser;
         if (this.hasAttribute("onclick-load")) {
@@ -984,6 +997,13 @@ $(document).ready(function () {
 
     /// Performs a reload of an element having an onload-load attribute:
     $(document).on("click", "*[onclick-reload]", function (event) {
+        // Check disabled:
+        if ($(this).is(".disabled")) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        // Perform reload:
         sircl.ext.$select($(this), $(this).attr("onclick-reload")).filter("[onload-load]").each(function () {
             var url = $(this).attr("onload-load") + "";
             $(this).load(url.replace("{rnd}", Math.random()));
@@ -992,6 +1012,12 @@ $(document).ready(function () {
 
     /// Clicking a submit element may submit a form:
     $(document).on("click", "form *:submit, *:submit[form]", function (event) {
+        // Check disabled:
+        if ($(this).is(".disabled")) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
         // To not interfer with form validation, we let default behavior happen.
         // But we want to know the form trigger element, and unfortunately there's no but a dirty way to get it...
         var form = (this.hasAttribute("form")) ? document.getElementById(this.getAttribute("form")) : $(this).closest("FORM")[0];
@@ -1334,6 +1360,37 @@ $(function () {
     };
 
     sircl._afterHistory();
+});
+
+//#endregion
+
+//#region Disabled handling
+
+sircl.addRequestHandler("beforeSend", function sircl_disable_beforeSend_requestHandler(req) {
+    // Add "disabled" class:
+    if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger.is(".onclick-disable")) {
+        if (req.$trigger[0].tagName == "BUTTON" || req.$trigger[0].tagName == "INPUT") {
+            req._disabled_to_restore = req.$trigger[0];
+            req._disabled_to_restore.disabled = true;
+        } else {
+            req._disabledclass_to_restore = req.$trigger;
+            req._disabledclass_to_restore.addClass("disabled");
+        }
+    }
+    // Move to next handler:
+    this.next(req);
+});
+
+sircl.addRequestHandler("afterSend", function sircl_disable_afterSend_requestHandler(req) {
+    // Remove "disabled" class:
+    if (req._disabled_to_restore) {
+        req._disabled_to_restore.disabled = false;
+    }
+    if (req._disabledclass_to_restore) {
+        req._disabledclass_to_restore.removeClass("disabled");
+    }
+    // Move to next handler:
+    this.next(req);
 });
 
 //#endregion
