@@ -52,9 +52,9 @@ sircl.addRequestHandler("beforeSend", function sircl_bs4_navbar_beforeSend_reque
 sircl.addRequestHandler("beforeSend", function sircl_bs4_modal_beforeSend_requestHandler1 (req) {
     var processor = this;
     // Close any opened modal that is not the target if target has beforeload-showmodal class and is not open:
-    var $openedTarget = req.$initialTarget.closest(".modal:not(.beforeload-showmodal):not(.show)");
+    var $closedTarget = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.show)");
     var $openModals = $(".modal.show");
-    if (req.isForeground == true && $openModals.length > 0 && $openedTarget.length == 0) {
+    if (req.isForeground == true && $openModals.length > 0 && $closedTarget.length > 0) {
         if (!$.contains($openModals[0], req.$initialTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
             $openModals[0]._onCloseOnce = function (e) {

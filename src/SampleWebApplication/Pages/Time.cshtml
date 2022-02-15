@@ -1,4 +1,8 @@
 ﻿@page
-@{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"].ToString())); }
+@{
+    if (Request.Query["target"].Count > 0) Response.Headers["X-Sircl-Target"] = Request.Query["target"][0];
+    if (Request.Query["target-method"].Count > 0) Response.Headers["X-Sircl-Target-Method"] = Request.Query["target-method"][0];
+}
+@{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"][0])); }
 @{ Response.Headers["Cache-Control"] = "public, max-age=10"; }
 @DateTime.Now

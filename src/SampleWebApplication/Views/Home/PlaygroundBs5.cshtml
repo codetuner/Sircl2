@@ -374,6 +374,8 @@
 
         <hr />
 
+        <div id="cnvclosetarget">...</div>
+
         <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#registerCnv">
             onshowoffcanvas-load
         </button>
@@ -391,14 +393,38 @@
             <div class="offcanvas-body">
                 Loading registration form...
 
-                <form target="#clscnv" action="/204">
-                    <button type="submit"><i class="spinner"></i> Close</button>
+                <form target=":this" action="/Time" target-method="prepend">
+                    <p>
+                    <button type="submit"><i class="spinner"></i> Local</button>
+                    </p>
+                </form>
+
+                <br/>
+
+                <form target="#clscnv" action="/204?delay=300">
+                    <p>
+                    <button type="submit"><i class="spinner"></i> Close 204</button>
+                    </p>
+                </form>
+
+                <br/>
+
+                <form target="#cnvclosetarget" action="/Time?delay=300">
+                    <p>
+                    <button type="submit"><i class="spinner"></i> Close Load</button>
+                    </p>
+                    <p>
+                    <button type="submit" formaction="/Time?delay=300&target=%23clscnv"><i class="spinner"></i> Close Load retarget here</button>
+                    </p>
+                    <p>
+                    <button type="submit" formaction="/Time?delay=300&target=%23registerCnv"><i class="spinner"></i> Close Load retarget other canvas</button>
+                    </p>
                 </form>
 
             </div>
         </div>
 
-        <div class="offcanvas offcanvas-start onclose-restore" id="registerCnv" onshowoffcanvas-load="/Time" tabindex="-1">
+        <div class="offcanvas offcanvas-end onclose-restore" id="registerCnv" onshowoffcanvas-load="/Time" tabindex="-1">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title">Register</h5>
             </div>
