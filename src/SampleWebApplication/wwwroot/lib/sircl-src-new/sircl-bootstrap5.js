@@ -609,7 +609,7 @@ sircl.addRequestHandler("beforeRender", function (req) {
     // Close any opened offcanvas that is not the target:
     var $openOffcanvasses = $(".offcanvas.show");
     if (req.isForeground == true && $openOffcanvasses.length > 0) {
-        if (!$.contains($openOffcanvasses[0], req.$finalTarget[0]) && !$openOffcanvasses.is(req.$initialTarget)) {
+        if (!$.contains($openOffcanvasses[0], req.$finalTarget[0]) && !$openOffcanvasses.is(req.$finalTarget)) {
             // Delay move to next handler:
             $openOffcanvasses[0]._onCloseOnce = function (e) {
                 processor.next(req);
