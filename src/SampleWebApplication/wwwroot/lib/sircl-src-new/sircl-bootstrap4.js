@@ -12,7 +12,7 @@ if (typeof bootstrap === "undefined") console.warn("The 'sircl-bootstrap4' compo
 //// Initialize Bootstrap popovers, tooltips, etc. using a $$() function as in:
 //<script>
 //$$(function () {
-//   $(this).find("[data-bs-toggle='popover']").popover({ container: "body" });
+//   $(this).find("[data-toggle='popover']").popover({ container: "body" });
 //   $(this).find("[data-toggle='tooltip']").tooltip({ boundary: "window" });
 //})
 //</script>

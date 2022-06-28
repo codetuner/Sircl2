@@ -1,13 +1,13 @@
 ﻿/////////////////////////////////////////////////////////////////
-// Sircl 2.x - Bootstrap4 extension
+// Sircl 2.x - Bootstrap3 extension
 // www.getsircl.com
 // Copyright (c) 2019-2022 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
 // Initialize sircl lib:
-if (typeof sircl === "undefined") console.warn("The 'sircl-bootstrap4' component should be registered after the 'sircl' component. Please review order of script files.");
-if (typeof bootstrap === "undefined") console.warn("The 'sircl-bootstrap4' component requires the 'bootstrap' component. See https://getbootstrap.com/");
+if (typeof sircl === "undefined") console.warn("The 'sircl-bootstrap3' component should be registered after the 'sircl' component. Please review order of script files.");
+if (typeof $().modal === "undefined") console.warn("The 'sircl-bootstrap3' component requires the 'bootstrap' component. See https://getbootstrap.com/");
 
 //// Initialize Bootstrap popovers, tooltips, etc. using a $$() function as in:
 //<script>
@@ -17,29 +17,26 @@ if (typeof bootstrap === "undefined") console.warn("The 'sircl-bootstrap4' compo
 //})
 //</script>
 
-// Use a Bootstrap spinner:
-sircl.html_spinner = '<span class="sircl-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
-
 //#region Hide or dispose elements before unloading their container
 
-$$("before", function sircl_bs4_init_beforeHandler () {
+$$("before", function sircl_bs3_init_beforeHandler() {
     // Hide all popovers in scope:
-    $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("dispose");
+    $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("destroy");
 
     // Hide all tooltips in scope:
-    $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("dispose");
+    $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("destroy");
 });
 
 //#endregion
 
 //#region Handling Bootstrap NavBars
 
-sircl.addRequestHandler("beforeSend", function sircl_bs4_navbar_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_bs3_navbar_beforeSend_requestHandler(req) {
     var processor = this;
     // Collapse any expanded navbar before loading:
-    var $expandedNavbar = $(".navbar-collapse.show");
+    var $expandedNavbar = $(".navbar-collapse.in");
     $expandedNavbar.each(function () {
-        $(this).removeClass("show");
+        $(this).removeClass("in");
     });
     // Move to next handler:
     processor.next(req);
@@ -49,11 +46,11 @@ sircl.addRequestHandler("beforeSend", function sircl_bs4_navbar_beforeSend_reque
 
 //#region Handling Bootstrap Modals
 
-sircl.addRequestHandler("beforeSend", function sircl_bs4_modal_beforeSend_requestHandler1 (req) {
+sircl.addRequestHandler("beforeSend", function sircl_bs3_modal_beforeSend_requestHandler1(req) {
     var processor = this;
     // Close any opened modal that is not the target if target has beforeload-showmodal class and is not open:
-    var $closedTarget = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.show)");
-    var $openModals = $(".modal.show");
+    var $closedTarget = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.in)");
+    var $openModals = $(".modal.in");
     if (req.isForeground == true && $openModals.length > 0 && $closedTarget.length > 0) {
         if (!$.contains($openModals[0], req.$initialTarget[0]) && !$openModals.is(req.$initialTarget)) {
             // Delay move to next handler:
@@ -72,10 +69,10 @@ sircl.addRequestHandler("beforeSend", function sircl_bs4_modal_beforeSend_reques
     }
 });
 
-sircl.addRequestHandler("beforeSend", function sircl_bs4_modal_beforeSend_requestHandler2 (req) {
+sircl.addRequestHandler("beforeSend", function sircl_bs3_modal_beforeSend_requestHandler2(req) {
     var processor = this;
     // Open any non-open modal holding the initial target and having class "beforeload-showmodal":
-    req._bsModalOpened = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.show)");
+    req._bsModalOpened = req.$initialTarget.closest(".modal.beforeload-showmodal:not(.in)");
     if (req._bsModalOpened.length > 0) {
         // Delay move to next handler:
         req._bsModalOpened[0]._onOpenOnce = function (e) {
@@ -89,7 +86,7 @@ sircl.addRequestHandler("beforeSend", function sircl_bs4_modal_beforeSend_reques
     }
 });
 
-sircl.addRequestHandler("afterSend", function sircl_bs4_modal_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_bs3_modal_afterSend_requestHandler(req) {
     var processor = this;
     // On error, undo opened modals:
     if (!req.succeeded && req._bsModalOpened.length > 0) {
@@ -101,7 +98,7 @@ sircl.addRequestHandler("afterSend", function sircl_bs4_modal_afterSend_requestH
         req._bsModalOpened.modal("hide");
     } else if (req.status == "204") {
         // Else, if status "204" (no content), close target modal:
-        var $dlg = req.$initialTarget.closest(".modal.show");
+        var $dlg = req.$initialTarget.closest(".modal.in");
         if ($dlg.length > 0) {
             // Delay move to next handler:
             $dlg[0]._onCloseOnce = function (e) {
@@ -119,10 +116,10 @@ sircl.addRequestHandler("afterSend", function sircl_bs4_modal_afterSend_requestH
     }
 });
 
-sircl.addRequestHandler("beforeRender", function sircl_bs4_modal_beforeRender_requestHandler (req) {
+sircl.addRequestHandler("beforeRender", function sircl_bs3_modal_beforeRender_requestHandler(req) {
     var processor = this;
     // Close any opened modal that is not the target:
-    var $openModals = $(".modal.show");
+    var $openModals = $(".modal.in");
     if (req.isForeground == true && $openModals.length > 0) {
         if (!$.contains($openModals[0], req.$finalTarget[0]) && !$openModals.is(req.$finalTarget)) {
             // Delay move to next handler:
@@ -140,10 +137,10 @@ sircl.addRequestHandler("beforeRender", function sircl_bs4_modal_beforeRender_re
         processor.next(req);
     }
 });
-sircl.addRequestHandler("afterRender", function sircl_bs4_modal_afterRender_requestHandler (req) {
+sircl.addRequestHandler("afterRender", function sircl_bs3_modal_afterRender_requestHandler(req) {
     var processor = this;
     // Open modal on final target:
-    var $modal = req.$finalTarget.closest(".modal:not(.show)");
+    var $modal = req.$finalTarget.closest(".modal:not(.in)");
     if ($modal.length > 0) {
         // Delay move to next handler:
         $modal[0]._onOpenOnce = function (e) {
@@ -200,7 +197,7 @@ $(function () {
     });
 });
 
-$$(function sircl_bs4_modal_processHandler () {
+$$(function sircl_bs3_modal_processHandler() {
     // Backup original content of onclose-restore modals to be able to reset on close:
     $(this).find(".modal.onclose-restore").each(function (index, elem) {
         elem._originalContent = $(elem).html();
@@ -217,7 +214,7 @@ $$(function sircl_bs4_modal_processHandler () {
         // Set timer:
         setTimeout(function (mdl) {
             // Only show if no other modals shown yet:
-            if ($(".modal.show").length == 0) {
+            if ($(".modal.in").length == 0) {
                 $(mdl).modal("show");
             }
         }, 1000 * delay, modal);
@@ -251,7 +248,7 @@ $(function () {
     });
 });
 
-$$(function sircl_bs4_tabs_processHandler () {
+$$(function sircl_bs3_tabs_processHandler() {
     // Dynamically load content on initially shown tab:
     $(".nav-link.active[data-toggle='tab'], .nav-link.active[data-toggle='pill']").each(function () {
         // Find target tab:
@@ -271,15 +268,6 @@ $$(function sircl_bs4_tabs_processHandler () {
             $(target$).removeAttr("ifactivetab-load");
         }
     });
-});
-
-//#endregion
-
-//#region Handling Bootstrap Toasts
-
-$$(function sircl_bs4_toasts_processHandler () {
-    // Automatically show toasts with .onload-showtoast on init:
-    $(this).find(".toast.onload-showtoast").toast("show");
 });
 
 //#endregion
@@ -368,7 +356,7 @@ $(function () {
     });
 });
 
-$$(function sircl_bs4_collapse_processHandler () {
+$$(function sircl_bs3_collapse_processHandler() {
 
     // If checked, expand, else collapse:
     $("INPUT[type=checkbox][ifchecked-expand], INPUT[type=radio][ifchecked-expand]").each(function () {
@@ -395,7 +383,7 @@ $$(function sircl_bs4_collapse_processHandler () {
 
 //#region Bootstrap load progress handling
 
-sircl.addRequestHandler("beforeSend", function sircl_bs4_loadprogess_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_bs3_loadprogess_beforeSend_requestHandler(req) {
     req._bsProgressToResetAfterSend = []
     req._bsProgressToHideAfterSend = []
     if (req.xhr != null) {
@@ -448,7 +436,7 @@ sircl.addRequestHandler("beforeSend", function sircl_bs4_loadprogess_beforeSend_
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_bs4_loadprogess_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_bs3_loadprogess_afterSend_requestHandler(req) {
     // Hide progresses that were hidden before send:
     req._bsProgressToHideAfterSend.forEach(function (elem) {
         sircl.ext.visible(elem, false);
@@ -481,7 +469,7 @@ $(function () {
 });
 
 // If location contains hash, activate matching tab:
-sircl.addAfterHistoryHandler(function sircl_bs4_hashRoute_afterHistoryHandler () {
+sircl.addAfterHistoryHandler(function sircl_bs3_hashRoute_afterHistoryHandler() {
     if (location.hash != null && location.hash.length > 0) {
         var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
         if ($target.length > 0) {
@@ -494,7 +482,7 @@ sircl.addAfterHistoryHandler(function sircl_bs4_hashRoute_afterHistoryHandler ()
 
 //#region ifroute-setactive
 
-sircl.addAfterHistoryHandler(function sircl_bs4_activeRoute_afterHistoryHandler () {
+sircl.addAfterHistoryHandler(function sircl_bs3_activeRoute_afterHistoryHandler() {
     $(document).find("[ifroute-setactive]").each(function () {
         var regex = new RegExp($(this).attr("ifroute-setactive"), "i");
         if (regex.exec(location.pathname) !== null) {

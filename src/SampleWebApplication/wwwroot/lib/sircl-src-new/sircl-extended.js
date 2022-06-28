@@ -152,7 +152,7 @@ $(function () {
 
     // <* onchange-enable="selector"> On change, enables the elements matching the given selector.
     $(document).on("change", "*[onchange-enable]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onchange-enable")).prop("disabled", false);
+        sircl.ext.enabled(sircl.ext.$select($(this), $(this).attr("onchange-enable")), true);
     });
 
     // <* onchange-show="selector"> On change, shows the elements matching the given selector.
@@ -250,12 +250,12 @@ $(function () {
 
     // <* onclick-disable="selector"> On click disables the elements matching the given selector.
     $(document).on("click", "[onclick-disable]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-disable")).prop("disabled", true);
+        sircl.ext.enabled(sircl.ext.$select($(this), $(this).attr("onclick-disable")), false);
     });
 
     // <* onclick-enable="selector"> On click enables the elements matching the given selector.
     $(document).on("click", "[onclick-enable]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-enable")).prop("disabled", false);
+        sircl.ext.enabled(sircl.ext.$select($(this), $(this).attr("onclick-enable")), true);
     });
 
     // <* onclick-readonly="selector"> On click makes the elements matching the given selector readonly.
@@ -491,11 +491,11 @@ $(function () {
     });
 
     $(document).on("change", "[ifchecked-disable]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")).prop("disabled", this.checked);
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")), !this.checked);
     });
 
     $(document).on("change", "[ifchecked-enable]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")).prop("disabled", !this.checked);
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")), this.checked);
     });
 
     $(document).on("change", "[ifchecked-readonly]", function (event) {
@@ -593,10 +593,10 @@ $(function () {
             if (!sircl.ext.visible(this)) actions.toshow.push(this);
         });
         $scope.find(ifvaluename + "-disable").each(function () {
-            if ($(this).prop("disabled") == false) actions.todisable.push(this);
+            if (sircl.ext.enabled(this)) actions.todisable.push(this);
         });
         $scope.find(ifvaluename + "-enable").each(function () {
-            if ($(this).prop("disabled") == true) actions.toenable.push(this);
+            if (!sircl.ext.enabled(this)) actions.toenable.push(this);
         });
         $scope.find(ifvaluename + "-readonly").each(function () {
             if ($(this).prop("readonly") == false) action.toreadonly.push(this);
@@ -636,11 +636,11 @@ $(function () {
                 });
                 $scope.find(ifvaluenameisvalue + "-disable").each(function () {
                     if (actions.toenable.indexOf(this) >= 0) actions.toenable.splice(actions.toenable.indexOf(this), 1);
-                    if ($(this).prop("disabled") == false && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
+                    if (sircl.ext.enabled(this) && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
                 });
                 $scope.find(ifvaluenameisvalue + "-enable").each(function () {
                     if (actions.todisable.indexOf(this) >= 0) actions.todisable.splice(actions.todisable.indexOf(this), 1);
-                    if ($(this).prop("disabled") == true && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
+                    if (!sircl.ext.enabled(this) && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
                 });
                 $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
                     if (actions.toreadwrite.indexOf(this) >= 0) actions.toreadwrite.splice(actions.toreadwrite.indexOf(this), 1);
@@ -673,10 +673,10 @@ $(function () {
         });
         // Perform only net enable/disables:
         actions.toenable.forEach(function (elem) {
-            $(elem).prop("disabled", false);
+            sircl.ext.enabled($(elem), true);
         });
         actions.todisable.forEach(function (elem) {
-            $(elem).prop("disabled", true);
+            sircl.ext.enabled($(elem), false);
         });
         // Perform only net readwrite/readonlies:
         actions.toreadwrite.forEach(function (elem) {
@@ -713,11 +713,11 @@ $$(function sircl_ext_ifchecked_processHandler () {
     });
 
     $(this).find("[ifchecked-disable]").each(function () {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")).prop("disabled", this.checked);
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifchecked-disable")), !this.checked);
     });
 
     $(this).find("[ifchecked-enable]").each(function () {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")).prop("disabled", !this.checked);
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifchecked-enable")), this.checked);
     });
 
     $(this).find("[ifchecked-readonly]").each(function (event) {
@@ -819,10 +819,10 @@ $$(function sircl_ext_ifchecked_processHandler () {
             if (!sircl.ext.visible(this)) actions.toshow.push(this);
         });
         $scope.find(ifvaluename + "-disable").each(function () {
-            if ($(this).prop("disabled") == false) actions.todisable.push(this);
+            if (sircl.ext.enabled(this)) actions.todisable.push(this);
         });
         $scope.find(ifvaluename + "-enable").each(function () {
-            if ($(this).prop("disabled") == true) actions.toenable.push(this);
+            if (!sircl.ext.enabled(this)) actions.toenable.push(this);
         });
         $scope.find(ifvaluename + "-readonly").each(function () {
             if ($(this).prop("readonly") == false) action.toreadonly.push(this);
@@ -862,11 +862,11 @@ $$(function sircl_ext_ifchecked_processHandler () {
                 });
                 $scope.find(ifvaluenameisvalue + "-disable").each(function () {
                     if (actions.toenable.indexOf(this) >= 0) actions.toenable.splice(actions.toenable.indexOf(this), 1);
-                    if ($(this).prop("disabled") == false && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
+                    if (sircl.ext.enabled(this) && actions.todisable.indexOf(this) === -1) actions.todisable.push(this);
                 });
                 $scope.find(ifvaluenameisvalue + "-enable").each(function () {
                     if (actions.todisable.indexOf(this) >= 0) actions.todisable.splice(actions.todisable.indexOf(this), 1);
-                    if ($(this).prop("disabled") == true && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
+                    if (!sircl.ext.enabled(this) && actions.toenable.indexOf(this) === -1) actions.toenable.push(this);
                 });
                 $scope.find(ifvaluenameisvalue + "-readonly").each(function () {
                     if (actions.toreadwrite.indexOf(this) >= 0) actions.toreadwrite.splice(actions.toreadwrite.indexOf(this), 1);
@@ -899,10 +899,10 @@ $$(function sircl_ext_ifchecked_processHandler () {
         });
         // Perform only net enable/disables:
         actions.toenable.forEach(function (elem) {
-            $(elem).prop("disabled", false);
+            sircl.ext.enabled($(elem), true);
         });
         actions.todisable.forEach(function (elem) {
-            $(elem).prop("disabled", true);
+            sircl.ext.enabled($(elem), false);
         });
         // Perform only net readwrite/readonlies:
         actions.toreadwrite.forEach(function (elem) {
@@ -988,9 +988,9 @@ $$(function sircl_ext_actionEvents_processHandler () {
         var $this = $(this);
         var $all = sircl.ext.$select($this, $this.attr("enable-ifallchecked"));
         sircl.ext.$select($this, $this.attr("enable-ifallchecked")).on("change", function () {
-            $this.prop("disabled", $all.filter(":checked").length < $all.length);
+            sircl.ext.enabled($this, $all.filter(":checked").length >= $all.length);
         });
-        $this.prop("disabled", $all.filter(":checked").length < $all.length);
+        sircl.ext.enabled($this, $all.filter(":checked").length >= $all.length);
     });
 
     /// <* enable-ifanychecked="selection"> If any of the selection is checked, enable, else disable this.
@@ -998,9 +998,9 @@ $$(function sircl_ext_actionEvents_processHandler () {
         var $this = $(this);
         var $any = sircl.ext.$select($this, $this.attr("enable-ifanychecked"));
         sircl.ext.$select($this, $this.attr("enable-ifanychecked")).on("change", function () {
-            $this.prop("disabled", !$any.filter(":checked").length > 0);
+            sircl.ext.enabled($this, $any.filter(":checked").length > 0);
         });
-        $this.prop("disabled", !$any.filter(":checked").length > 0);
+        sircl.ext.enabled($this, $any.filter(":checked").length > 0);
     });
 
     /// <* show-ifallchecked="selection"> If all of the selection is checked, show, else hide this.
@@ -1063,37 +1063,37 @@ $$(function sircl_ext_ifvalid_processHandler() {
             sircl.ext.addClass($(this), this.getAttribute("ifinvalid-addclass"));
     });
     $(this).find("[ifvalid-enable]").each(function () {
-        sircl.ext.$select($(this), this.getAttribute("ifvalid-enable")).prop("disabled", !sircl.ext.isValid($(this)));
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifvalid-enable")), sircl.ext.isValid($(this)));
     });
     $(this).find("[ifinvalid-enable]").each(function () {
-        sircl.ext.$select($(this), this.getAttribute("ifinvalid-enable")).prop("disabled", sircl.ext.isValid($(this)));
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifinvalid-enable")), !sircl.ext.isValid($(this)));
     });
 });
 
 $(function () {
-    $(document).on("change", "[ifvalid-show]", function (event) {
+    $(document).on("change input invalid", "[ifvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
     });
-    $(document).on("change", "[ifinvalid-show]", function (event) {
+    $(document).on("change input invalid", "[ifinvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifinvalid-show")), !sircl.ext.isValid($(this)));
     });
-    $(document).on("change", "[ifvalid-addclass]", function (event) {
+    $(document).on("change input invalid", "[ifvalid-addclass]", function (event) {
         if (sircl.ext.isValid($(this)))
             sircl.ext.addClass($(this), this.getAttribute("ifvalid-addclass"));
         else
             sircl.ext.removeClass($(this), this.getAttribute("ifvalid-addclass"));
     });
-    $(document).on("change", "[ifinvalid-addclass]", function (event) {
+    $(document).on("change input invalid", "[ifinvalid-addclass]", function (event) {
         if (sircl.ext.isValid($(this)))
             sircl.ext.removeClass($(this), this.getAttribute("ifinvalid-addclass"));
         else
             sircl.ext.addClass($(this), this.getAttribute("ifinvalid-addclass"));
     });
-    $(document).on("change", "[ifvalid-enable]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifvalid-enable")).prop("disabled", !sircl.ext.isValid($(this)));
+    $(document).on("change input invalid", "[ifvalid-enable]", function (event) {
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifvalid-enable")), sircl.ext.isValid($(this)));
     });
-    $(document).on("change", "[ifinvalid-enable]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifinvalid-enable")).prop("disabled", sircl.ext.isValid($(this)));
+    $(document).on("change input invalid", "[ifinvalid-enable]", function (event) {
+        sircl.ext.enabled(sircl.ext.$select($(this), this.getAttribute("ifinvalid-enable")), !sircl.ext.isValid($(this)));
     });
 });
 

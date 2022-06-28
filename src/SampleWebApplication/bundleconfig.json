@@ -12,6 +12,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bootstrap3.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-bootstrap3.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bootstrap4.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl-bootstrap4.js"

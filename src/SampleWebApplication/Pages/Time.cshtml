@@ -6,3 +6,8 @@
 @{ System.Threading.Thread.Sleep(Int32.Parse(Request.Query["delay"].Count == 0 ? "100" : Request.Query["delay"][0])); }
 @{ Response.Headers["Cache-Control"] = "public, max-age=10"; }
 @DateTime.Now
+<script>
+$(document).ready(function() {
+    console.log("/Time ready");
+});
+</script>

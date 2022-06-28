@@ -18,47 +18,11 @@ if (typeof jQuery === "undefined") console.error("Sircl requires jQuery to be ex
 
 //#endregion
 
-//#region HTML and jQuery Overrides
+//#region jQuery Overrides
 
 //$.ajaxSetup({
 //    cache: false
 //});
-
-// Form submit() overwrite:
-sircl_originalSubmit = HTMLFormElement.prototype.submit;
-HTMLFormElement.prototype.submit = function (event) {
-    if ($(this).is("FORM:not([download]):not([method=dialog])")) {
-        // Find target of submit request:
-        var $trigger = (this._formTrigger) ? $(this._formTrigger) : $(this);
-        var target = null;
-        var targetMethod = null;
-        var $targetScope = $(this);
-        if ($trigger.hasAttr("formtarget")) {
-            $targetScope = $trigger;
-            target = $targetScope.attr("formtarget");
-            targetMethod = $targetScope.attr("target-method");
-        } else if ($trigger.closest("[target]").length > 0) {
-            $targetScope = $trigger.closest("[target]");
-            target = $targetScope.attr("target");
-            targetMethod = $targetScope.attr("target-method");
-        }
-        if ((target != null && sircl.ext.isInternalTarget(target)) || (target == null && sircl.singlePageMode == true)) {
-            // Forward to the server side rendering handler:
-            var $target = (target != null) ? sircl.ext.$select($targetScope, target) : sircl.ext.$mainTarget();
-            sircl._submitForm($trigger, $(this), $target, targetMethod, event);
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        } else {
-            // Navigate link through default behavior
-            sircl_originalSubmit.apply(this, arguments);
-        }
-    } else {
-        // Navigate link through default behavior
-        sircl_originalSubmit.apply(this, arguments);
-    }
-}
 
 // jQuery html() override:
 sircl_originalJqHtml = $.fn.html;
@@ -68,21 +32,27 @@ $.fn.html = function (htmlStringOrFx) {
         return sircl_originalJqHtml.call($t);
     } else {
         $t.each(function () { sircl._beforeUnload(this); });
-        sircl_originalJqHtml.call($t, htmlStringOrFx);
+        var response = sircl_originalJqHtml.call($t, htmlStringOrFx);
         if (htmlStringOrFx !== null) {
             $t.each(function () { sircl._afterLoad(this); });
         }
+        return response;
     }
 };
 
 // jQuery load() override:
 sircl_originalJqLoad = $.fn.load;
 $.fn.load = function (url, data, callback) {
+    // Adjust params:
+    if (callback === undefined && typeof data == "function") {
+        callback = data;
+        data = null;
+    }
     // Build request data:
     var req = {
-        $trigger: $(this),
-        $initialTarget: $(this),
-        targetMethod: $(this).attr("target-method") || null,
+        $trigger: this,
+        $initialTarget: this,
+        targetMethod: this.attr("target-method") || null,
         action: url,
         method: "get",
         enctype: null,
@@ -92,6 +62,9 @@ $.fn.load = function (url, data, callback) {
 
     // Process submission:
     sircl._processRequest(req, callback);
+
+    // Return this for chaining:
+    return this;
 };
 
 // Add a jQuery "hasAttr(name)" function:
@@ -107,6 +80,20 @@ $.fn.hasAttr = function (name) {
 if (typeof sircl === "undefined") sircl = {};
 sircl.version = 2.0;
 console.info("Sircl v." + sircl.version + " running.");
+
+/**
+ * Defines an class alias for an attribute with specific value.
+ * @param {any} aliasClass$ The class that is the alias.
+ * @param {any} attributeName The attribute name.
+ * @param {any} attributeValue The default attribute value.
+ */
+sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue) {
+    sircl.addContentReadyHandler("enrich", function sircl_addAttributeAlias() {
+        $(this).find(aliasClass$).each(function () {
+            $(this).attr(attributeName, attributeValue);
+        });
+    });
+};
 
 //#endregion
 
@@ -144,6 +131,38 @@ sircl.ext.visible = function (elementOrSelector, visible) {
         $(elementOrSelector).attr("hidden", "hidden");
     }
 };
+
+/**
+ * Get current enabled state or set enabled state of given element or selector.
+ * @param {any} elementOrSelector Element or selector.
+ * @param {any} enabled True to make it enabled, false to make it disabled. Absent to get current enabled state.
+ */
+sircl.ext.enabled = function (elementOrSelector, enabled) {
+    var $selector = $(elementOrSelector);
+    if (enabled === undefined) {
+        if ($selector.length > 0) {
+            if ($selector[0].hasAttribute("href")) {
+                return !$selector[0].hasAttribute("disabled");
+            } else {
+                return !$selector.prop("disabled");
+            }
+        } else {
+            return false;
+        }
+    } else {
+        $selector.each(function () {
+            if (this.hasAttribute("href")) {
+                if (enabled) {
+                    $selector.removeAttr("disabled");
+                } else {
+                    $selector.attr("disabled", "disabled");
+                }
+            } else {
+                $selector.prop("disabled", !enabled);
+            }
+        });
+    }
+}
 
 /**
  * Returns the id of the given element or selector.
@@ -371,6 +390,45 @@ sircl.ext.getUrlParameter = function (name) {
     var results = regex.exec(location.search);
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
+
+/**
+ * Submits a form.
+ * @param {any} event Event initiating the submit request.
+ */
+sircl.ext.submit = function (form, event, fallback) {
+    if ($(form).is("FORM:not([download]):not([method=dialog])")) {
+        // Find target of submit request:
+        var $trigger = (form._formTrigger) ? $(form._formTrigger) : $(form);
+        var target = null;
+        var targetMethod = null;
+        var $targetScope = $(form);
+        if ($trigger.hasAttr("formtarget")) {
+            $targetScope = $trigger;
+            target = $targetScope.attr("formtarget");
+            targetMethod = $targetScope.attr("target-method");
+        } else if ($trigger.closest("[target]").length > 0) {
+            $targetScope = $trigger.closest("[target]");
+            target = $targetScope.attr("target");
+            targetMethod = $targetScope.attr("target-method");
+        }
+        if ((target != null && sircl.ext.isInternalTarget(target)) || (target == null && sircl.singlePageMode == true)) {
+            // Forward to the server side rendering handler:
+            var $target = (target != null) ? sircl.ext.$select($targetScope, target) : sircl.ext.$mainTarget();
+            sircl._submitForm($trigger, $(form), $target, targetMethod, event);
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        } else {
+            // Invoke fallback:
+            if (fallback) fallback();
+        }
+    } else {
+        // Invoke fallback:
+        if (fallback) fallback();
+    }
+}
+
 
 //#endregion
 
@@ -885,7 +943,7 @@ $(document).ready(function () {
     console.info("sircl.singlePageMode = " + sircl.singlePageMode + "");
 
     // Disable disabled hyperlinks:
-    $(document).on("click", "*[href].disabled, [onclick-load].disabled", function (event) {
+    $(document).on("click", "*[href][disabled], [onclick-load][disabled]", function (event) {
         // If not returned earlier, stop event propagation:
         event.preventDefault();
         event.stopPropagation();
@@ -895,7 +953,7 @@ $(document).ready(function () {
     /// Handles special href values
     $(document).on("click", "*[href]:not([download]), [onclick-load]", function (event) {
         // Check disabled:
-        if ($(this).is(".disabled")) {
+        if ($(this).is("[disabled]")) {
             event.preventDefault();
             event.stopPropagation();
             return;
@@ -998,7 +1056,7 @@ $(document).ready(function () {
     /// Performs a reload of an element having an onload-load attribute:
     $(document).on("click", "*[onclick-reload]", function (event) {
         // Check disabled:
-        if ($(this).is(".disabled")) {
+        if ($(this).is("[disabled]")) {
             event.preventDefault();
             event.stopPropagation();
             return;
@@ -1013,7 +1071,7 @@ $(document).ready(function () {
     /// Clicking a submit element may submit a form:
     $(document).on("click", "form *:submit, *:submit[form]", function (event) {
         // Check disabled:
-        if ($(this).is(".disabled")) {
+        if ($(this).is("[disabled]")) {
             event.preventDefault();
             event.stopPropagation();
             return;
@@ -1026,14 +1084,39 @@ $(document).ready(function () {
         form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
     });
 
+    sircl.addAttributeAlias(".onclick-submit", "onclick-submit", ":form");
+
+    /// Clicking an element to submit a form:
+    $(document).on("click", "*[onclick-submit]", function sircl_onclickSubmit(event) {
+        // Event is hereby handled:
+        event.preventDefault();
+        event.stopPropagation();
+        // Check disabled:
+        if ($(this).is("[disabled]")) {
+            return;
+        }
+        // Search for form:
+        var $this = $(this);
+        var $form = sircl.ext.$select($this, $this.attr("onclick-submit"));
+        if ($form.length >= 1) {
+            var form = $form[0];
+            clearTimeout(form._formTriggerTimer);
+            form._formTrigger = this;
+            form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
+            sircl.ext.submit(form, event, function () {
+                form.submit();
+            });
+        }
+    });
+
     /// Submitting a form:
     $(document).on("submit", "form:not([download]):not([method=dialog])", function (event) {
-        this.submit(event);
+        sircl.ext.submit(this, event);
     });
 
     /// Handle onkeyenter-click:
     $(document).on("keydown", "[onkeyenter-click]", function (event) {
-        if (event.key === "Enter") {
+        if (event.key === "Enter" && event.target.tagName !== "TEXTAREA") {
             event.preventDefault();
             var $this = $(this);
             var $target = sircl.ext.$select($this, $this.attr("onkeyenter-click"));
@@ -1079,7 +1162,7 @@ $(document).ready(function () {
 /**
  * ContentReadyHandlers are executed before/after updating the content of a web page part.
  */
-sircl._contentReadyHandlers = { };
+sircl._contentReadyHandlers = {};
 sircl._contentReadyHandlers.before = [];
 sircl._contentReadyHandlers.content = [];
 sircl._contentReadyHandlers.enrich = [];
@@ -1104,20 +1187,6 @@ function $$() {
     else
         sircl.addContentReadyHandler("process", arguments[0]);
 }
-
-/**
- * Defines an class alias for an attribute with specific value.
- * @param {any} aliasClass$ The class that is the alias.
- * @param {any} attributeName The attribute name.
- * @param {any} attributeValue The default attribute value.
- */
-sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue) {
-    sircl.addContentReadyHandler("enrich", function sircl_addAttributeAlias () {
-        $(this).find(aliasClass$).each(function () {
-            $(this).attr(attributeName, attributeValue);
-        });
-    });
-};
 
 /**
  * To be called before unloading a web page part.
@@ -1173,7 +1242,7 @@ sircl._afterLoad = function (scope) {
 
 //#region Default Content Ready handlers
 
-$$("content", function sircl_default_contentHandler () {
+$$("content", function sircl_default_contentHandler() {
     /// <* onload-copyto="selector"> Copies the content to the given selector.
     $(this).filter("[onload-copyto]").add($(this).find("*[onload-copyto]")).each(function () {
         var html = $(this).html();
@@ -1188,7 +1257,7 @@ $$("content", function sircl_default_contentHandler () {
     });
 });
 
-$$(function sircl_default_processHandler () {
+$$(function sircl_default_processHandler() {
     /// <* document-title="document title"> Sets the document title.
     var documentTitleElement = $(this).find("[document-title]");
     if (documentTitleElement.length > 0) {
@@ -1217,13 +1286,13 @@ sircl.addAttributeAlias(".target", "target", ":this");
  */
 sircl._errorHandlers = [],
 
-/**
- * Add an error handler.
- * Handlers have following arguments: code, message, [data].
- */
-sircl.addErrorHandler = function (handler) {
-    this._errorHandlers.push(handler);
-};
+    /**
+     * Add an error handler.
+     * Handlers have following arguments: code, message, [data].
+     */
+    sircl.addErrorHandler = function (handler) {
+        this._errorHandlers.push(handler);
+    };
 
 /**
  * Handles an error. Arguments to pass: code, message, [data].
@@ -1246,7 +1315,7 @@ sircl.handleError = function (code, message, data) {
 /**
  * Add a default error handler logging to console.
  */
-sircl.addErrorHandler(function sircl_defaultLogging_errorHandler (code, message, data) {
+sircl.addErrorHandler(function sircl_defaultLogging_errorHandler(code, message, data) {
     console.error("Sircl " + code + " - " + message, data);
 });
 
@@ -1277,7 +1346,7 @@ sircl._afterHistory = function () {
     });
 };
 
-sircl.addRequestHandler("beforeRender", function sircl_history_beforeRender_requestHandler (req) {
+sircl.addRequestHandler("beforeRender", function sircl_history_beforeRender_requestHandler(req) {
     // If request is a "get" request on the main target and history handling is not to be skipped:
     if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
         // Store the current state in history:
@@ -1293,7 +1362,7 @@ sircl.addRequestHandler("beforeRender", function sircl_history_beforeRender_requ
     this.next(req);
 });
 
-sircl.addRequestHandler("afterRender", function sircl_history_afterRender_requestHandler (req) {
+sircl.addRequestHandler("afterRender", function sircl_history_afterRender_requestHandler(req) {
     if (req._historyMode) {
         // Push or replace new state in history:
         var finalState = {
@@ -1367,14 +1436,14 @@ $(function () {
 //#region Disabled handling
 
 sircl.addRequestHandler("beforeSend", function sircl_disable_beforeSend_requestHandler(req) {
-    // Add "disabled" class:
+    // Make "disabled":
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger.is(".onclick-disable")) {
         if (req.$trigger[0].tagName == "BUTTON" || req.$trigger[0].tagName == "INPUT") {
             req._disabled_to_restore = req.$trigger[0];
             req._disabled_to_restore.disabled = true;
         } else {
             req._disabledclass_to_restore = req.$trigger;
-            req._disabledclass_to_restore.addClass("disabled");
+            sircl.ext.enabled(req._disabledclass_to_restore, false);
         }
     }
     // Move to next handler:
@@ -1382,12 +1451,12 @@ sircl.addRequestHandler("beforeSend", function sircl_disable_beforeSend_requestH
 });
 
 sircl.addRequestHandler("afterSend", function sircl_disable_afterSend_requestHandler(req) {
-    // Remove "disabled" class:
+    // Undo "disabled":
     if (req._disabled_to_restore) {
         req._disabled_to_restore.disabled = false;
     }
     if (req._disabledclass_to_restore) {
-        req._disabledclass_to_restore.removeClass("disabled");
+        sircl.ext.enabled(req._disabledclass_to_restore, true);
     }
     // Move to next handler:
     this.next(req);
@@ -1397,7 +1466,7 @@ sircl.addRequestHandler("afterSend", function sircl_disable_afterSend_requestHan
 
 //#region Spinner handling
 
-sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler(req) {
     // Show spinner if any:
     req._spinner = false;
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
@@ -1411,7 +1480,7 @@ sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestH
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHandler(req) {
     // Hide spinner if any:
     if (req._spinner_to_restore) {
         req.$trigger[0].innerHTML = req._spinner_to_restore;
@@ -1483,7 +1552,7 @@ sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHan
 
 //#region Loading status handling
 
-sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_requestHandler(req) {
     // Set classes to loading state:
     $(document).addClass("body-loading");
     req.$initialTarget.addClass("loading");
@@ -1491,7 +1560,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_re
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_loadingStatus_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_loadingStatus_afterSend_requestHandler(req) {
     // Reset classes to loading state:
     $(document).removeClass("body-loading");
     req.$initialTarget.removeClass("loading");
@@ -1510,7 +1579,7 @@ $(document).ready(function () {
 
 //#region Load progress handling
 
-sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_requestHandler(req) {
     req._progressToResetAfterSend = []
     req._progressToHideAfterSend = []
     if (req.xhr != null) {
@@ -1563,7 +1632,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
     this.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_requestHandler(req) {
     // Hide progresses that were hidden before send:
     req._progressToHideAfterSend.forEach(function (elem) {
         sircl.ext.visible(elem, false);
@@ -1580,7 +1649,7 @@ sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_reque
 
 //#region Reload by server
 
-sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_requestHandler (req) {
+sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_requestHandler(req) {
     if (req.xhr != null) {
         // If reloadAfter header is set with value > 0, reload after timeout:
         var reloadAfter = req.xhr.getResponseHeader("X-Sircl-Reload-After");
@@ -1642,7 +1711,7 @@ $(function () {
 
 });
 
-sircl.addRequestHandler("beforeSend", function sircl_dialogs_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_dialogs_beforeSend_requestHandler(req) {
     var processor = this;
     // Open any non-open dialog holding the initial target and having class "beforeload-showdialog":
     req._dialogOpened = req.$initialTarget.closest("DIALOG.beforeload-showdialog:not([open])");
@@ -1667,7 +1736,7 @@ sircl.addRequestHandler("beforeSend", function sircl_dialogs_beforeSend_requestH
     processor.next(req);
 });
 
-sircl.addRequestHandler("afterSend", function sircl_dialogs_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_dialogs_afterSend_requestHandler(req) {
     var processor = this;
     // On error, undo opened dialogs:
     if (!req.succeeded && req._dialogOpened.length > 0) {
@@ -1686,7 +1755,7 @@ sircl.addRequestHandler("afterSend", function sircl_dialogs_afterSend_requestHan
     processor.next(req);
 });
 
-sircl.addRequestHandler("beforeRender", function sircl_dialogs_beforeRender_requestHandler (req) {
+sircl.addRequestHandler("beforeRender", function sircl_dialogs_beforeRender_requestHandler(req) {
     var processor = this;
     // Undo opened dialog if target has changed:
     if (req.targetHasChanged && req._dialogOpened.length > 0) {
@@ -1714,7 +1783,7 @@ sircl.addRequestHandler("beforeRender", function sircl_dialogs_beforeRender_requ
     processor.next(req);
 });
 
-sircl.addRequestHandler("afterRender", function sircl_dialogs_afterRender_requestHandler (req) {
+sircl.addRequestHandler("afterRender", function sircl_dialogs_afterRender_requestHandler(req) {
     var processor = this;
     // Open modal on final target:
     var $dlg = req.$finalTarget.closest("DIALOG:not([open])");
@@ -1729,7 +1798,7 @@ sircl.addRequestHandler("afterRender", function sircl_dialogs_afterRender_reques
     processor.next(req);
 });
 
-$$(function sircl_dialogs_processHandler () {
+$$(function sircl_dialogs_processHandler() {
     // Disable cancelling of dialog with .dialog-nocancel:
     $(this).find("DIALOG").each(function (index, elem) {
         elem.addEventListener("cancel", function (event) {
@@ -1798,7 +1867,10 @@ $(function () {
             if ($form.length > 0) {
                 $form[0]._formTrigger = this;
                 $form[0]._formTriggerTimer = setTimeout(function () { $form[0]._formTrigger = null; }, 700);
-                $form[0].submit();
+                sircl.ext.submit($form[0], null, function () {
+                    $form[0].submit();
+                });
+
             }
         }
     });
@@ -1832,25 +1904,25 @@ $(function () {
 sircl.addAttributeAlias(".onsubmit-disable", "onsubmit-disable", ">:submit");
 
 /// <form onsubmit-disable="selector"> On submit of the form, disable selector elements.
-sircl.addRequestHandler("beforeSend", function sircl_submit_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_submit_beforeSend_requestHandler(req) {
     // Disable requested elements:
     if (req.$form) {
         if (req.$form.hasAttr("onsubmit-disable")) {
             req._formSubmitsToReenable = [];
-            sircl.ext.$select(req.$form, req.$form.attr("onsubmit-disable")).filter(":enabled").each(function () {
+            sircl.ext.$select(req.$form, req.$form.attr("onsubmit-disable")).filter(":not([disabled])").each(function () {
                 req._formSubmitsToReenable.push(this);
-                this.disabled = true;
+                sircl.ext.enabled(this, false);
             });
         }
     }
     // Move to next handler:
     this.next(req);
 });
-sircl.addRequestHandler("afterSend", function sircl_submit_afterSend_requestHandler (req) {
+sircl.addRequestHandler("afterSend", function sircl_submit_afterSend_requestHandler(req) {
     // Re-enable previously disabled elements:
     if (req._formSubmitsToReenable) {
         req._formSubmitsToReenable.forEach(function (elem) {
-            elem.disabled = false;
+            sircl.ext.enabled(elem, true);
         });
     }
     // Move to next handler:
@@ -1873,7 +1945,7 @@ $(function () {
 
 sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
 
-$$(function sircl_onload_processHandler () {
+$$(function sircl_onload_processHandler() {
 
     /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
     $(this).find("[onload-click]").each(function () {
@@ -1916,7 +1988,7 @@ $$(function sircl_onload_processHandler () {
 //#region Form changed state handling
 
 // On initial load, if onchange-set input is true, add .form-changed class to form:
-$$(function sircl_formState_processHandler () {
+$$(function sircl_formState_processHandler() {
     $(this).find("FORM[onchange-set]").each(function () {
         var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {

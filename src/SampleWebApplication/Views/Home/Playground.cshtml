@@ -1,4 +1,51 @@
-﻿<hr />
+﻿
+<hr />
+
+<p>Onclick-submit:</p>
+
+<div>
+<form id="ocsf1" action="/Query?src=form" target="<DIV|>.output">
+    Value : <input type="text" name="value" />
+    <p>
+        <button type="button" class="onclick-submit" formaction="/Query?src=Submit3">Submit 3</button>
+    </p>
+</form>
+<div class="output"></div>
+</div>
+<button type="button" class="onclick-submit" form="ocsf1" onclick-confirm="This BUTTON has no target; will load in new page. Proceed ?">Submit</button>
+<br/>
+
+<p class="onclick-submit mt-3" style="padding: 6px; background-color: lightcyan;" form="ocsf1" formaction="/Query?src=Submit2" formtarget="#ocsf1|<DIV|>.output">Submit 2 (click on me)</p>
+
+<a href="http://www.google.com/" onclick-submit="#ocsf1" target="_self">Submit 4</a>
+
+<hr />
+
+<p>Submit a form where an onclick handler exists on the submit button</p>
+
+<form action="/Time?delay=100" target="#submitWithOnClick" class="onsubmit-disable">
+    <input type="text" name="t" />
+    <br/>
+    <button id="submitWithOnClickBtn" type="submit" onclick="submitWithOnClick();">Submit</button>
+</form>
+<div id="submitWithOnClick">
+    (update time here)
+</div>
+<script>
+    function submitWithOnClick() {
+        console.log("OnClick handler triggered");
+        //$("#submitWithOnClickBtn").addClass("disabled");
+        return true;
+    }
+</script>
+
+<a id="disabledhref" href="https://www.google.com" target="_self" disabled>Disabled link</a>
+<style>
+a[href][disabled] { font-style:italic; }
+</style>
+<br/><button type="button" onclick-enable="#disabledhref">Enable</button><button type="button" onclick-disable="#disabledhref">Disable</button>
+
+<hr />
 
 <div>
     <a href="/Time?delay=2000" target="#disabledtime" target-method="append" class="onclick-disable">Hyperlink to disable</a>
