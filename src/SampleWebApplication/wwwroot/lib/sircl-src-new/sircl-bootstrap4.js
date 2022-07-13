@@ -485,7 +485,9 @@ sircl.addAfterHistoryHandler(function sircl_bs4_hashRoute_afterHistoryHandler ()
     if (location.hash != null && location.hash.length > 0) {
         var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
         if ($target.length > 0) {
-            $("A[href=\\" + $target.attr("href") + "]").tab("show");
+            $(function () {
+                $("A[href=\\" + $target.attr("href") + "]").tab("show");
+            });
         }
     }
 });

@@ -173,22 +173,25 @@
 
 <ul class="nav nav-tabs hash-routed" id="myTab" role="tablist" xxhistory="push">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#forms" role="tab" aria-controls="home" aria-selected="true">Forms</a>
+        <a class="nav-link active" data-toggle="tab" href="#forms" role="tab">Forms</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#dialogs" role="tab" aria-controls="profile" aria-selected="false">Dialogs</a>
+        <a class="nav-link" data-toggle="tab" href="#dialogs" role="tab">Dialogs</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#modals" role="tab" aria-controls="profile" aria-selected="false">Modals</a>
+        <a class="nav-link" data-toggle="tab" href="#modals" role="tab">Modals</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#actions" role="tab" aria-controls="contact" aria-selected="false">Actions</a>
+        <a class="nav-link" data-toggle="tab" href="#actions" role="tab">Actions</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#checks" role="tab" aria-controls="contact" aria-selected="false">Checks</a>
+        <a class="nav-link" data-toggle="tab" href="#checks" role="tab">Checks</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#extra" role="tab" aria-controls="contact" aria-selected="false">Extra</a>
+        <a class="nav-link" data-toggle="tab" href="#extra" role="tab">Extra</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" data-toggle="tab" href="#lazy" role="tab">Lazy loaded</a>
     </li>
 </ul>
 <div class="tab-content" id="myTabContent">
@@ -977,6 +980,13 @@
         <p>
             <button type="button" ondblclick-load="/Home/Privacy" target="#xxx5">Double click for privacy</button>
         </p>
+
+    </div>
+
+    <!-- TAB LAZY -->
+    <div class="tab-pane fade" id="lazy" role="tabpanel" aria-labelledby="contact-tab" ifactivetab-load="/Time?delay=1200">
+
+        Loading...
 
     </div>
 </div>

@@ -115,14 +115,14 @@ sircl.ext = {};
  * Returns the first element of the given array, or null if array undefined or empty.
  * @param {any} array The array.
  */
-sircl.ext.firstOrNull = function (array) { if (array) { if (array.length > 0) return array[0]; else return null; } else return null; };
+sircl.ext.firstOrNull = function sircl_ext_firstOrNull(array) { if (array) { if (array.length > 0) return array[0]; else return null; } else return null; };
 
 /**
  * Get current visible state or set visible state of given element or selector.
  * @param {any} elementOrSelector Element or selector.
  * @param {any} visible True to make it visible, false to make it hidden. Absent to get current visible state.
  */
-sircl.ext.visible = function (elementOrSelector, visible) {
+sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible) {
     if (visible === undefined) {
         return !$(elementOrSelector).hasAttr("hidden");
     } else if (visible) {
@@ -134,11 +134,11 @@ sircl.ext.visible = function (elementOrSelector, visible) {
 
 /**
  * Get current enabled state or set enabled state of given element or selector.
- * @param {any} elementOrSelector Element or selector.
+ * @param {any} elementOrJqObject Element or jQuery object.
  * @param {any} enabled True to make it enabled, false to make it disabled. Absent to get current enabled state.
  */
-sircl.ext.enabled = function (elementOrSelector, enabled) {
-    var $selector = $(elementOrSelector);
+sircl.ext.enabled = function sircl_ext_enabled(elementOrJqObject, enabled) {
+    var $selector = $(elementOrJqObject);
     if (enabled === undefined) {
         if ($selector.length > 0) {
             if ($selector[0].hasAttribute("href")) {
@@ -169,7 +169,7 @@ sircl.ext.enabled = function (elementOrSelector, enabled) {
  * @param {any} elementOrSelector Element or selector.
  * @param {any} createIdIfMissing True to create and id if none exists yet.
  */
-sircl.ext.getId = function (elementOrSelector, createIdIfMissing) {
+sircl.ext.getId = function sircl_ext_getId(elementOrSelector, createIdIfMissing) {
     var $elements = $(elementOrSelector);
     if ($elements.length > 0) {
         var id = $elements[0].id;
@@ -188,7 +188,7 @@ sircl.ext.getId = function (elementOrSelector, createIdIfMissing) {
  * For multiselects, an array is returned. For all other controls, a string is returned.
  * @param {any} element Form control element to get the value from.
  */
-sircl.ext.effectiveValue = function (element) {
+sircl.ext.effectiveValue = function sircl_ext_effectivValue(element) {
     if (element.tagName == "INPUT" && element.getAttribute('type') == 'checkbox') {
         return (element.checked) ? element.value : "";
     } else if (element.tagName == "INPUT" && element.getAttribute('type') == 'radio') {
@@ -201,7 +201,7 @@ sircl.ext.effectiveValue = function (element) {
 /**
  * Returns the main target of the page.
  */
-sircl.ext.$mainTarget = function () {
+sircl.ext.$mainTarget = function sircl_ext_$mainTarget() {
     var $mainTarget = $(sircl.mainTargetSelector$);
     return $mainTarget;
 }
@@ -212,7 +212,7 @@ sircl.ext.$mainTarget = function () {
  * External targets typically start with an underscore (as _self, _top, _blank) or are alphanumeric.
  * @param {any} targetValue
  */
-sircl.ext.isInternalTarget = function (targetValue) {
+sircl.ext.isInternalTarget = function sircl_ext_isInternalTarget(targetValue) {
     if (targetValue == null || targetValue.length == 0) return false;
     switch (targetValue.charAt(0)) {
         case "#": return true;
@@ -232,14 +232,14 @@ sircl.ext.isInternalTarget = function (targetValue) {
  * Convenience function, inverse of isInternalTarget.
  * @param {any} targetValue
  */
-sircl.ext.isExternalTarget = function (targetValue) { return !sircl.ext.isInternalTarget(targetValue); };
+sircl.ext.isExternalTarget = function sircl_ext_isExternalTarget(targetValue) { return !sircl.ext.isInternalTarget(targetValue); };
 
 /**
  * Resolves an absolute or relative selector in the given context.
  * @param {any} $context Context in which to resolve the selector.
  * @param {any} selector$ Absolute or relative selector string.
  */
-sircl.ext.$select = function ($context, selector$) {
+sircl.ext.$select = function sircl_ext_$select($context, selector$) {
     if (selector$ === undefined || selector$ === null) {
         return $([]);
     } else {
@@ -282,7 +282,7 @@ sircl.ext.$select = function ($context, selector$) {
  * Returns the value in CSS escaped format.
  * @param {any} value
  */
-sircl.ext.cssEscape = function (value) {
+sircl.ext.cssEscape = function sircl_ext_cssEscape(value) {
     try {
         return CSS.escape(value);
     } catch (ex) {
@@ -309,7 +309,7 @@ sircl.ext.cssEscape = function (value) {
  * @param {string} expression An expression consisting of comma-separated parts that may contain an "on" clausule.
  * @param {scopedDoCallback} action The action to perform.
  */
-sircl.ext.scopedDo = function ($scope, expression, action) {
+sircl.ext.scopedDo = function sircl_ext_scopedDo($scope, expression, action) {
     try {
         var part0 = null;
         expression.split(",").forEach(function (exprItem) {
@@ -336,7 +336,7 @@ sircl.ext.scopedDo = function ($scope, expression, action) {
   * @param {any} $scope
   * @param {string} classExpression Class name to add. Can contain an "on" clausule. Supports comma-separated list. I.e. "active, highlighted on < li" : make scope active and closest li highlighted.
   */
-sircl.ext.addClass = function ($scope, classExpression) {
+sircl.ext.addClass = function sircl_ext_addClass($scope, classExpression) {
     sircl.ext.scopedDo($scope, classExpression, function ($s, c) { $s.addClass(c); })
 };
 
@@ -345,7 +345,7 @@ sircl.ext.addClass = function ($scope, classExpression) {
  * @param {any} $scope
  * @param {string} classExpression Class name to remove. Can contain an "on" clausule. Supports comma-separated list. I.e. "active, highlighted on < li" : remove active from scpe and highlighted from closest li.
  */
-sircl.ext.removeClass = function ($scope, classExpression) {
+sircl.ext.removeClass = function sircl_ext_removeClass($scope, classExpression) {
     sircl.ext.scopedDo($scope, classExpression, function ($s, c) { $s.removeClass(c); })
 };
 
@@ -354,7 +354,7 @@ sircl.ext.removeClass = function ($scope, classExpression) {
  * @param {any} $scope
  * @param {string} classExpression Class name to toggle. Can contain an "on" clausule. Supports comma-separated list. I.e. "active, highlighted on < li" : toggle active on scope and highlighted on closest li.
  */
-sircl.ext.toggleClass = function ($scope, classExpression) {
+sircl.ext.toggleClass = function sircl_ext_toggleClass($scope, classExpression) {
     sircl.ext.scopedDo($scope, classExpression, function ($s, c) { $s.toggleClass(c); })
 };
 
@@ -364,7 +364,7 @@ sircl.ext.toggleClass = function ($scope, classExpression) {
  * @param {any} message Message to show.
  * @param {any} event Event that triggered the confirm request.
  */
-sircl.ext.alert = function (subject, message, event) {
+sircl.ext.alert = function sircl_ext_alert(subject, message, event) {
     window.alert(message);
 };
 
@@ -375,7 +375,7 @@ sircl.ext.alert = function (subject, message, event) {
  * @param {any} event Event that triggered the confirm request.
  * @returns True if confirmed, false otherwise.
  */
-sircl.ext.confirm = function (subject, message, event) {
+sircl.ext.confirm = function sircl_ext_confirm(subject, message, event) {
     return window.confirm(message);
 };
 
@@ -383,7 +383,7 @@ sircl.ext.confirm = function (subject, message, event) {
  * Retrieves the value of the named querystring parameter.
  * @param {any} name Name of the querystring parameter.
  */
-sircl.ext.getUrlParameter = function (name) {
+sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
     // Note: in v3 replace this by URLSearchParams (not supported by MSIE).
     name = name.replace(/[\[]/g, '\\[').replace(/[\]]/g, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -395,7 +395,7 @@ sircl.ext.getUrlParameter = function (name) {
  * Submits a form.
  * @param {any} event Event initiating the submit request.
  */
-sircl.ext.submit = function (form, event, fallback) {
+sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
     if ($(form).is("FORM:not([download]):not([method=dialog])")) {
         // Find target of submit request:
         var $trigger = (form._formTrigger) ? $(form._formTrigger) : $(form);
@@ -429,6 +429,49 @@ sircl.ext.submit = function (form, event, fallback) {
     }
 }
 
+/**
+ * Returns the URL with substituted fields (form field references between [ and ]).
+ * @param {any} url The url to substitute.
+ * @param {any} $source The source of the substitution, usually the element holding the URL reference.
+ * @param {any} mustHaveSubstituteFieldsClass Whether to check for ".substitute-fields" class.
+ */
+sircl.ext.subtituteFields = function sircl_ext_substituteFields(url, $source, mustHaveSubstituteFieldsClass) {
+    if (mustHaveSubstituteFieldsClass == false || $source.hasClass("substitute-fields")) {
+        var $formscope = $source.closest("FORM");
+        if ($formscope.length == 0) $formscope = $(document);
+        var fieldparser = new RegExp(/(\[[a-z0-9\.\-\_]+?\])|(\%5B[a-z0-9\.\-\_]+?\%5D)/gi);
+        var fieldnames = [];
+        do {
+            var fieldname = fieldparser.exec(url);
+            if (fieldname !== null) fieldnames.push(fieldname[0]);
+            else break;
+        } while (true);
+        var fieldvalue;
+        for (var f = 0; f < fieldnames.length; f++) {
+            var fieldname = (fieldnames[f].charAt(0) === "[")
+                ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
+                : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
+            var fields = $formscope.find("[name='" + fieldname + "']");
+            if (fields.length == 1) {
+                fieldvalue = sircl.ext.effectiveValue(fields[0]);
+            } else if (fields.length > 1) {
+                fieldvalue = [];
+                for (var v = 0; v < fields.length; v++) {
+                    var vval = sircl.ext.effectiveValue(fields[v]);
+                    if (vval != "") fieldvalue.push(vval);
+                }
+                fieldvalue = fieldvalue.join();
+            } else {
+                fieldvalue = null;
+            }
+            if (fieldvalue === null)
+                url = url.replace(fieldnames[f], "");
+            else
+                url = url.replace(fieldnames[f], encodeURIComponent(fieldvalue));
+        }
+    }
+    return url;
+};
 
 //#endregion
 
@@ -968,42 +1011,9 @@ $(document).ready(function () {
             canBeHandledByBrowser = (this.tagName === "A");
         }
         // In href, substitute "[...]" by form values:
-        var hrefHasSubstitutions = false;
-        if ($(this).hasClass("substitute-fields")) {
-            var $formscope = $(this).closest("FORM");
-            if ($formscope.length == 0) $formscope = $(document);
-            var fieldparser = new RegExp(/(\[[a-z0-9\.\-\_]+?\])|(\%5B[a-z0-9\.\-\_]+?\%5D)/gi);
-            var fieldnames = [];
-            do {
-                var fieldname = fieldparser.exec(href);
-                if (fieldname !== null) fieldnames.push(fieldname[0]);
-                else break;
-            } while (true);
-            var fieldvalue;
-            for (var f = 0; f < fieldnames.length; f++) {
-                hrefHasSubstitutions = true;
-                var fieldname = (fieldnames[f].charAt(0) === "[")
-                    ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
-                    : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
-                var fields = $formscope.find("[name='" + fieldname + "']");
-                if (fields.length == 1) {
-                    fieldvalue = sircl.ext.effectiveValue(fields[0]);
-                } else if (fields.length > 1) {
-                    fieldvalue = [];
-                    for (var v = 0; v < fields.length; v++) {
-                        var vval = sircl.ext.effectiveValue(fields[v]);
-                        if (vval != "") fieldvalue.push(vval);
-                    }
-                    fieldvalue = fieldvalue.join();
-                } else {
-                    fieldvalue = null;
-                }
-                if (fieldvalue === null)
-                    href = href.replace(fieldnames[f], "");
-                else
-                    href = href.replace(fieldnames[f], encodeURIComponent(fieldvalue));
-            }
-        }
+        var hrefBefore = href;
+        href = sircl.ext.subtituteFields(href, $(this), true);
+        var hrefHasSubstitutions = (href != hrefBefore);
         // Process href:
         if (href === "null" || href === "") {
             // Ignore
@@ -1960,8 +1970,12 @@ $$(function sircl_onload_processHandler() {
     /// I.e: <div onload-load="/Home/News/?x={rnd}" onload-reloadafter="10"></div>
     $(this).find("[onload-load]").each(function () {
         var url = $(this).attr("onload-load") + "";
-        var loadRefresh = $(this).attr("onload-reloadafter");
+        // Perform field substitution:
+        url = sircl.ext.subtituteFields(url, $(this), true);
+        // Actually load the URL (and replace '{rnd}'):
         $(this).load(url.replace("{rnd}", Math.random()));
+        // Hande onload-refreshafter and noreload:
+        var loadRefresh = $(this).attr("onload-reloadafter");
         if (loadRefresh) {
             // Parse delay ("seconds" or "[hh:]mm:ss"):
             var delaypart = loadRefresh.split(":");
