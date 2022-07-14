@@ -7,11 +7,13 @@ IF "%~1"=="" (
    SET Version=%~1
 )
 
+:: Copy to version-specific and latest DIST folder:
 MKDIR "%~dp0dist\sircl-%Version%"
 COPY "%~dp0src\SampleWebApplication\wwwroot\lib\sircl-src-new\*.*" "%~dp0dist\sircl-%version%\"
 DEL "%~dp0dist\sircl-latest\*.*" /q
 COPY "%~dp0src\SampleWebApplication\wwwroot\lib\sircl-src-new\*.*" "%~dp0dist\sircl-latest\"
 
+:: Create "package.json" file in version-specific folder, and copy to latest folder:
 ECHO {^
  "name": "sircl",^
  "version": "%version%",^
@@ -24,7 +26,14 @@ ECHO {^
  },^
  "license": "MIT"^
 }>"%~dp0dist\sircl-%version%\package.json"
+COPY "%~dp0dist\sircl-%version%\package.json" "%~dp0dist\sircl-latest\package.json"
 
+:: Create a ZIP file of version-specific folder:
+PUSHD "%~dp0dist\sircl-%version%"
+7za a ..\sircl-%version%.zip *
+POPD
+
+:: Ready to publish on NPM ?
 PAUSE
 ECHO.
 ECHO Publish on NPM ?
