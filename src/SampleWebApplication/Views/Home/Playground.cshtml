@@ -1,6 +1,21 @@
 ﻿
 <hr />
 
+<p>Spinner onnavigate URL</p>
+
+<a href="/Time?delay=2000" target="_self" class="onclick-disable onnavigate"><i class="spinner"></i> Time (delayed)</a>
+
+<hr />
+
+<p>Spinner onnavigate Form</p>
+
+<form action="/Time" method="get" class="onsubmit-disable onnavigate" target="_self">
+<input type="number" name="delay" value="2000" /><br/>
+<button type="submit"><i class="spinner"></i> Submit</button>
+</form>
+
+<hr />
+
 <p>Onclick-submit:</p>
 
 <div>
@@ -41,7 +56,7 @@
 
 <a id="disabledhref" href="https://www.google.com" target="_self" disabled>Disabled link</a>
 <style>
-a[href][disabled] { font-style:italic; }
+[href][disabled] { color: gray; text-decoration: none; }
 </style>
 <br/><button type="button" onclick-enable="#disabledhref">Enable</button><button type="button" onclick-disable="#disabledhref">Disable</button>
 

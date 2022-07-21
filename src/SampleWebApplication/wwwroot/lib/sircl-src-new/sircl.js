@@ -105,6 +105,8 @@ sircl.max_redirects = 20;
 
 sircl.mainTargetSelector$ = ".main-target";
 
+sircl.lastPageNavigationObject = null;
+
 //#endregion
 
 //#region Sircl extensions library
@@ -420,6 +422,8 @@ sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
                 event.stopPropagation();
             }
         } else {
+            // Perform page navigation preparation:
+            sircl._onPageNavigate(event, $trigger, $(form));
             // Invoke fallback:
             if (fallback) fallback();
         }
@@ -1023,6 +1027,9 @@ $(document).ready(function () {
             sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
             window.history.back();
         } else if (href === "history:refresh") {
+            // Perform page navigation preparation:
+            sircl._onPageNavigate(event, $(this));
+            // Reload page:
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
             sircl.ext.alert(this, href.substr(6), event);
@@ -1034,12 +1041,21 @@ $(document).ready(function () {
                 jQuery.globalEval(href.substr(11));
             }
         } else if (canBeHandledByBrowser && href.indexOf("#") === 0) {
-            return; // navigate link through default behavior
+            // Perform page navigation preparation:
+            sircl._onPageNavigate(event, $(this));
+            // Navigate link through default behavior:
+            return; 
         } else if (href.indexOf("#") === 0) {
+            // Perform page navigation preparation:
+            sircl._onPageNavigate(event, $(this));
+            // Load page:
             window.location.hash = href;
         } else {
             var target = this.getAttribute("target");
             if ((target == null && !sircl.singlePageMode) || (target != null && sircl.ext.isExternalTarget(target))) {
+                // Perform page navigation preparation:
+                sircl._onPageNavigate(event, $(this));
+                // Load whole page:
                 if (hrefHasSubstitutions && target === null) {
                     window.location.href = href;
                 } else if (hrefHasSubstitutions) {
@@ -1246,6 +1262,48 @@ sircl._afterLoad = function (scope) {
     });
     // Remove "sircl-content-processing" class:
     $(scope).removeClass("sircl-content-processing");
+};
+
+//#endregion
+
+//#region PageNavigate handlers
+
+sircl._pageNavigateHandlers = {};
+sircl._pageNavigateHandlers.initiate = [];
+sircl._pageNavigateHandlers.cancel = [];
+
+sircl.addPageNavigateHandler = function sircl_addPageNavigateHandler(phase, handler) {
+    sircl._pageNavigateHandlers[phase].push(handler);
+};
+
+sircl._onPageNavigate = function sircl__onPageNavigate(event, $trigger, $form) {
+    if ($trigger != null && $trigger.length >= 1 && $trigger.closest(".onnavigate").length > 0) {
+        // Execute all page navigate handlers:
+        var nav = { event: event, $trigger: $trigger, $form: $form };
+        sircl.lastPageNavigationObject = nav;
+        sircl._pageNavigateHandlers.initiate.forEach(function (handler) {
+            try {
+                handler.call(null, nav);
+            } catch (ex) {
+                sircl.handleError("S161", "Error executing a Page Navigate handler: " + ex, { exception: ex, fx: handler });
+            }
+        });
+    }
+};
+
+sircl.cancelPageNavigate = function sircl_cancelPageNavigate() {
+    if (sircl.lastPageNavigationObject !== null) {
+        // Execute all page navigate handlers:
+        var nav = sircl.lastPageNavigationObject;
+        sircl._pageNavigateHandlers.cancel.forEach(function (handler) {
+            try {
+                handler.call(null, nav);
+            } catch (ex) {
+                sircl.handleError("S162", "Error executing a Page Navigate cancellation handler: " + ex, { exception: ex, fx: handler });
+            }
+        });
+        sircl.lastPageNavigationObject = null;
+    }
 };
 
 //#endregion
@@ -1472,13 +1530,36 @@ sircl.addRequestHandler("afterSend", function sircl_disable_afterSend_requestHan
     this.next(req);
 });
 
+
+sircl.addPageNavigateHandler("initiate", function sircl_disable_initiatePageNavigate_requestHandler(nav) {
+    // Make "disabled":
+    if (nav.$trigger != null && nav.$trigger.length == 1 && nav.$trigger.is(".onclick-disable")) {
+        if (nav.$trigger[0].tagName == "BUTTON" || nav.$trigger[0].tagName == "INPUT") {
+            nav._disabled_to_restore = nav.$trigger[0];
+            nav._disabled_to_restore.disabled = true;
+        } else {
+            nav._disabledclass_to_restore = nav.$trigger;
+            sircl.ext.enabled(nav._disabledclass_to_restore, false);
+        }
+    }
+});
+
+sircl.addPageNavigateHandler("cancel", function sircl_disable_cancelPageNavigate_requestHandler(nav) {
+    // Undo "disabled":
+    if (nav._disabled_to_restore) {
+        nav._disabled_to_restore.disabled = false;
+    }
+    if (nav._disabledclass_to_restore) {
+        sircl.ext.enabled(nav._disabledclass_to_restore, true);
+    }
+});
+
 //#endregion
 
 //#region Spinner handling
 
 sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler(req) {
     // Show spinner if any:
-    req._spinner = false;
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
         var $spinners = req.$trigger.find(".spinner");
         if ($spinners.length > 0) {
@@ -1498,6 +1579,25 @@ sircl.addRequestHandler("afterSend", function sircl_spinner_afterSend_requestHan
     // Move to next handler:
     this.next(req);
 });
+
+sircl.addPageNavigateHandler("initiate", function sircl_spinner_initiatePageNavigate_requestHandler(nav) {
+    // Show spinner if any:
+    if (nav.$trigger != null && nav.$trigger.length == 1 && nav.$trigger[0].tagName != "FORM") {
+        var $spinners = nav.$trigger.find(".spinner");
+        if ($spinners.length > 0) {
+            nav._spinner_to_restore = nav.$trigger[0].innerHTML;
+            $spinners[0].outerHTML = sircl.html_spinner;
+        }
+    }
+});
+
+sircl.addPageNavigateHandler("cancel", function sircl_spinner_cancelPageNavigate_requestHandler(req) {
+    // Hide spinner if any:
+    if (req._spinner_to_restore) {
+        req.$trigger[0].innerHTML = req._spinner_to_restore;
+    }
+});
+
 
 //#endregion
 
@@ -1928,6 +2028,7 @@ sircl.addRequestHandler("beforeSend", function sircl_submit_beforeSend_requestHa
     // Move to next handler:
     this.next(req);
 });
+
 sircl.addRequestHandler("afterSend", function sircl_submit_afterSend_requestHandler(req) {
     // Re-enable previously disabled elements:
     if (req._formSubmitsToReenable) {
@@ -1937,6 +2038,28 @@ sircl.addRequestHandler("afterSend", function sircl_submit_afterSend_requestHand
     }
     // Move to next handler:
     this.next(req);
+});
+
+sircl.addPageNavigateHandler("initiate", function sircl_submit_initiatePageNavigate_requestHandler(nav) {
+    // Disable requested elements:
+    if (nav.$form) {
+        if (nav.$form.hasAttr("onsubmit-disable")) {
+            nav._formSubmitsToReenable = [];
+            sircl.ext.$select(nav.$form, nav.$form.attr("onsubmit-disable")).filter(":not([disabled])").each(function () {
+                nav._formSubmitsToReenable.push(this);
+                sircl.ext.enabled(this, false);
+            });
+        }
+    }
+});
+
+sircl.addPageNavigateHandler("cancel", function sircl_submit_cancelPageNavigate_requestHandler(nav) {
+    // Re-enable previously disabled elements:
+    if (nav._formSubmitsToReenable) {
+        nav._formSubmitsToReenable.forEach(function (elem) {
+            sircl.ext.enabled(elem, true);
+        });
+    }
 });
 
 /// Propagate event-actions:
