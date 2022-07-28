@@ -1,0 +1,129 @@
+﻿@model SampleWebApplication.Models.Sortable.IndexModel
+
+<h3>Sorted list</h3>
+
+<hr noshade />
+
+<div class="onsort-submit">
+    <span> Alfa </span><span> Beta </span><span> Gamma </span>
+</div>
+
+<hr noshade />
+
+<p>Just move, no submit</p>
+
+<div class="row">
+    <div class="col">
+        <div class="onsort-move" sort-handle=".fa-grip-lines">
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+                <div class="alert alert-info @(i%2==0?"even":"odd")">
+                    <i class="fas fa-grip-lines" style="cursor:pointer"></i>
+                    @item
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<hr noshade />
+
+<p>Submit</p>
+
+<form action="@Url.Action("Reorder")" method="get" history="skip">
+    <input type="hidden" class="onsort-setfromlist" name="fromlist" />
+    <input type="hidden" class="onsort-setfromindex" name="fromindex" />
+    <input type="hidden" class="onsort-settolist" name="tolist" />
+    <input type="hidden" class="onsort-settoindex" name="toindex" />
+    <div class="row">
+        <div class="col">
+            <div class="onsort-submit" sort-handle=".fa-grip-lines">
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    var item = Model.Items[i];
+                    <div class="alert alert-info @(i%2==0?"even":"odd")">
+                        <i class="fas fa-grip-lines" style="cursor:pointer"></i>
+                        @item
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+<hr noshade />
+
+<form action="@Url.Action("Noop")" method="get">
+    <input type="hidden" class="onsort-setfromlist" name="fromlist" />
+    <input type="hidden" class="onsort-setfromindex" name="fromindex" />
+    <input type="hidden" class="onsort-settolist" name="tolist" />
+    <input type="hidden" class="onsort-settoindex" name="toindex" />
+    <div class="row">
+        <div class="col">
+            <div class="onsort onsort-submit" sort-name="weekdays" onsort-accept="months">
+                <div class="alert alert-warning">
+                    Monday
+                </div>
+                <div class="alert alert-warning">
+                    Tuesday
+                </div>
+                <div class="alert alert-warning">
+                    Wednesday
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="onsort-submit" sort-name="months" onsort-accept="weekdays">
+                <div class="alert alert-success">
+                    January
+                </div>
+                <div class="alert alert-success">
+                    February
+                </div>
+                <div class="alert alert-success">
+                    March
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<hr noshade />
+
+<form action="@Url.Action("Noop")" method="get" history="skip" onkeyenter-click="#none">
+    <input type="hidden" class="onsort-setfromlist" name="fromlist" />
+    <input type="hidden" class="onsort-setfromindex" name="fromindex" />
+    <input type="hidden" class="onsort-settolist" name="tolist" />
+    <input type="hidden" class="onsort-settoindex" name="toindex" />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="onsort-submit onsort-clone" sort-name="controls" sort-disabled formaction="@Url.Action("AddControl")">
+                @foreach(var item in Model.Controls)
+                {
+                    <div class="alert alert-secondary">
+                        <i class="fas fa-play"></i>
+                        @item.Key
+                    </div>
+                }
+            </div>
+            <div class="alert alert-info">
+                Drag an element from the above list of controls to the screen on the right. You can then sort by dragging them by the <i class="fas fa-arrows-alt-v"></i> icon, and delete controls from the screen by clicking their <b>&times;</b> button.
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="overlay" hidden></div>
+            <div class="onsort-submit" sort-name="screen" onsort-accept="controls" sort-handle=".handle" formaction="@Url.Action("UpdateScreen")" style="min-height: 120px; background-color: #f8f8f8">
+                @for(int i=0; i<Model.Screen.Count; i++)
+                {
+                    var item = Model.Screen[i];
+                    <div class="alert alert-primary">
+                        <i class="fas fa-arrows-alt-v handle"></i>
+                        <button class="float-right btn" type"submit" formaction="@Url.Action("DeleteControl", new { index = i })">&times;</button>
+                        @Html.Raw(item)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>

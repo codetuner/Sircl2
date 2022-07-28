@@ -12,48 +12,58 @@ if (typeof Sortable === "undefined") console.warn("The 'sircl-sortablejs' compon
 /// Sortable options template:
 var sircl_sortable_options_template = {
     animation: 150,
+    animation: 150,
     delay: 300,
     delayOnTouchOnly: true,
-    handle: ".reorder-handle"
+    touchStartThreshold: 4,
 };
 
 $$(function site_onload_process_handler() {
     /// Sortable:
-    $(this).find(".onreorder-submit").each(function () {
+    $(this).find(".onsort, .onsort-move, .onsort-copy, .onsort-clone, .onsort-submit").each(function () {
         var $this = $(this);
         var options = Object.assign({}, sircl_sortable_options_template); // Create shallow copy of options template
-        options.group = $this.attr("reorder-group");
-        options.onEnd = function (event) {
-            if (event.newIndex === event.oldIndex && event.from === event.to) return;
-            var $form = $this.closest("FORM");
-            if ($form.length >= 1) {
-                var form = $form[0];
-                // Set fromindex/toindex input values:
-                $form.find("INPUT.reorder-fromlist").each(function () {
-                    $(this).val(event.from.getAttribute("reorder-name"));
-                });
-                $form.find("INPUT.reorder-fromindex").each(function () {
-                    $(this).val(event.oldIndex);
-                });
-                $form.find("INPUT.reorder-tolist").each(function () {
-                    $(this).val(event.to.getAttribute("reorder-name"));
-                });
-                $form.find("INPUT.reorder-toindex").each(function () {
-                    $(this).val(event.newIndex);
-                });
-                // Submit form (add a submit button, then click that button):
-                var btnid = "sircl-autoid-" + new Date().getTime();
-                var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
-                if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
-                if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
-                if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
-                if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
-                if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
-                btn += "/>";
-                $form.append(btn);
-                $("#" + btnid).click();
-            }
+        options.sort = !$this.hasClass("onsort");
+        options.handle = $this.attr("sort-handle") || options.handle;
+        options.filter = $this.attr("sort-filter") || options.filter;
+        options.group = {
+            name: $this.attr("sort-name"),
+            pull: ($this.hasClass("onsort-copy") || $this.hasClass("onsort-clone")) ? "clone" : true,
+            put: $this.hasAttr("onsort-accept") ? ($this.attr("onsort-accept") == "any" ? true : $this.attr("onsort-accept").split(" ")) : (false)
         };
+        if ($this.hasClass("onsort-submit")) {
+            options.onEnd = function (event) {
+                if (event.newIndex === event.oldIndex && event.from === event.to) return;
+                var $form = $this.closest("FORM");
+                if ($form.length >= 1) {
+                    var form = $form[0];
+                    // Set fromindex/toindex input values:
+                    $form.find("INPUT.onsort-setfromlist").each(function () {
+                        $(this).val(event.from.getAttribute("sort-name"));
+                    });
+                    $form.find("INPUT.onsort-setfromindex").each(function () {
+                        $(this).val(event.oldIndex);
+                    });
+                    $form.find("INPUT.onsort-settolist").each(function () {
+                        $(this).val(event.to.getAttribute("sort-name"));
+                    });
+                    $form.find("INPUT.onsort-settoindex").each(function () {
+                        $(this).val(event.newIndex);
+                    });
+                    // Submit form (add a submit button, then click that button):
+                    var btnid = "sircl-autoid-" + new Date().getTime();
+                    var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
+                    if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
+                    if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
+                    if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
+                    if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
+                    if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
+                    btn += "/>";
+                    $form.append(btn);
+                    $("#" + btnid).click();
+                }
+            };
+        }
         new Sortable(this, options);
     });
 });

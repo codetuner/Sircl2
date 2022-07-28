@@ -155,6 +155,7 @@
     @*<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/lib/sortable/Sortable.js"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
     @if (minified)
     {
@@ -179,14 +180,14 @@
     @RenderSection("Scripts", required: false)
     @*<script src="~/lib/sircl-src-new/sircl-samples-extensibility.js"></script>*@
     <script>
-        $$(function () {
+        $$(function() {
             $("[data-bs-toggle='popover']").popover({ container: "body" });
             $("[data-toggle='tooltip']").tooltip({ boundary: "window" });
         });
     </script>
     <script>
 
-        sircl.addErrorHandler(function (code, message, data) {
+        sircl.addErrorHandler(function(code, message, data) {
             alert(code + ": " + message);
         });
         //sircl.addRequestHandler("onError", function (req) {
@@ -195,7 +196,7 @@
         //    req.succeeded = true;
         //    this.next(req);
         //});
-        sircl.addRequestHandler("onError", function (req) {
+        sircl.addRequestHandler("onError", function(req) {
             if (req.method === "get") {
                 // Re-issue the request by the browser, to render the error page:
                 //window.location.href = req.action
