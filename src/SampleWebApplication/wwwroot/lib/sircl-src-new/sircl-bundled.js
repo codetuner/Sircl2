@@ -2134,6 +2134,25 @@ $$(function sircl_formState_processHandler() {
     });
 });
 
+// When loading part of a form, if response has header "X-Sircl-Form-Changed", set form changed:
+sircl.addRequestHandler("afterRender", function (req) {
+    // If response has "X-Sircl-Form-Changed" header "true", mark closest form channged:
+    if (req != null && req.xhr != null) {
+        var reloadSection = req.xhr.getResponseHeader("X-Sircl-Form-Changed");
+        if (reloadSection !== null && reloadSection.toLowerCase() === "true") {
+            req.$finalTarget.closest("FORM[onchange-set]").each(function () {
+                $(this).addClass("form-changed");
+                var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
+                if ($input.length > 0) {
+                    $input.val(true);
+                }
+            });
+        }
+    }
+    // Move to next handler:
+    this.next(req);
+});
+
 // On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
 $(function () {
     $(document).on("change", "FORM[onchange-set]", function (event) {
