@@ -8,5 +8,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Models.Query
     public class EditModel : BaseEditModel<Data.Localize.Query>
     {
         public Data.Localize.Domain[] Domains { get; internal set; }
+        
+        public string[] ConnectionNames { get; internal set; }
     }
 }

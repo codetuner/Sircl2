@@ -31,7 +31,7 @@
                         <th>Domain</th>
                         <th asp-order="@Model.Order">Name</th>
                         <th asp-order="@Model.Order" field-name="ForPath">For path</th>
-                        <th>Validated</th>
+                        <th>To review</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                             <td>@item.Domain.Name</td>
                             <td>@item.Name</td>
                             <td>@item.ForPath</td>
-                            <td>1/1</td>
+                            <td>@String.Join(' ', (item.ValuesToReview ?? Array.Empty<string>()))</td>
                         </tr>
                     }
                 </tbody>

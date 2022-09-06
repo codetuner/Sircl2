@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Sircl.Website.Localize
 {
-    public class LocalizationSource : ILocalizationSource
+    public class DbContextLocalizationSource : ILocalizationSource
     {
-        public LocalizationSource(IConfiguration configuration, LocalizeDbContext context, IOptions<LocalizationOptions> localizationOptions)
+        public DbContextLocalizationSource(IConfiguration configuration, LocalizeDbContext context, IOptions<LocalizationOptions> localizationOptions)
         {
             this.Context = context;
             this.Options = localizationOptions.Value;
@@ -38,10 +38,7 @@ namespace Sircl.Website.Localize
                 var domain = Context.LocalizeDomains.SingleOrDefault(d => d.Name == domainName);
                 if (domain == null) continue;
                 if (domain.Cultures == null) continue;
-
-                // Retrieve cultures (no "'" allowed to prevent SQL Injection when using queries):
-                var cultures = domain.Cultures.Replace('\'', '*').Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray();
-                if (cultures.Length == 0) continue;
+                if (domain.Cultures.Length == 0) continue;
 
                 // Create keys from queries:
                 foreach (var query in Context.LocalizeQueries.Where(q => q.DomainId == domain.Id))
@@ -49,8 +46,9 @@ namespace Sircl.Website.Localize
                     using (var conn = new SqlConnection(Configuration.GetConnectionString(query.ConnectionName)))
                     using (var cmd = conn.CreateCommand())
                     {
+                        // Replace "{cultures}" in SQL command (replace single quotes to prevent SQL injection):
                         cmd.CommandText = query.Sql
-                            .Replace("{cultures}", String.Join("','", cultures));
+                            .Replace("{cultures}", String.Join("','", domain.Cultures.Select(c => c.Replace('\'','*'))));
 
                         if (conn.State == System.Data.ConnectionState.Closed) conn.Open();
 
@@ -60,7 +58,7 @@ namespace Sircl.Website.Localize
                             while (reader.Read())
                             {
                                 var culture = reader.GetString(0);
-                                if (cultures.Contains(culture))
+                                if (domain.Cultures.Contains(culture))
                                 {
                                     for (int c = 0; c < keyCount; c++)
                                     {
@@ -79,17 +77,16 @@ namespace Sircl.Website.Localize
                 {
                     var resource = new LocalizationResource();
                     resource.ForPath = key.ForPath;
-                    var namedParameters = (key.ParameterNames ?? "").Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray();
                     foreach (var value in key.Values)
                     {
                         if (value.Value == null && value.Reviewed == false) continue;
-                        if (cultures.Contains(value.Culture))
+                        if (domain.Cultures.Contains(value.Culture))
                         {
-                            if (namedParameters.Length > 0)
+                            if (key.ParameterNames != null && key.ParameterNames.Length > 0)
                             {
-                                for (int i = 0; i < namedParameters.Length; i++)
+                                for (int i = 0; i < key.ParameterNames.Length; i++)
                                 {
-                                    value.Value = (value.Value ?? "").Replace("{" + namedParameters[i], "{" + i);
+                                    value.Value = (value.Value ?? "").Replace("{" + key.ParameterNames[i], "{" + i);
                                 }
                             }
                             resource.Values[value.Culture] = (value.Value ?? "");

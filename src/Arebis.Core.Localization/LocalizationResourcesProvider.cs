@@ -11,6 +11,13 @@ namespace Arebis.Core.Localization
     {
         private volatile LocalizationResources resources;
 
+        public virtual bool HasResources => (this.resources != null);
+
+        public virtual void SetResources(LocalizationResources resources)
+        {
+            this.resources = resources;
+        }
+
         public virtual void LoadResources(Stream stream)
         {
 #pragma warning disable SYSLIB0011
@@ -41,13 +48,6 @@ namespace Arebis.Core.Localization
 
             // If no match, return null;
             return null;
-        }
-
-        public virtual bool HasResources => (this.resources != null);
-
-        public virtual void SetResources(LocalizationResources resources)
-        {
-            this.resources = resources;
         }
 
         protected virtual string ResourceToString(LocalizationResource resource, object[] parameters, LocalizationData data, CultureInfo culture, CultureInfo fallbackCulture, bool fallbackToParentCultures)

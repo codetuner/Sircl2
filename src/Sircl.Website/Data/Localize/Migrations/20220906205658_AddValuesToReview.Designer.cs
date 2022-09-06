@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sircl.Website.Data.Localize;
 
 namespace Sircl.Website.Data.Localize.Migrations
 {
     [DbContext(typeof(LocalizeDbContext))]
-    partial class LocalizeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220906205658_AddValuesToReview")]
+    partial class AddValuesToReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

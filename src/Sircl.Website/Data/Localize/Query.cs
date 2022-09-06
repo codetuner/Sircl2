@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sircl.Website.Data.Localize
@@ -17,17 +18,20 @@ namespace Sircl.Website.Data.Localize
         /// Id of the query.
         /// </summary>
         [Key]
+        [JsonIgnore]
         public virtual int Id { get; set; }
 
         /// <summary>
         /// Domain id of the query.
         /// </summary>
+        [JsonIgnore]
         public virtual int DomainId { get; set; }
 
         /// <summary>
         /// Domain of the query.
         /// </summary>
         [ForeignKey(nameof(DomainId))]
+        [JsonIgnore]
         public virtual Domain Domain { get; set; }
 
         /// <summary>

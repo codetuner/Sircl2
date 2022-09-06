@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
 {
@@ -17,10 +19,12 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         #region Construction
 
         private readonly LocalizeDbContext context;
+        private readonly ILogger logger;
 
-        public DomainController(LocalizeDbContext context)
+        public DomainController(LocalizeDbContext context, ILogger<DomainController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         #endregion
@@ -45,10 +49,8 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         public IActionResult New([FromServices] IOptions<RequestLocalizationOptions> requestLocalizationOptions)
         {
             var model = new EditModel();
-            model.Item = new Domain()
-            {
-                Cultures = String.Join(',', requestLocalizationOptions.Value.SupportedUICultures.Select(c => c.TwoLetterISOLanguageName).Distinct())
-            };
+            model.Item = new Domain();
+            model.Cultures = String.Join(',', requestLocalizationOptions.Value.SupportedUICultures.Select(c => c.TwoLetterISOLanguageName).Distinct());
 
             return EditView(model);
         }
@@ -58,6 +60,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
             var model = new EditModel();
             model.Item = context.LocalizeDomains.Find(id);
             if (model.Item == null) return new NotFoundResult();
+            model.Cultures = String.Join(", ", model.Item.Cultures ?? Array.Empty<string>());
 
             return EditView(model);
         }
@@ -66,21 +69,25 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         public IActionResult Save(int id, EditModel model)
         {
             // Validate cultures:
-            if (model.Item.Cultures != null)
+            if (model.Cultures != null)
             {
-                var cultures = model.Item.Cultures.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray();
+                var cultures = model.Cultures.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray();
                 if (cultures.Distinct().Count() != cultures.Count())
                 {
-                    ModelState.AddModelError("Item.Cultures", "Value should not contain duplicates!");
+                    ModelState.AddModelError("Cultures", "Value should not contain duplicates!");
                 }
                 else if (cultures.Length == 0)
                 {
-                    ModelState.AddModelError("Item.Cultures", "Value is required!");
+                    ModelState.AddModelError("Cultures", "Value is required!");
+                }
+                else
+                { 
+                    model.Item.Cultures = cultures;
                 }
             }
             else
             {
-                ModelState.AddModelError("Item.Cultures", "Value is required!");
+                ModelState.AddModelError("Cultures", "Value is required!");
             }
 
             // Validate modelstate and save:
@@ -94,6 +101,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                 }
                 catch (Exception ex)
                 {
+                    logger.LogError(ex, "Unexpected error saving domain {0}", id);
                     ModelState.AddModelError("", "An unexpected error occured.");
                     ViewBag.Exception = ex;
                 }
@@ -114,6 +122,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unexpected error deleting domain {0}", id);
                 ModelState.AddModelError("", "An unexpected error occured.");
                 ViewBag.Exception = ex;
             }
@@ -124,6 +133,19 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         private IActionResult EditView(EditModel model)
         {
             return View("Edit", model);
+        }
+
+        #endregion
+
+        #region Export
+
+        public IActionResult Export(int id)
+        {
+            var domain = context.LocalizeDomains
+                .Include(d => d.Keys).ThenInclude(k => k.Values)
+                .Include(d => d.Queries)
+                .Single(d => d.Id == id);
+            return this.Json(domain);
         }
 
         #endregion

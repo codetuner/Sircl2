@@ -13,7 +13,7 @@ namespace Arebis.Core.AspNet.Localization
 {
     public static class Extensions
     {
-        public static void AddArebisLocalization(this IServiceCollection services, IConfiguration configuration, Action<LocalizationOptions> optionsAction)
+        public static void AddLocalizationFromSource(this IServiceCollection services, IConfiguration configuration, Action<LocalizationOptions> optionsAction)
         {
             //services.AddOptions<LocalizationOptions>();
             //services.Configure<LocalizationOptions>(configuration.GetSection("Localization"));
@@ -45,7 +45,7 @@ namespace Arebis.Core.AspNet.Localization
             });
         }
 
-        public static IApplicationBuilder UseArebisLocalization(this IApplicationBuilder app)
+        public static IApplicationBuilder UseLocalizationFromSource(this IApplicationBuilder app)
         {
             return app;
         }

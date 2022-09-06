@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sircl.Website.Data.Localize
@@ -17,6 +18,7 @@ namespace Sircl.Website.Data.Localize
         /// Id of the domain.
         /// </summary>
         [Key]
+        [JsonIgnore]
         public virtual int Id { get; set; }
 
         /// <summary>
@@ -38,9 +40,9 @@ namespace Sircl.Website.Data.Localize
         public virtual IList<Key> Keys { get; set; }
 
         /// <summary>
-        /// Comma-separated list of exposed cultures.
+        /// List of exposed cultures.
         /// </summary>
-        [Required, MaxLength(2000)]
-        public virtual string Cultures { get; set; }
+        [MaxLength(2000)]
+        public virtual string[] Cultures { get; set; }
     }
 }

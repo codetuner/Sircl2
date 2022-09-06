@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sircl.Website.Data.Localize
@@ -17,17 +18,20 @@ namespace Sircl.Website.Data.Localize
         /// Id of the value.
         /// </summary>
         [Key]
+        [JsonIgnore]
         public virtual int Id { get; set; }
 
         /// <summary>
         /// Key id of the value.
         /// </summary>
+        [JsonIgnore]
         public virtual int KeyId { get; set; }
 
         /// <summary>
         /// Key of the value.
         /// </summary>
         [ForeignKey(nameof(KeyId))]
+        [JsonIgnore]
         public virtual Key Key { get; set; }
 
         /// <summary>

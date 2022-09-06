@@ -57,13 +57,15 @@ namespace Sircl.Website
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddArebisLocalization(Configuration, options => {
+            services.AddLocalizationFromSource(Configuration, options => {
                 //options.CompiledDataFileName = "CompiledDataFile.dat";
                 options.AllowLocalizeFormat = true;
                 options.Domains = new string[] { "Base", "Website" };
             });
 
-            services.AddTransient<ILocalizationSource, LocalizationSource>();
+            services.AddTransient<ILocalizationSource, DbContextLocalizationSource>();
+
+            services.AddTransient<ITranslationService, DeepLTranslatorService>();
 
             #endregion
 
@@ -110,7 +112,7 @@ namespace Sircl.Website
             app.UseAuthorization();
 
             #region Localization:
-            app.UseArebisLocalization();
+            app.UseLocalizationFromSource();
             #endregion
 
             app.UseEndpoints(endpoints =>

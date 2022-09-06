@@ -7,5 +7,6 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Models.Translate
 {
     public class IndexModel
     {
+        public List<string> TranslationResponse { get; internal set; }
     }
 }

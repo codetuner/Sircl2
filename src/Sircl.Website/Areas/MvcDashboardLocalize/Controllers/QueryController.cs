@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Sircl.Website.Areas.MvcDashboardLocalize.Models.Query;
 using Sircl.Website.Data.Localize;
 using System;
@@ -17,10 +18,12 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         #region Construction
 
         private readonly LocalizeDbContext context;
+        private readonly ILogger logger;
 
-        public QueryController(LocalizeDbContext context)
+        public QueryController(LocalizeDbContext context, ILogger<KeyController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         #endregion
@@ -93,6 +96,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                 }
                 catch (Exception ex)
                 {
+                    logger.LogError(ex, "Unexpected error saving query {0}", id);
                     ModelState.AddModelError("", "An unexpected error occured.");
                     ViewBag.Exception = ex;
                 }
@@ -114,6 +118,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Unexpected error deleting query {0}", id);
                 ModelState.AddModelError("", "An unexpected error occured.");
                 ViewBag.Exception = ex;
             }
@@ -124,6 +129,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         private IActionResult EditView(EditModel model)
         {
             model.Domains = context.LocalizeDomains.OrderBy(d => d.Name).ToArray();
+            model.ConnectionNames = context.LocalizeQueries.Select(q => q.ConnectionName).Distinct().OrderBy(n => n).ToArray();
 
             return View("Edit", model);
         }

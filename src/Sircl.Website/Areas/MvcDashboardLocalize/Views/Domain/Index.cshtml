@@ -10,7 +10,10 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">@domain.Name</h5>
-            <p class="card-text"><em>@domain.Cultures</em></p>
+            <p class="card-text"><em>@String.Join(", ", domain.Cultures ?? Array.Empty<string>())</em></p>
+            <span class="float-end">
+                <a asp-action="Export" asp-route-id="@domain.Id" class="card-link" download="@(domain.Name).json">Export</a>
+            </span>
             <a asp-action="Edit" asp-route-id="@domain.Id" class="card-link" target="#editDomainModal">Edit</a>
             <a asp-action="Index" asp-controller="Key" asp-route-domainid="@domain.Id" class="card-link">Keys</a>
             <a asp-action="Index" asp-controller="Query" asp-route-domainid="@domain.Id" class="card-link">Queries</a>

@@ -33,7 +33,13 @@
 
     <div class="mb-3">
         <label for="@Html.IdFor(m => m.Item.ConnectionName)" class="form-label">Connection name:</label>
-        <input asp-for="Item.ConnectionName" type="text" class="form-control" />
+        <input asp-for="Item.ConnectionName" type="text" class="form-control" list="@Html.IdFor(m => m.Item.ConnectionName)_List" />
+        <datalist id="@Html.IdFor(m => m.Item.ConnectionName)_List">
+            @foreach (var name in Model.ConnectionNames)
+            {
+                <option value="@name" />
+            }
+        </datalist>
         <span asp-validation-for="Item.ConnectionName" class="text-danger"></span>
     </div>
 
@@ -41,6 +47,13 @@
         <label for="@Html.IdFor(m => m.Item.Sql)" class="form-label">SQL:</label>
         <textarea asp-for="Item.Sql" class="form-control" rows="8"></textarea>
         <span asp-validation-for="Item.Sql" class="text-danger"></span>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+        <button type="button" class="btn btn-link float-end" data-bs-toggle="modal" data-bs-target="#sqlexamplemodal" style="padding: 0">
+            Example
+        </button>
+        The SQL query should return 3, 5, 7,... columns. The first column is supposed to contain the language or culture code. Subsequent column pairs return the name of the resource string and its value.
     </div>
 
     @if (Model.Item.Id != 0)
@@ -52,3 +65,66 @@
     <a href="history:back" class="btn btn-secondary"><i class="fas fa-angle-left"></i> Back</a>
 
 </form>
+
+<div id="sqlexamplemodal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div id="-content" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Example</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This example query retrieves localized labels and descriptions from a fictive ProductLocalized table:
+                </p>
+                <pre>    SELECT
+       LanguageCode,
+       CONCAT('ProdLabel', Id),
+       Label,
+       CONCAT('ProdDescription', Id),
+       Description
+    FROM
+       ProductLocalized
+    WHERE
+       LanguageCode IN ('{cultures}')</pre>
+                <p>
+                    This could for instance result in following rows, defining the <b>ProdLabel1</b>, <b>ProdLabel2</b>, <b>ProdDescription1</b> and <b>ProdDescription2</b> resource keys:
+                </p>
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Lang</th>
+                            <th>Key1</th>
+                            <th>Value1</th>
+                            <th>Key2</th>
+                            <th>Value2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>en</td>
+                            <td>ProdLabel1</td>
+                            <td>Bike</td>
+                            <td>ProdDescription1</td>
+                            <td>A 2-wheel vehicle.</td>
+                        </tr>
+                        <tr>
+                            <td>en</td>
+                            <td>ProdLabel2</td>
+                            <td>Car</td>
+                            <td>ProdDescription2</td>
+                            <td>A 4-wheel vehicle.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>
+                    The WHERE clause is optional but adviced. It will perform filtering by language/culture on the database server. At execution time, "<code>{cultures}</code>" will be substituted by the list of cultures of the domain the query belongs to.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

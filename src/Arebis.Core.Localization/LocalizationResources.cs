@@ -62,7 +62,7 @@ namespace Arebis.Core.Localization
             }
         }
 
-        private Regex extendedSubstitutionRegex = new Regex("\\{[a-zA-Z][^}]*\\}");
+        private static Regex extendedSubstitutionRegex = new Regex("\\{[a-zA-Z][^}]*\\}");
 
         public void Compile()
         {

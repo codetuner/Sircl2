@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sircl.Website.Data.Localize;
 
 namespace Sircl.Website.Data.Localize.Migrations
 {
     [DbContext(typeof(LocalizeDbContext))]
-    partial class LocalizeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220905233716_AddMimeType")]
+    partial class AddMimeType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +28,7 @@ namespace Sircl.Website.Data.Localize.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Cultures")
+                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
@@ -67,10 +70,6 @@ namespace Sircl.Website.Data.Localize.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ParameterNames")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("ValuesToReview")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
