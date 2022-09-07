@@ -113,19 +113,19 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                 source.Reviewed = true;
 
                 // Translate each culture that is not empty and not reviewed:
-                foreach (var target in model.Values.Where(v => v.Culture != model.SourceCulture && v.Reviewed == false && String.IsNullOrWhiteSpace(v.Value)))
+                var valuesToTranslate = model.Values.Where(v => v.Culture != model.SourceCulture && v.Reviewed == false && String.IsNullOrWhiteSpace(v.Value)).ToList();
+                var result = (await translationService.TranslateAsync(source.Culture, valuesToTranslate.Select(v => v.Culture), model.Item.MimeType, source.Value)).ToList();
+                for (int i = 0; i < valuesToTranslate.Count; i++)
                 {
-                    try
+                    if (result[i] != null)
                     {
-                        var result = await translationService.TranslateAsync(source.Culture, target.Culture, model.Item.MimeType, new String[] { source.Value });
-                        target.Value = result.FirstOrDefault();
+                        valuesToTranslate[i].Value = result[i];
                         model.HasChanges = true;
-                        succeededTranslations.Add(target.Culture);
+                        succeededTranslations.Add(valuesToTranslate[i].Culture);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        logger.LogWarning(ex, "Autotranslating key {0} from {1} to {2} failed.", id, source.Culture, target.Culture);
-                        failedTranslations.Add(target.Culture);
+                        failedTranslations.Add(valuesToTranslate[i].Culture);
                     }
                 }
             }
@@ -141,6 +141,23 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
             else
             {
                 SetToastrMessage("info", "Nothing to translate.");
+            }
+
+            return EditView(model);
+        }
+
+        [HttpPost]
+        public IActionResult MarkAllReviewed(int id, EditModel model)
+        {
+            ModelState.Clear();
+
+            foreach (var value in model.Values)
+            {
+                if (!value.Reviewed && !String.IsNullOrEmpty(value.Value))
+                {
+                    value.Reviewed = true;
+                    model.HasChanges = true;
+                }
             }
 
             return EditView(model);

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -11,18 +13,46 @@ using System.Threading.Tasks;
 
 namespace Sircl.Website.Localize
 {
+    /// <summary>
+    /// An ITranslationService implementation using basic Google Cloud Translation API.
+    /// Following configuration key is required: "GoogleApi:ApiKey" (i.e. "AbCdEfG81jKlMn0pQrStU4w-4BcDeFgH12kLmNo").
+    /// </summary>
     public class GoogleTranslationService : ITranslationService, IDisposable
     {
         private const int MaxBatchSize = 128;
 
         private HttpClient httpClient = null;
         private IConfigurationSection configSection;
+        private readonly ILogger logger;
 
-        public GoogleTranslationService(IConfiguration configuration)
+        public GoogleTranslationService(IConfiguration configuration, ILogger<GoogleTranslationService> logger)
         {
             this.configSection = configuration.GetSection("GoogleApi");
+            this.logger = logger;
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<string>> TranslateAsync(string fromLanguage, IEnumerable<string> toLanguages, string mimeType, string source, CancellationToken? ct = null)
+        {
+            var result = new List<string>();
+            var sources = new string[] { source };
+            foreach (var toLanguage in toLanguages)
+            {
+                try
+                {
+                    var texts = await this.TranslateAsync(fromLanguage, toLanguage, mimeType, sources, ct);
+                    result.Add(texts.FirstOrDefault());
+                }
+                catch (Exception)
+                {
+                    // Since Google is strict on translation language pairs, on failure add null:
+                    result.Add(null);
+                }
+            }
+            return result;
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<string>> TranslateAsync(string fromLanguage, string toLanguage, string mimeType, IEnumerable<string> sources, CancellationToken? ct = null)
         {
             var result = new List<string>();
@@ -77,6 +107,10 @@ namespace Sircl.Website.Localize
                             ex.Data["StatusCode"] = (int)response.StatusCode;
                             ex.Data["StatusMessage"] = response.ReasonPhrase;
                             ex.Data["Content"] = await response.Content.ReadAsStringAsync();
+                            ex.Data["Arg.fromLanguage"] = fromLanguage;
+                            ex.Data["Arg.toLanguage"] = toLanguage;
+                            ex.Data["Arg.mimeType"] = mimeType;
+                            logger.LogError(ex, "Failed to translate using GoogleTranslationService.");
                             throw ex;
                         }
                     }
@@ -97,6 +131,7 @@ namespace Sircl.Website.Localize
             return httpClient;
         }
 
+        /// <inheritdoc/>
         public virtual void Dispose()
         {
             if (httpClient != null)

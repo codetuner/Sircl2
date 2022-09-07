@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text.Json;
@@ -15,21 +17,45 @@ namespace Sircl.Website.Localize
 {
     /// <summary>
     /// An ITranslationService implementation using DeepL.com API.
-    /// Following configuration keys are required: "DeepL:ServiceUrl" (the service URL to use, i.e. "https://api-free.deepl.com/")
-    /// and "DeepL:ApiKey" (API key prefixed with "DeepL-Auth-Key ", i.e. "DeepL-Auth-Key 01234567-89ab-cdef-0123-456789abcdef:fx").
+    /// Following configuration keys are required: "DeepLApi:ServiceUrl" (the service URL to use, i.e. "https://api-free.deepl.com/")
+    /// and "DeepLApi:ApiKey" (API key prefixed with "DeepL-Auth-Key ", i.e. "DeepL-Auth-Key 01234567-89ab-cdef-0123-456789abcdef:fx").
     /// </summary>
     public class DeepLTranslationService : ITranslationService, IDisposable
     {
         private const int MaxBatchSize = 50;
 
         private HttpClient httpClient = null;
-        private IConfigurationSection configSection;
+        private readonly IConfigurationSection configSection;
+        private readonly ILogger logger;
 
-        public DeepLTranslationService(IConfiguration configuration)
+        public DeepLTranslationService(IConfiguration configuration, ILogger<DeepLTranslationService> logger)
         {
             this.configSection = configuration.GetSection("DeepLApi");
+            this.logger = logger;
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<string>> TranslateAsync(string fromLanguage, IEnumerable<string> toLanguages, string mimeType, string source, CancellationToken? ct = null)
+        {
+            var result = new List<string>();
+            var sources = new string[] { source };
+            foreach (var toLanguage in toLanguages)
+            {
+                try
+                {
+                    var texts = await this.TranslateAsync(fromLanguage, toLanguage, mimeType, sources, ct);
+                    result.Add(texts.FirstOrDefault());
+                }
+                catch (Exception)
+                {
+                    // Since DeepL is very strict on language codes, on failure (i.e. non-supported language) add null:
+                    result.Add(null);
+                }
+            }
+            return result;
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<string>> TranslateAsync(string fromLanguage, string toLanguage, string mimeType, IEnumerable<string> sources, CancellationToken? ct = null)
         {
             var result = new List<string>();
@@ -81,6 +107,10 @@ namespace Sircl.Website.Localize
                             ex.Data["StatusCode"] = (int)response.StatusCode;
                             ex.Data["StatusMessage"] = response.ReasonPhrase;
                             ex.Data["Content"] = await response.Content.ReadAsStringAsync();
+                            ex.Data["Arg.fromLanguage"] = fromLanguage;
+                            ex.Data["Arg.toLanguage"] = toLanguage;
+                            ex.Data["Arg.mimeType"] = mimeType;
+                            logger.LogError(ex, "Failed to translate using DeepLTranslationService.");
                             throw ex;
                         }
                     }
@@ -115,6 +145,7 @@ namespace Sircl.Website.Localize
             return data;
         }
 
+        /// <inheritdoc/>
         public virtual void Dispose()
         {
             if (httpClient != null)

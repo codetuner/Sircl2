@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Sircl.Website.Localize
 {
+    /// <summary>
+    /// An ILocalizationSource implementation that retrieves the source data for localizing this application from a LocalizeDbContext.
+    /// </summary>
     public class DbContextLocalizationSource : ILocalizationSource
     {
         public DbContextLocalizationSource(IConfiguration configuration, LocalizeDbContext context, IOptions<LocalizationOptions> localizationOptions)

@@ -23,14 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\MvcDashboardContent\Data\" />
-    <Folder Include="Areas\MvcDashboardContent\Models\Home\" />
-    <Folder Include="Areas\MvcDashboardContent\Views\PropertyType\" />
-    <Folder Include="Areas\MvcDashboardContent\Views\Property\" />
-    <Folder Include="Areas\MvcDashboardLocalize\Data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Arebis.Core.AspNet.Localization\Arebis.Core.AspNet.Localization.csproj" />
     <ProjectReference Include="..\Arebis.Core.Localization\Arebis.Core.Localization.csproj" />
   </ItemGroup>
