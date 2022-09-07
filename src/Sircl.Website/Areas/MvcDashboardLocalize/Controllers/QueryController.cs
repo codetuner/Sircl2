@@ -101,6 +101,10 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                     ViewBag.Exception = ex;
                 }
             }
+            else
+            {
+                SetToastrMessage("error", "Failed to save the query.<br/>See validation messages for more information.");
+            }
 
             Response.Headers.Add("X-Sircl-History-Replace", Url.Action("Edit", new { id = model.Item.Id }));
             return EditView(model);

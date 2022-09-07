@@ -98,7 +98,7 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
             // Check MimeType (Plain text or Html) is given:
             if (String.IsNullOrEmpty(model.Item.MimeType))
             {
-                Response.Headers["X-Sircl-Toastr"] = "error|Select content type then retry.";
+                SetToastrMessage("error", "Select content type then retry.");
                 return EditView(model);
             }
 
@@ -132,15 +132,15 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
 
             if (failedTranslations.Any())
             {
-                Response.Headers["X-Sircl-Toastr"] = $"warning|Key translated with errors for {(String.Join(", ", failedTranslations))}.";
+                SetToastrMessage($"warning", $"Key translated with errors for {(String.Join(", ", failedTranslations))}.");
             }
             else if (succeededTranslations.Any())
             {
-                Response.Headers["X-Sircl-Toastr"] = $"success|Key successfully translated in {(String.Join(", ", succeededTranslations))}.";
+                SetToastrMessage("success", $"Key successfully translated in {(String.Join(", ", succeededTranslations))}.");
             }
             else
             {
-                Response.Headers["X-Sircl-Toastr"] = "info|Nothing to translate.";
+                SetToastrMessage("info", "Nothing to translate.");
             }
 
             return EditView(model);
@@ -197,6 +197,10 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
                     ModelState.AddModelError("", "An unexpected error occured.");
                     ViewBag.Exception = ex;
                 }
+            }
+            else
+            {
+                SetToastrMessage("error", "Failed to save the query.<br/>See validation messages for more information.");
             }
 
             Response.Headers.Add("X-Sircl-History-Replace", Url.Action("Edit", new { id = model.Item.Id }));

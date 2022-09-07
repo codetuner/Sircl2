@@ -25,9 +25,9 @@
         @if (Model.Item.DomainId != 0)
         {
             <div>
-                @foreach (var cult in Model.Domains.Single(d => d.Id == Model.Item.DomainId).Cultures)
+                @foreach (var val in Model.Values)
                 {
-                    <a href="null" onclick-scrollintoview="#cult-@(cult)" class="onunloadchanged-allow" style="margin-right: 1ch;">@(cult)</a>
+                    <a href="null" onclick-scrollintoview="#cult-@(val.Culture)" class="onunloadchanged-allow" style="margin-right: 1ch;">@(val.Culture)</a>
                 }
             </div>
         }
@@ -71,20 +71,20 @@
                 <h5 class="card-title">@Model.Values[i].Culture</h5>
                 <textarea asp-for="Values[i].Value" class="form-control" rows="6"></textarea>
                 @if (Model.Item.MimeType == "text/html")
-                { 
+                {
                     <span class="float-end">
                         <span id="@Html.IdFor(m => m.Values[i].Value)_tb" class="d-none d-sm-none d-md-inline">
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h1>', '</h1>');">&lt;H1&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h2>', '</h2>');">&lt;H2&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h3>', '</h3>');">&lt;H3&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<p>', '</p>');">&lt;P&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<div>', '</div>');">&lt;DIV&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<b>', '</b>');">&lt;b&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<i>', '</i>');">&lt;i&gt;</button>
-                        <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<a href=\'\' target=\'_blank\'>', '</a>');">&lt;a&gt;</button>
-                        |
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h1>', '</h1>');">&lt;H1&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h2>', '</h2>');">&lt;H2&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<h3>', '</h3>');">&lt;H3&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<p>', '</p>');">&lt;P&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<div>', '</div>');">&lt;DIV&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<b>', '</b>');">&lt;b&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<i>', '</i>');">&lt;i&gt;</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertTag('@(Html.IdFor(m => m.Values[i].Value))', '<a href=\'\' target=\'_blank\'>', '</a>');">&lt;a&gt;</button>
+                            |
                         </span>
-                        <button type="submit"  class="btn btn-light btn-sm"asp-action="Preview" asp-route-id="@Model.Item.Id" asp-route-previewculture="@Model.Values[i].Culture" target="#preview-modal-body">Preview</button>
+                        <button type="submit" class="btn btn-light btn-sm" asp-action="Preview" asp-route-id="@Model.Item.Id" asp-route-previewculture="@Model.Values[i].Culture" target="#preview-modal-body">Preview</button>
                     </span>
                 }
                 <label>
