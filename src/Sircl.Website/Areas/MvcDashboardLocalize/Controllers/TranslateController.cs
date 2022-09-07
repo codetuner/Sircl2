@@ -34,16 +34,24 @@ namespace Sircl.Website.Areas.MvcDashboardLocalize.Controllers
         [HttpGet]
         public async Task<IActionResult> IndexAsync(IndexModel model)
         {
-            if (translationService != null)
+            try
             {
-                var response = await translationService.TranslateAsync("en", "fr", "text/plain", new String[] { "Hello World", "See you next time!" });
+                if (translationService != null)
+                {
+                    var response = await translationService.TranslateAsync("en", "fr", "text/plain", new String[] { "Hello World", "See you next time!" });
 
-                model.TranslationResponse = response.ToList();
+                    model.TranslationResponse = response.ToList();
+                }
+                else
+                {
+                    model.TranslationResponse = new List<string>(new String[] { "No-translation-service" });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                model.TranslationResponse = new List<string>(new String[] { "No-translation-service" });
+                model.Exception = ex;
             }
+
             return View("Index", model);
         }
 

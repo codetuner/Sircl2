@@ -65,7 +65,8 @@ namespace Sircl.Website
 
             services.AddTransient<ILocalizationSource, DbContextLocalizationSource>();
 
-            services.AddTransient<ITranslationService, DeepLTranslatorService>();
+            //services.AddTransient<ITranslationService, DeepLTranslatorService>();
+            services.AddTransient<ITranslationService, GoogleTranslationService>();
 
             #endregion
 

@@ -5,9 +5,16 @@
 
 <h1>Translate</h1>
 
-<ul>
-    @foreach(var item in Model.TranslationResponse)
-    {
-        <li>@item</li>
-    }
-</ul>
+@if (Model.Exception == null)
+{ 
+    <ul>
+        @foreach (var item in Model.TranslationResponse)
+        {
+                 <li>@item</li>
+        }
+    </ul>
+}
+else
+{
+    <p><b>@(Model.Exception.Data["Content"])</b></p>
+}

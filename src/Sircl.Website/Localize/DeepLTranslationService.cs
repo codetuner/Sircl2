@@ -18,16 +18,16 @@ namespace Sircl.Website.Localize
     /// Following configuration keys are required: "DeepL:ServiceUrl" (the service URL to use, i.e. "https://api-free.deepl.com/")
     /// and "DeepL:ApiKey" (API key prefixed with "DeepL-Auth-Key ", i.e. "DeepL-Auth-Key 01234567-89ab-cdef-0123-456789abcdef:fx").
     /// </summary>
-    public class DeepLTranslatorService : ITranslationService, IDisposable
+    public class DeepLTranslationService : ITranslationService, IDisposable
     {
         private const int MaxBatchSize = 50;
 
         private HttpClient httpClient = null;
         private IConfigurationSection configSection;
 
-        public DeepLTranslatorService(IConfiguration configuration)
+        public DeepLTranslationService(IConfiguration configuration)
         {
-            this.configSection = configuration.GetSection("DeepL");
+            this.configSection = configuration.GetSection("DeepLApi");
         }
 
         public async Task<IEnumerable<string>> TranslateAsync(string fromLanguage, string toLanguage, string mimeType, IEnumerable<string> sources, CancellationToken? ct = null)
@@ -63,7 +63,7 @@ namespace Sircl.Website.Localize
                     ct?.ThrowIfCancellationRequested();
 
                     this.httpClient ??= BuildHttpClient();
-                    using (var response = await this.httpClient.PostAsync(new Uri(new Uri(configSection["ServiceUrl"]), "/v2/translate"), content, ct ?? CancellationToken.None))
+                    using (var response = await this.httpClient.PostAsync(configSection["TranslationServiceUrl"], content, ct ?? CancellationToken.None))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -71,7 +71,7 @@ namespace Sircl.Website.Localize
                             var responseData = (TranslateResponse)JsonSerializer.Deserialize<TranslateResponse>(responseContent);
                             foreach (var item in responseData.Translations)
                             {
-                                result.Add(item.Text);
+                                result.Add(item.TranslatedText);
                             }
                         }
                         else
@@ -132,7 +132,7 @@ namespace Sircl.Website.Localize
             public class Translation
             {
                 [JsonPropertyName("text")]
-                public string Text { get; set; }
+                public string TranslatedText { get; set; }
             }
         }
     }
