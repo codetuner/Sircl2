@@ -50,5 +50,13 @@ namespace Sircl.Website.Areas.MvcDashboardLogging.Controllers
         {
             return this.Forward(Url.Action(action, controller, values));
         }
+
+        protected void SetToastrMessage(string level, string text, string title = null)
+        {
+            if (String.IsNullOrWhiteSpace(title))
+                Response.Headers["X-Sircl-Toastr"] = $"{level}|{text}";
+            else
+                Response.Headers["X-Sircl-Toastr"] = $"{level}|{text}|{title}";
+        }
     }
 }

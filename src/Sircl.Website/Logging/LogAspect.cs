@@ -29,12 +29,13 @@ namespace Sircl.Website.Logging
             }
         }
 
-        private LogAspect(string name, string htmlClass, string htmlStyle, string htmlIcon)
+        private LogAspect(string name, string htmlClass, string htmlStyle, string htmlIcon, string htmlColor)
         {
             this.Name = name;
             this.HtmlClass = htmlClass;
             this.HtmlStyle = htmlStyle;
             this.HtmlIcon = htmlIcon;
+            this.HtmlColor = htmlColor;
             aspects[name] = this;
         }
 
@@ -58,36 +59,41 @@ namespace Sircl.Website.Logging
         /// </summary>
         public string HtmlIcon { get; set; }
 
+        /// <summary>
+        /// HTML color code.
+        /// </summary>
+        public string HtmlColor { get; set; }
+
         #endregion
 
         /// <summary>
         /// Log aspect to mark requests informational logging.
         /// </summary>
-        public static readonly LogAspect Information = new LogAspect("Information", "aspect-information", "", "<i class=\"fas fa-info\"></i>");
+        public static readonly LogAspect Information = new LogAspect("Information", "aspect-information", "", "<i class=\"fas fa-info\"></i>", "#9AC8EB");
 
         /// <summary>
         /// Log aspect to mark requests demanding attention.
         /// </summary>
-        public static readonly LogAspect Attention = new LogAspect("Attention", "aspect-attention", "", "<i class=\"fas fa-exclamation-triangle\"></i>");
+        public static readonly LogAspect Attention = new LogAspect("Attention", "aspect-attention", "", "<i class=\"fas fa-exclamation-triangle\"></i>", "#E5DB9C");
 
         /// <summary>
         /// Log aspect to mark requests with possible timing issue.
         /// </summary>
-        public static readonly LogAspect Timing = new LogAspect("Timing", "aspect-timing", "", "<i class=\"fas fa-stopwatch\"></i>");
+        public static readonly LogAspect Timing = new LogAspect("Timing", "aspect-timing", "", "<i class=\"fas fa-stopwatch\"></i>", "#F7F6CF");
 
         /// <summary>
         /// Log aspect to mark requests with possible security issue.
         /// </summary>
-        public static readonly LogAspect Security = new LogAspect("Security", "aspect-security", "", "<i class=\"fas fa-shield-alt\"></i>");
+        public static readonly LogAspect Security = new LogAspect("Security", "aspect-security", "", "<i class=\"fas fa-shield-alt\"></i>", "#26474E");
 
         /// <summary>
         /// Log aspect to mark requests resulting in a 404 Not Found error.
         /// </summary>
-        public static readonly LogAspect NotFound = new LogAspect("NotFound", "aspect-notfound", "", "<i class=\"fas fa-search\"></i>");
+        public static readonly LogAspect NotFound = new LogAspect("NotFound", "aspect-notfound", "", "<i class=\"fas fa-search\"></i>", "#F4CFDF");
 
         /// <summary>
         /// Log aspect to mark requests resulting in an error.
         /// </summary>
-        public static readonly LogAspect Error = new LogAspect("Error", "aspect-error", "", "<i class=\"fas fa-bug\"></i>");
+        public static readonly LogAspect Error = new LogAspect("Error", "aspect-error", "", "<i class=\"fas fa-bug\"></i>", "#744622");
     }
 }
