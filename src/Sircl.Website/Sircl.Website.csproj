@@ -22,9 +22,4 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Arebis.Core.AspNet.Localization\Arebis.Core.AspNet.Localization.csproj" />
-    <ProjectReference Include="..\Arebis.Core.Localization\Arebis.Core.Localization.csproj" />
-  </ItemGroup>
-
 </Project>

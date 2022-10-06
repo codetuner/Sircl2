@@ -1,5 +1,3 @@
-using Arebis.Core.AspNet.Localization;
-using Arebis.Core.Localization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sircl.Website.Data;
-using Sircl.Website.Localize;
 using Sircl.Website.Logging;
 using System;
 using System.Collections.Generic;
@@ -48,26 +45,6 @@ namespace Sircl.Website
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"));
             });
-
-            #endregion
-
-            #region Localization
-
-            services.AddDbContext<Data.Localize.LocalizeDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddLocalizationFromSource(Configuration, options => {
-                //options.CompiledDataFileName = "CompiledDataFile.dat";
-                options.AllowLocalizeFormat = true;
-                options.Domains = new string[] { "Base", "Website" };
-            });
-
-            services.AddTransient<ILocalizationSource, DbContextLocalizationSource>();
-
-            //services.AddTransient<ITranslationService, DeepLTranslationService>();
-            //services.AddTransient<ITranslationService, GoogleTranslationService>();
-            services.AddTransient<ITranslationService, BingTranslationService>();
 
             #endregion
 
@@ -112,10 +89,6 @@ namespace Sircl.Website
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            #region Localization:
-            app.UseLocalizationFromSource();
-            #endregion
 
             app.UseEndpoints(endpoints =>
             {
