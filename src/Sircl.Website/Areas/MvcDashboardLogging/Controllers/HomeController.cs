@@ -76,14 +76,16 @@ namespace Sircl.Website.Areas.MvcDashboardLogging.Controllers
                 l.Count(ll => ll.AspectName == LogAspect.Attention.Name),
                 l.Count(ll => ll.AspectName == LogAspect.NotFound.Name),
                 l.Count(ll => ll.AspectName == LogAspect.Timing.Name),
+                l.Count(ll => ll.AspectName == LogAspect.Information.Name),
             }).ToArray();
 
-            var dataSets = new ChartDataSet[5];
+            var dataSets = new ChartDataSet[6];
             dataSets[0] = new ChartDataSet(LogAspect.Error, new int[labels.Count]);
             dataSets[1] = new ChartDataSet(LogAspect.Security, new int[labels.Count]);
             dataSets[2] = new ChartDataSet(LogAspect.Attention, new int[labels.Count]);
             dataSets[3] = new ChartDataSet(LogAspect.NotFound, new int[labels.Count]);
             dataSets[4] = new ChartDataSet(LogAspect.Timing, new int[labels.Count]);
+            dataSets[5] = new ChartDataSet(LogAspect.Information, new int[labels.Count]);
 
             for (int i = 0; i < labels.Count; i++)
             {
@@ -92,6 +94,7 @@ namespace Sircl.Website.Areas.MvcDashboardLogging.Controllers
                 dataSets[2].Data[i] = data.SingleOrDefault(d => d[0] == labels[i].Item1)?[3] ?? 0;
                 dataSets[3].Data[i] = data.SingleOrDefault(d => d[0] == labels[i].Item1)?[4] ?? 0;
                 dataSets[4].Data[i] = data.SingleOrDefault(d => d[0] == labels[i].Item1)?[5] ?? 0;
+                dataSets[5].Data[i] = data.SingleOrDefault(d => d[0] == labels[i].Item1)?[6] ?? 0;
             }
 
             return View(new ChartModel(grain, labels.Select(l => l.Item2).ToArray(), dataSets));
