@@ -12,7 +12,6 @@ if (typeof Sortable === "undefined") console.warn("The 'sircl-sortablejs' compon
 /// Sortable options template:
 var sircl_sortable_options_template = {
     animation: 150,
-    animation: 150,
     delay: 300,
     delayOnTouchOnly: true,
     touchStartThreshold: 4,

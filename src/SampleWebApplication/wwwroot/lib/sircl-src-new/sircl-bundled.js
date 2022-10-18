@@ -1492,7 +1492,8 @@ $(function () {
                 }, callback);
             }
         } else {
-            window.history.go(0);
+            // Is this needed ? With this line of code, an <a href="#pagelocation"> triggers a full page load instead of just scrolling to the right place...
+            //window.history.go(0);
         }
     };
 
@@ -3223,9 +3224,9 @@ $$(function sircl_ext_actionEvents_processHandler () {
         var $this = $(this);
         var $any = sircl.ext.$select($this, $this.attr("show-ifanychecked"));
         sircl.ext.$select($this, $this.attr("show-ifanychecked")).on("change", function () {
-            sircl.ext.visible($this, $all.filter(":checked").length > 0)
+            sircl.ext.visible($this, $any.filter(":checked").length > 0)
         });
-        sircl.ext.visible($this, $all.filter(":checked").length > 0)
+        sircl.ext.visible($this, $any.filter(":checked").length > 0)
     });
 });
 
@@ -3599,7 +3600,7 @@ $(function () {
         event.preventDefault();
         // Perform move:
         var sourceId = event.originalEvent.dataTransfer.getData("__id");
-        event.originalEvent.target.appendChild(document.getElementById(sourceId));
+        event.originalEvent.target.closest(".ondrop-move").appendChild(document.getElementById(sourceId));
     });
 
     $(document).on("drop", ".ondrop-copy", function (event) {
@@ -3607,7 +3608,7 @@ $(function () {
         event.preventDefault();
         // Perform move:
         var sourceId = event.originalEvent.dataTransfer.getData("__id");
-        $(event.originalEvent.target).append(document.getElementById(sourceId).outerHTML.replace("id=\"" + sourceId + "\"", ""));
+        $(event.originalEvent.target.closest(".ondrop-copy")).append(document.getElementById(sourceId).outerHTML.replace("id=\"" + sourceId + "\"", ""));
     });
 
     $(document).on("drop", ".ondrop-submit", function (event) {

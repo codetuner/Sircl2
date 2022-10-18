@@ -1492,7 +1492,8 @@ $(function () {
                 }, callback);
             }
         } else {
-            window.history.go(0);
+            // Is this needed ? With this line of code, an <a href="#pagelocation"> triggers a full page load instead of just scrolling to the right place...
+            //window.history.go(0);
         }
     };
 
