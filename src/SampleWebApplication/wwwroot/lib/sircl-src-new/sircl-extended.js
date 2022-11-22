@@ -315,6 +315,11 @@ $(function () {
     $(document).on("click", "[onclick-copyto]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-copyto")).html($(this).html());
     });
+
+    // <* onclick-alert="selector"> On click shows an alert.
+    $(document).on("click", "[onclick-alert]", function (event) {
+        sircl.ext.alert(this, $(this).attr("onclick-alert"), event);
+    });
 });
 
 // Dblclick event-actions:
@@ -479,6 +484,34 @@ $(function () {
         var targetSelector = this.getAttribute("onchecked-click");
         sircl.ext.$select($(this), targetSelector).each(function () {
             this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
+    $(document).on("change", "[onchecked-uncheck]", function (event) {
+        if (this.checked) sircl.ext.$select($(this), this.getAttribute("onchecked-uncheck")).filter(":checked").each(function () {
+            $(this).prop("checked", false);
+            $(this).change();
+        });
+    });
+
+    $(document).on("change", "[onchecked-check]", function (event) {
+        if (this.checked) sircl.ext.$select($(this), this.getAttribute("onchecked-check")).filter(":not(:checked)").each(function () {
+            $(this).prop("checked", true);
+            $(this).change();
+        });
+    });
+
+    $(document).on("change", "[onunchecked-uncheck]", function (event) {
+        if (!this.checked) sircl.ext.$select($(this), this.getAttribute("onunchecked-uncheck")).filter(":checked").each(function () {
+            $(this).prop("checked", false);
+            $(this).change();
+        });
+    });
+
+    $(document).on("change", "[onunchecked-check]", function (event) {
+        if (!this.checked) sircl.ext.$select($(this), this.getAttribute("onunchecked-check")).filter(":not(:checked)").each(function () {
+            $(this).prop("checked", true);
+            $(this).change();
         });
     });
 
