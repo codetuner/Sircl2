@@ -16,7 +16,7 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component s
 sircl.addAttributeAlias(".beforeload-show", "beforeload-show", ":this");
 sircl.addAttributeAlias(".beforeload-hide", "beforeload-hide", ":this");
 
-sircl.addRequestHandler("beforeSend", function sircl_ext_beforeSend_requestHandler (req) {
+sircl.addRequestHandler("beforeSend", function sircl_ext_beforeSend_requestHandler(req) {
 
     req.$initialTarget.find("[beforeload-hide]").each(function () {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("beforeload-hide")), false);
@@ -48,13 +48,13 @@ sircl.addRequestHandler("beforeSend", function sircl_ext_beforeSend_requestHandl
 sircl.addAttributeAlias(".onload-show", "onload-show", ":this");
 sircl.addAttributeAlias(".onload-hide", "onload-hide", ":this");
 
-$$("enrich", function sircl_ext_onload_enrichHandler () {
+$$("enrich", function sircl_ext_onload_enrichHandler() {
     $(this).find(".onload-setvaluefromquery").each(function () {
         $(this).attr("onload-setvaluefromquery", this.name);
     });
 });
 
-$$(function sircl_ext_onload_processHandler () {
+$$(function sircl_ext_onload_processHandler() {
 
     /// <* onload-hide="selector"> Will make that element invisible on init.
     $(this).find("[onload-hide]").each(function () {
@@ -153,6 +153,11 @@ $(function () {
     // <* onchange-enable="selector"> On change, enables the elements matching the given selector.
     $(document).on("change", "*[onchange-enable]", function (event) {
         sircl.ext.enabled(sircl.ext.$select($(this), $(this).attr("onchange-enable")), true);
+    });
+
+    // <* onchange-hide="selector"> On change, hides the elements matching the given selector.
+    $(document).on("change", "*[onchange-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-hide")), false);
     });
 
     // <* onchange-show="selector"> On change, shows the elements matching the given selector.
@@ -363,7 +368,7 @@ $(function () {
                 var $target = (target != null) ? sircl.ext.$select($(this), target) : sircl.ext.$mainTarget();
                 var targetMethod = this.getAttribute("target-method") || null;
                 sircl._loadUrl($(this), href, $target, targetMethod);
-           }
+            }
         }
         // If not returned earlier, stop event propagation:
         event.preventDefault();
@@ -735,7 +740,7 @@ $(function () {
     });
 });
 
-$$(function sircl_ext_ifchecked_processHandler () {
+$$(function sircl_ext_ifchecked_processHandler() {
 
     $(this).find("[ifchecked-hide]").each(function () {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked);
@@ -964,7 +969,7 @@ $$(function sircl_ext_ifchecked_processHandler () {
 /// Action-events:
 //////////////////
 
-$$(function sircl_ext_actionEvents_processHandler () {
+$$(function sircl_ext_actionEvents_processHandler() {
 
     /// <* hide-ifexists="selection"> If the selection has matches, hide this element, else show it.
     $(this).find("[hide-ifexists]").each(function () {
@@ -1148,7 +1153,7 @@ $(document.body).on("change", "INPUT.onfocusout-trim:not([type=checkbox]):not([t
 /////////////////////////
 
 // From: https://stackoverflow.com/a/7557433/323122
-sircl.isElementInView = function(el) {
+sircl.isElementInView = function (el) {
     var rect = el.getBoundingClientRect();
     return (
         rect.top >= 0 &&
@@ -1209,7 +1214,7 @@ $(function () {
     });
 });
 
-$$(function sircl_ext_ifinview_processHandler () {
+$$(function sircl_ext_ifinview_processHandler() {
     /// <* ifinview-load="url"> Loads the given URL and places the result in the element when the element is visible in the view.
     $("[ifinview-load]").each(function () {
         if (sircl.isElementInView(this)) {
@@ -1277,7 +1282,7 @@ $(function () {
     });
 });
 
-$$(function sircl_ext_onchangeConfirm_processHandler () {
+$$(function sircl_ext_onchangeConfirm_processHandler() {
     // Store initial value of input or select having onchange-confirm, to be able to restore if not confirmed:
     $(this).find("INPUT[onchange-confirm]:not([type='checkbox']):not([type='radio']),SELECT[onchange-confirm]").each(function () {
         this._beforeConfirmValue = $(this).val();
@@ -1290,9 +1295,131 @@ $$(function sircl_ext_onchangeConfirm_processHandler () {
 
 $(function () {
 
+    /// Limit file count on file input
+    $(document.body).on("change", "INPUT[type='file'][multiple][maxcount], INPUT[type='file']:not([multiple])", function (event) {
+        var $this = $(this);
+        var maxcount = $this.hasAttr("multiple") ? parseInt($this.attr("maxcount")) : 1;
+        if (this.files.length > maxcount) {
+            var maxcountalert = $this.attr("maxcount-alert");
+            if (maxcountalert) sircl.ext.alert(this, maxcountalert, event);
+            this.value = "";
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    /// Limit file type on file input
+    $(document.body).on("change", "INPUT[type='file'][accept]", function (event) {
+        var $this = $(this);
+        var tokens = $this.attr("accept").split(',');
+        for (var i = 0; i < tokens.length; i++) {
+            if (tokens[i][0] === '.') {
+                tokens[i] = tokens[i].toUpperCase();
+            } else {
+                tokens[i] = tokens[i]
+                    .replaceAll("+", "\\+")
+                    .replaceAll(".", "\\.")
+                    .replaceAll("/", "\\/")
+                    .replaceAll("*", ".+");
+            }
+        }
+        for (var i = 0; i < this.files.length; i++) {
+            var validFile = false;
+            for (var t = 0; t < tokens.length; t++) {
+                if (tokens[t][0] === '.') {
+                    if (this.files[i].name.toUpperCase().lastIndexOf(tokens[t]) === (this.files[i].name.length - tokens[t].length)) {
+                        validFile = true;
+                        break;
+                    }
+                } else if (this.files[i].type.match(tokens[t])) {
+                    validFile = true;
+                    break;
+                }
+            }
+            if (!validFile) {
+                var acceptalert = $this.attr("accept-alert");
+                if (acceptalert) sircl.ext.alert(this, acceptalert, event);
+                this.value = "";
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            }
+        }
+    });
+
+    /// Limit file size on file input
+    $(document.body).on("change", "INPUT[type='file'][maxsize]", function (event) {
+        var $this = $(this);
+        var maxsize = ($this.attr("maxsize")).toUpperCase();
+        if (maxsize.indexOf("KB") > 0) maxsize = parseFloat(maxsize.replace("KB", "").trim()) * 1024;
+        else if (maxsize.indexOf("MB") > 0) maxsize = parseFloat(maxsize.replace("MB", "").trim()) * 1024 * 1024;
+        else maxsize = parseFloat(maxsize);
+        for (var i = 0; i < this.files.length; i++) {
+            if (this.files[i].size > maxsize) {
+                var maxsizealert = $this.attr("maxsize-alert");
+                if (maxsizealert) sircl.ext.alert(this, maxsizealert, event);
+                this.value = "";
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            }
+        }
+    });
+
+    /// Limit total file size on file input
+    $(document.body).on("change", "INPUT[type='file'][maxtotalsize]", function (event) {
+        var $this = $(this);
+        var maxtotalsize = ($this.attr("maxtotalsize")).toUpperCase();
+        if (maxtotalsize.indexOf("KB") > 0) maxtotalsize = parseFloat(maxtotalsize.replace("KB", "").trim()) * 1024;
+        else if (maxtotalsize.indexOf("MB") > 0) maxtotalsize = parseFloat(maxtotalsize.replace("MB", "").trim()) * 1024 * 1024;
+        else maxtotalsize = parseFloat(maxtotalsize);
+        var totalsize = 0;
+        for (var i = 0; i < this.files.length; i++) {
+            totalsize += this.files[i].size;
+            if (totalsize > maxtotalsize) {
+                var maxtotalsizealert = $this.attr("maxtotalsize-alert");
+                if (maxtotalsizealert) sircl.ext.alert(this, maxtotalsizealert, event);
+                this.value = "";
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            }
+        }
+    });
+
+    /// Copies the name of the file
+    $(document).on("change", "INPUT[type='file'][onchange-setname]", function (event) {
+        var $this = $(this);
+        if (this.files.length > 0) {
+            var filename = this.files[0].name;
+            var $target = sircl.ext.$select($this, $this.attr("onchange-setname"));
+            $target.each(function () {
+                if (this.tagName == "INPUT")
+                    this.value = filename;
+                else
+                    this.innerText = filename;
+            });
+        }
+    });
+
+    /// Copies the base name of the file (name without extension)
+    $(document).on("change", "INPUT[type='file'][onchange-setbasename]", function (event) {
+        var $this = $(this);
+        if (this.files.length > 0) {
+            var filename = this.files[0].name;
+            if (filename.indexOf('.') >= 0) filename = filename.substr(0, filename.lastIndexOf('.'));
+            var $target = sircl.ext.$select($this, $this.attr("onchange-setbasename"));
+            $target.each(function () {
+                this.value = filename;
+            });
+        }
+    });
+
+    sircl.addAttributeAlias(".ondropfile-set", "ondropfile-set", ">INPUT[type=file]");
+
     /// Allow dragging file:
-    /// <* ondropfile-accept="mimetypse">...</*>
-    $(document.body).on("dragover", "[ondropfile-accept]", function (event) {
+    /// <* ondropfile-set="form-input">...</*>
+    $(document.body).on("dragover", "[ondropfile-set]", function (event) {
         if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
             // Allow by preventing default browser behavior:
             event.preventDefault();
@@ -1305,81 +1432,33 @@ $(function () {
     });
 
     /// Allow dropping file:
-    /// <* class="ondropfile-submit" ondropfile-accept="mimetypes">...</*>
-    $(document).on("drop", "[ondropfile-accept]", function (event) {
+    /// <* ondropfile-set="form-input">...</*>
+    $(document).on("drop", "[ondropfile-set]", function (event) {
         // Prevent default browser behavior:
         event.preventDefault();
-        // Verify files:
+        // Sert file(s):
         var $this = $(this);
-        var acceptedTypes = $this.attr("ondropfile-accept").split(" ");
-        var maxFileSize = ($this.attr("dropfile-maxsize") || "1024 MB").toUpperCase();
-        if (maxFileSize.indexOf("KB") > 0) maxFileSize = parseFloat(maxFileSize.replace("KB", "").trim()) * 1024;
-        else if (maxFileSize.indexOf("MB") > 0) maxFileSize = parseFloat(maxFileSize.replace("MB", "").trim()) * 1024 * 1024;
-        else maxFileSize = parseFloat(maxFileSize);
-        var maxFileCount = parseInt($this.attr("dropfile-maxcount") || "99");
-        var invalidFileMsg = $this.attr("ondropinvalidfile-alert");
-        var tooManyFilesMsg = $this.attr("ondroptoomanyfiles-alert");
-        var validFileIndexes = [];
-        for (var f = 0; f < event.originalEvent.dataTransfer.files.length; f++) {
-            var file = event.originalEvent.dataTransfer.files[f];
-            if (file.size > maxFileSize) continue;
-            for (var t = 0; t < acceptedTypes.length; t++) {
-                var type = acceptedTypes[t].trim().toLowerCase();
-                if (type == "") continue;
-                if (type.indexOf("*") == 0) { // If type = "*/*":
-                    validFileIndexes.push(f);
-                } else if (type.indexOf("*") == type.length - 1) { // If type ends with "*":
-                    if (file.type.toLowerCase().indexOf(type.substr(0, type.length - 1)) == 0) {
-                        validFileIndexes.push(f);
-                    }
-                } else { // Else must be exact match:
-                    if (file.type.toLowerCase() == type) {
-                        validFileIndexes.push(f);
-                    }
-                }
-            }
+        var $file = sircl.ext.$select($this, $(this).attr("ondropfile-set"));
+        if ($file.length > 0) {
+            $file[0].files = event.originalEvent.dataTransfer.files;
+            $($file[0]).change();
         }
-        if (validFileIndexes.length > maxFileCount && tooManyFilesMsg != null) {
-            sircl.ext.alert(this, tooManyFilesMsg, event);
-        } else if (validFileIndexes.length != event.originalEvent.dataTransfer.files.length && invalidFileMsg != null) {
-            sircl.ext.alert(this, invalidFileMsg, event);
+    });
+
+    /// Disallow dragging file:
+    /// <* class="ondropfile-ignore">...</*>
+    $(document).on("dragover", ".ondropfile-ignore", function (event) {
+        if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
+            // Override default browser behavior:
+            event.preventDefault();
         }
-        if (validFileIndexes.length > 0) {
-            if (validFileIndexes.length > maxFileCount) {
-                // Shorten array to maxFileCount:
-                validFileIndexes = validFileIndexes.slice(0, maxFileCount);
-            }
-            if ($this.hasClass("ondropfile-submit")) {
-                // Determine form:
-                var $form = ($this.hasAttr("form"))
-                    ? $("#" + $this.attr("form"))
-                    : $this.closest("FORM");
-                if ($form.length > 0) {
-                    // Prevent default browser behavior:
-                    event.preventDefault();
-                    // Add a submit button:
-                    var btnid = "sircl-autoid-" + new Date().getTime();
-                    var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
-                    if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction") + "\" ";
-                    if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
-                    if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
-                    if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
-                    if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
-                    btn += "/>";
-                    $form.append(btn);
-                    var $btn = $("#" + btnid);
-                    // Add files to submit button:
-                    var files = [];
-                    for (var i = 0; i < validFileIndexes.length; i++) {
-                        files.push(event.originalEvent.dataTransfer.files[validFileIndexes[i]]);
-                    }
-                    $btn[0]._files = files;
-                    $btn[0]._filesName = $this.attr("name") || "files";
-                    // Submit form:
-                    $btn.click();
-                }
-            }
-        }
+    });
+
+    /// Disallow dropping file:
+    /// <* class="ondropfile-ignore">...</*>
+    $(document).on("drop", ".ondropfile-ignore", function (event) {
+        // Prevent default browser behavior:
+        event.preventDefault();
     });
 });
 
@@ -1472,7 +1551,7 @@ $(function () {
 //#region Sharing
 
 // Hide sharing elements when sharing is not available:
-$$(function sircl_ext_onclickShare_processHandler () {
+$$(function sircl_ext_onclickShare_processHandler() {
     if (navigator.share) { } else {
         $("[onclick-share]").each(function () {
             sircl.ext.visible(this, false);
@@ -1499,5 +1578,3 @@ $(function () {
 });
 
 //#endregion
-
-

@@ -1,4 +1,48 @@
 ﻿
+
+<form class="" action="/Test/RequestInfo?form" enctype="multipart/form-data" method="post">
+    <div ondropfile-set="#fileinp" ondragover-addclass="red">
+        <p>Drop file here...</p>
+        <div>
+            <input type="text" name="hi" class="onchange-submit"/>
+        </div>
+        <input id="fileinp" name="files" type="file" multiple
+            accept=".pdf,.docx,image/*"
+            accept-alert="File type not supported"
+            maxcount="4"
+            maxcount-alert="Too many files"
+            maxsize="5 MB"
+            maxsize-alert="File is more than 100 KB"
+            maxtotalsize="20 MB"
+            maxtotalsize-alert="All files together should be less than 200 KB"
+            onchange-setname="<DIV|>P"
+            class="onchange-submit" formaction="/Test/RequestInfo?input" formenctype="multipart/form-data" formmethod="post">
+    </div>
+    <button type="submit">OK</button>
+</form>
+
+<hr/>
+
+<form action="/Test/RequestInfo?form" method="post">
+  <input type="text" name="Name" placeholder="Enter name" />
+  <div class="ondropfile-set" style="border: solid 1px green;">
+    <p>Drop your picture here</p>
+    <input class="onchange-submit" type="file" name="files"
+        accept="image/*"
+        maxsize="4 MB"
+        accept-alert="Only images are accepted."
+        maxcount-alert="Only a single file is accepted."
+        maxsize-alert="Please upload a file smaller than 4 MB."
+        formaction="/Test/RequestInfo?form"
+        formmethod="post"
+        formenctype="multipart/form-data"
+        formtarget="<DIV"
+        hidden>
+  </div>
+  <button type="submit">OK</button>
+</form>
+
+
 <hr />
 
 <a href="#bottom">Go to bottom of page</a>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +20,13 @@ namespace SampleWebApplication.Controllers
         {
             Debug.WriteLine($"{DateTime.Now:HH:mm:ss} ChangeFailed: {Request.QueryString}");
             return StatusCode(500);
+        }
+
+        [HttpGet, HttpPost]
+        public IActionResult RequestInfo(List<IFormFile> files)
+        {
+            ViewBag.Files = files;
+            return View();
         }
     }
 }

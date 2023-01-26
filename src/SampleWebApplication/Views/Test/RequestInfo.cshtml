@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var files = (List<IFormFile>)ViewBag.Files;
+}
+
+<h3>Request:</h3>
+
+@if (this.Context.Request.Headers["X-Sircl-Request-Type"] == "Partial")
+{
+    <p>Partial: Yes, by Sircl</p>
+}
+else if (this.Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+{
+    <p>Partial: Yes, by Ajax</p>
+}
+else
+{
+    <p>Partial: No</p>
+}
+
+<p>Method: @(this.Context.Request.Method)</p>
+<p>Query string: @(this.Context.Request.QueryString)</p>
+
+<h3>Form:</h3>
+@foreach(var keyPair in this.Context.Request.Form)
+{
+    <p><b>@(keyPair.Key)</b> = @(keyPair.Value)</p>
+}
+
+@if (files != null)
+{
+    <h3>Files:</h3>
+    foreach (var file in files)
+    {
+        <p><b>@(file.FileName)</b> - @(file.ContentType) - @(file.Length)</p>
+    }
+}
