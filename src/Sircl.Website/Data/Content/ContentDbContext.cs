@@ -48,6 +48,8 @@ namespace Sircl.Website.Data.Content
 
         public DbSet<Content.SecuredPath> ContentSecuredPaths { get; set; }
 
+        public DbSet<Content.PathRedirection> ContentPathRedirections { get; set; }
+
         #region Conversion helpers
 
         static string ToString(Dictionary<string, string> data)
@@ -78,4 +80,4 @@ namespace Sircl.Website.Data.Content
 
         #endregion
     }
-    }
+}

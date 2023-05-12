@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Sircl.Website.Data;
 using Sircl.Website.Data.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Sircl.Website.Controllers
@@ -15,11 +17,15 @@ namespace Sircl.Website.Controllers
         #region Construction
 
         private readonly ContentDbContext context;
+        private readonly IMemoryCache cache;
         private readonly ILogger<ContentController> logger;
 
-        public ContentController(ContentDbContext context, ILogger<ContentController> logger)
+        private static readonly Dictionary<string, Regex> compiledRedirectRegex = new Dictionary<string, Regex>();
+
+        public ContentController(ContentDbContext context, IMemoryCache cache, ILogger<ContentController> logger)
         {
             this.context = context;
+            this.cache = cache;
             this.logger = logger;
         }
 
@@ -32,6 +38,45 @@ namespace Sircl.Website.Controllers
 
             // Get current culture:
             var currentUICulture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+
+            // Check for redirections first:
+            if (!cache.TryGetValue("Content:PathRedirections", out List<PathRedirection> redirections))
+            {
+                redirections = context.ContentPathRedirections.AsNoTracking().OrderBy(r => r.Position).ThenBy(r => r.Id).ToList();
+                cache.Set("Content:PathRedirections", redirections);
+            }
+
+            // Apply first found matching redirection, if any:
+            foreach(var redirection in redirections)
+            {
+                // If FromPath is not a regular expression:
+                if (!redirection.IsRegex)
+                {
+                    // If match: redirect:
+                    if (path.Equals(redirection.FromPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Response.Headers.Add("Location", redirection.ToPath);
+                        return StatusCode(redirection.StatusCode);
+                    }
+                }
+                else // If FromPath is a regular expression:
+                {
+                    // Cache compiled version of FromPath regex in cache:
+                    if (!compiledRedirectRegex.TryGetValue(redirection.FromPath, out Regex fromPathRegex)) 
+                    {
+                        fromPathRegex = new Regex(redirection.FromPath, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                        compiledRedirectRegex[redirection.FromPath] = fromPathRegex;
+                    }
+                    // Test the FromPath regex:
+                    var match = fromPathRegex.Match(path);
+                    // If match: redirect:
+                    if (match.Success)
+                    {
+                        Response.Headers.Add("Location", match.Result(redirection.ToPath));
+                        return StatusCode(redirection.StatusCode);
+                    }
+                }
+            }      
 
             // Apply security:
             var securedPaths = await context.ContentSecuredPaths.Where(p => path.StartsWith(p.Path) && p.Roles != null).ToListAsync();

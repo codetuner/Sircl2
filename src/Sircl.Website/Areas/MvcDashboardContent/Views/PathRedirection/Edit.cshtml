@@ -1,9 +1,9 @@
 ﻿@model EditModel
 @{
-    ViewBag.Title = Model.Item.Path ?? "new";
+    ViewBag.Title = Model.Item.FromPath ?? "new";
 }
 
-<h1>Secured Path <small class="text-muted">@(Model.Item.Path ?? "new")</small></h1>
+<h1>Path Redirection <small class="text-muted">@(Model.Item.FromPath ?? "new")</small></h1>
 
 <form asp-action="Save" asp-route-id="@Model.Item.Id" method="post" onkeyenter-click="" autocomplete="off" onchange-set="HasChanges" onunloadchanged-confirm="Changes will be lost. Proceed anyway ?">
 
@@ -18,21 +18,40 @@
     </div>
 
     <div class="mb-3">
-        <label for="@Html.IdFor(m => m.Item.Path)" class="form-label">Path: *</label>
-        <input asp-for="Item.Path" type="text" class="form-control" list="@Html.IdFor(m => m.Item.Path)List" />
-        <datalist id="@Html.IdFor(m => m.Item.Path)List">
+        <label for="@Html.IdFor(m => m.Item.FromPath)" class="form-label">Path to redirect: *</label>
+        <input asp-for="Item.FromPath" type="text" class="form-control" />
+        <span asp-validation-for="Item.FromPath" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.IsRegex)" class="form-label">
+            <input asp-for="Item.IsRegex" /> Uses regular expressions
+        </label>
+        <span asp-validation-for="Item.IsRegex" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="@Html.IdFor(m => m.Item.ToPath)" class="form-label">Path to redirect to: *</label>
+        <input asp-for="Item.ToPath" type="text" class="form-control" list="@Html.IdFor(m => m.Item.ToPath)List" />
+        <datalist id="@Html.IdFor(m => m.Item.ToPath)List">
             @foreach (var item in Model.PathsList)
             {
                 <option value="@item" />
             }
         </datalist>
-        <span asp-validation-for="Item.Path" class="text-danger"></span>
+        <span asp-validation-for="Item.ToPath" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label for="@Html.IdFor(m => m.Item.Roles)" class="form-label">Comma-separated list of allowed roles, or '*' for any role:</label>
-        <input asp-for="Item.Roles" type="text" class="form-control" />
-        <span asp-validation-for="Item.Roles" class="text-danger"></span>
+        <label for="@Html.IdFor(m => m.Item.StatusCode)" class="form-label">Redirect status code:</label>
+        <input asp-for="Item.StatusCode" type="text" class="form-control" />
+        <span asp-validation-for="Item.StatusCode" class="text-danger"></span>
+<pre>  301 : Permanent redirect (client should never again request original URL)
+  302 : Temporary redirect</span>
+  303 : Temporary redirect and convert POST into GET
+  307 : Temporary redirect but do not convert POST into GET
+  308 : Permanent redirect but do not convert POST into GET
+  204 : No Content (used by Sircl redirects)</pre>
     </div>
 
     <div class="mb-3">

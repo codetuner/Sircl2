@@ -31,5 +31,10 @@ namespace Sircl.Website.Data.Content
         /// </summary>
         [MaxLength(2000)]
         public virtual string Roles { get; set; }
+
+        /// <summary>
+        /// Internal notes.
+        /// </summary>
+        public virtual string Notes { get; set; }
     }
 }

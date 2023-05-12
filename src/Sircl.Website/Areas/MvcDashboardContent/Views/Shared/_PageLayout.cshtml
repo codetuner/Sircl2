@@ -194,6 +194,9 @@
                         <li class="nav-item" ifroute-setactive="\/SecuredPath(\/|$)">
                             <a class="nav-link" asp-area="MvcDashboardContent" asp-controller="SecuredPath" asp-action="Index"><i class="fas fa-lock"></i> Secured Paths</a>
                         </li>
+                        <li class="nav-item" ifroute-setactive="\/PathRedirection(\/|$)">
+                            <a class="nav-link" asp-area="MvcDashboardContent" asp-controller="PathRedirection" asp-action="Index"><i class="fas fa-map-signs"></i> Redirections</a>
+                        </li>
                     }
                 </ul>
                 <form class="d-flex" action="/MvcDashboardContent/Document" method="get">
