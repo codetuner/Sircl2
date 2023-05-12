@@ -455,6 +455,8 @@ sircl.addRequestHandler("afterSend", function sircl_bs3_loadprogess_afterSend_re
 
 // Write hash value in location.href for hash-routed elements:
 $(function () {
+
+    // Write hash value in location.href for hash-routed elements:
     $(document).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
         var hash = this.getAttribute("href");
         var url = window.location.href.replace(/(#.*|$)/i, hash); // Add or update the hash:
@@ -465,6 +467,14 @@ $(function () {
         } else {
             window.history.replaceState(state, document.title, url);
         }
+    });
+
+    // Support links to tabs when the page URL is the same:
+    $(window).on("hashchange", function (event) {
+        $(".hash-routed").find("[href='" + location.hash + "']").each(function () {
+            event.preventDefault();
+            $(this).click();
+        });
     });
 });
 
