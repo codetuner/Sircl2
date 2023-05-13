@@ -1758,6 +1758,31 @@ sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_reque
 
 //#endregion
 
+//#region Load with diffcheck
+
+sircl.addRequestHandler("afterSend", function sircl_diffcheck_afterSend_requestHandler(req) {
+    // If diffcheck:
+    if (req.$finalTarget.is(".diffcheck")) {
+        // If call succeeded:
+        if (req.succeeded && req.$finalTarget.length == 1) {
+            // And if cached data same as response text:
+            var cached = req.$finalTarget[0].sirclDiffCheckCached;
+            if (cached == req.responseText) {
+                // Simulate an abort:
+                req.succeeded = false;
+                req.aborted = true;
+            } else {
+                // Else set or update the cache:
+                req.$finalTarget[0].sirclDiffCheckCached = req.responseText;
+            }
+        }
+    }
+    // Move to next handler:
+    this.next(req);
+});
+
+//#endregion
+
 //#region Reload by server
 
 sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_requestHandler(req) {
