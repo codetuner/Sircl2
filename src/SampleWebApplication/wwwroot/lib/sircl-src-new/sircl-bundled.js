@@ -1562,7 +1562,7 @@ sircl.addPageNavigateHandler("cancel", function sircl_disable_cancelPageNavigate
 sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler(req) {
     // Show spinner if any:
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
-        var $spinners = req.$trigger.find(".spinner");
+        var $spinners = req.$trigger.find("> .spinner");
         if ($spinners.length > 0) {
             req._spinner_to_restore = req.$trigger[0].innerHTML;
             $spinners[0].outerHTML = sircl.html_spinner;
