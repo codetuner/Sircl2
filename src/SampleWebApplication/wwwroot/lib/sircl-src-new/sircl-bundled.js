@@ -505,7 +505,7 @@ sircl.addRequestHandler = function (phase, handler) {
  * @param {any} $trigger The href holding element triggering the request.
  * @param {any} url The URL to be requested.
  * @param {any} $target The initial target of the request.
- * @param [any] targetMethod The method to use to fill the target.
+ * @param [any] targetMethod The method to use to fill the target ('content', 'prepend', 'append', 'replace'). Null for default.
  * @param {any} loadComplete Optional. Called when load is complete.
  */
 sircl._loadUrl = function ($trigger, url, $target, targetMethod, loadComplete) {
@@ -627,6 +627,7 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
     req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
     // Start processing:
@@ -2312,6 +2313,15 @@ $$(function sircl_ext_onload_processHandler() {
         sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
     });
 
+    /// <input onload-setvalue="javascript-expression"> When initializing, evaluates the javascript expression to set the value.
+    $(this).find("[onload-setvalue]").each(function () {
+        var jsexpr = this.getAttribute("onload-setvalue");
+        var value = eval(jsexpr);
+        this.value = value;
+        this.removeAttribute("onload-setvalue");
+        $(this).change();
+    });
+
     /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
     $(this).find("[onload-setvaluefromquery]").each(function () {
         $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
@@ -2555,6 +2565,40 @@ $(function () {
     // <* onclick-alert="selector"> On click shows an alert.
     $(document).on("click", "[onclick-alert]", function (event) {
         sircl.ext.alert(this, $(this).attr("onclick-alert"), event);
+    });
+
+    // <* onclick-copytext="text"> Copies the given text to the clipboard.
+    $(document).on("click", "[onclick-copytext]", function (event) {
+        var text = this.getAttribute("onclick-copytext");
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyinnertext="selector"> Copies the innerText of the matching element to the clipboard.
+    $(document).on("click", "[onclick-copyinnertext]", function (event) {
+        var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnertext")).text();
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyinnerhtml="selector"> Copies the innerHTML of the matching element to the clipboard.
+    $(document).on("click", "[onclick-copyinnerhtml]", function (event) {
+        var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnerhtml")).html();
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyvalue="selector"> Copies the value of the (first) matching (INPUT) element to the clipboard.
+    $(document).on("click", "[onclick-copyvalue]", function (event) {
+        var $elem = sircl.ext.$select($(this), $(this).attr("onclick-copyvalue"));
+        if ($elem.length > 0) {
+            var text = sircl.ext.effectiveValue($elem[0]);
+            navigator.clipboard.writeText(text);
+        }
+    });
+
+    // Hide element if clipboard is not supported:
+    $(this).find("[onclick-copytext], [onclick-copyinnertext], [onclick-copyinnerhtml], [onclick-copyvalue]").each(function () {
+        if (!('clipboard' in navigator)) {
+            sircl.ext.visible(this, false);
+        }
     });
 });
 

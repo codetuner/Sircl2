@@ -81,6 +81,15 @@ $$(function sircl_ext_onload_processHandler() {
         sircl.ext.toggleClass($(this), $(this).attr("onload-toggleclass"));
     });
 
+    /// <input onload-setvalue="javascript-expression"> When initializing, evaluates the javascript expression to set the value.
+    $(this).find("[onload-setvalue]").each(function () {
+        var jsexpr = this.getAttribute("onload-setvalue");
+        var value = eval(jsexpr);
+        this.value = value;
+        this.removeAttribute("onload-setvalue");
+        $(this).change();
+    });
+
     /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
     $(this).find("[onload-setvaluefromquery]").each(function () {
         $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
@@ -324,6 +333,40 @@ $(function () {
     // <* onclick-alert="selector"> On click shows an alert.
     $(document).on("click", "[onclick-alert]", function (event) {
         sircl.ext.alert(this, $(this).attr("onclick-alert"), event);
+    });
+
+    // <* onclick-copytext="text"> Copies the given text to the clipboard.
+    $(document).on("click", "[onclick-copytext]", function (event) {
+        var text = this.getAttribute("onclick-copytext");
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyinnertext="selector"> Copies the innerText of the matching element to the clipboard.
+    $(document).on("click", "[onclick-copyinnertext]", function (event) {
+        var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnertext")).text();
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyinnerhtml="selector"> Copies the innerHTML of the matching element to the clipboard.
+    $(document).on("click", "[onclick-copyinnerhtml]", function (event) {
+        var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnerhtml")).html();
+        navigator.clipboard.writeText(text);
+    });
+
+    // <* onclick-copyvalue="selector"> Copies the value of the (first) matching (INPUT) element to the clipboard.
+    $(document).on("click", "[onclick-copyvalue]", function (event) {
+        var $elem = sircl.ext.$select($(this), $(this).attr("onclick-copyvalue"));
+        if ($elem.length > 0) {
+            var text = sircl.ext.effectiveValue($elem[0]);
+            navigator.clipboard.writeText(text);
+        }
+    });
+
+    // Hide element if clipboard is not supported:
+    $(this).find("[onclick-copytext], [onclick-copyinnertext], [onclick-copyinnerhtml], [onclick-copyvalue]").each(function () {
+        if (!('clipboard' in navigator)) {
+            sircl.ext.visible(this, false);
+        }
     });
 });
 

@@ -1,6 +1,20 @@
 ﻿
 <hr/>
 
+<div>
+    <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br/>
+    <input type="text" onload-setvalue="5+3" /><br/>
+    <br/>
+    <button type="button" onclick-copytext="FooBar!">FooBar!</button>
+    <button type="button" onclick-copyvalue="[name=TimeZone]">Value</button>
+    <button type="button" onclick-copyinnertext="<DIV|>P">Text</button>
+    <button type="button" onclick-copyinnerhtml="<DIV">HTML</button>
+    <p>Hello there !</p>
+    <textarea></textarea>
+</div>
+
+<hr/>
+
 <div onload-load="/Time?Format=HH:mm" onload-reloadafter="5" class="diffcheck"></div>
 
 <hr/>
