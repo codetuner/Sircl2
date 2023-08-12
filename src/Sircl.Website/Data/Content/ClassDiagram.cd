@@ -76,8 +76,15 @@
   <Class Name="Sircl.Website.Data.Content.SecuredPath">
     <Position X="11.25" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAiAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Content\SecuredPath.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sircl.Website.Data.Content.PathRedirection">
+    <Position X="11.25" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAiAAAAAAAAAAAgQAAAAAAAAAAgAAAAIAAABAAAAAA=</HashCode>
+      <FileName>Data\Content\PathRedirection.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
