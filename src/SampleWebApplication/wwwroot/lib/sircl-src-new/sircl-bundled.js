@@ -884,23 +884,6 @@ SirclRequestProcessor.prototype._process = function (req) {
 };
 
 SirclRequestProcessor.prototype._render = function (req) {
-    var $realTarget = req.$finalTarget;
-    var realResponseText = req.responseText;
-    // Apply sub-target if any:
-    var subTarget$ = req.getAttr("sub-target");
-    var $subTarget = req.$finalTarget.find(subTarget$);
-    // If the sub-target is found in the finalTarget:
-    if (subTarget$ != null && $subTarget.length > 0) {
-        // Parse the responseText:
-        var $response = $("<div/>").append(req.responseText);
-        var subResponseText = $response.find(subTarget$).html();
-        // If the responseText also contains the sub-target:
-        if (subResponseText != null) {
-            // Use the sub-target instead, and use the sub-responseText:
-            $realTarget = $subTarget;
-            realResponseText = subResponseText;
-        }
-    }
     // Set document title:
     if (req.documentTitle != null) {
         window.document.title = req.documentTitle;
@@ -908,6 +891,41 @@ SirclRequestProcessor.prototype._render = function (req) {
     // Set document language:
     if (req.documentLanguage != null) {
         $("HTML").attr("lang", req.documentLanguage);
+    }
+    // Retrieve target and responseText:
+    var $realTarget = req.$finalTarget;
+    var realResponseText = req.responseText;
+    // Apply sub-target if any:
+    var subTarget$ = req.xhr.getResponseHeader("X-Sircl-Sub-Target") || req.getAttr("sub-target");
+    var $subTarget = req.$finalTarget.find(subTarget$);
+    // If the sub-target is found in the finalTarget:
+    if (subTarget$ != null && $subTarget.length > 0) {
+        var subTargetSucceeded = true;
+        // Parse the responseText:
+        var $response = $("<div/>").append(req.responseText);
+        var $responseSubTargets = $response.find(subTarget$);
+        // If same count of subTargets and all have matching ids:
+        if ($subTarget.length == $responseSubTargets.length) {
+            for (var s = 0; s < $subTarget.length; s++) {
+                for (var r = 0; r < $responseSubTargets.length; r++) {
+                    if ($subTarget[s].hasAttribute("id") && $subTarget[s].id === $responseSubTargets[r].id) {
+                        // Substitute subtarget (only if different):
+                        var responseSubTargetText = $($responseSubTargets[r]).html();
+                        if ($($subTarget[s]).html() != responseSubTargetText) $($subTarget[s]).html(responseSubTargetText);
+                        break; // This loop can now safely be aborted, outer loop will proceed
+                    }
+                }
+                if (r >= $responseSubTargets.length) {
+                    // No matching substitution was found:
+                    subTargetSucceeded = false;
+                }
+            }
+            // Proceed with next (afterRender) and abort:
+            if (subTargetSucceeded) {
+                this.next(req);
+                return;
+            }
+        }
     }
     // Render, applying correct render mode:
     if (req.targetMethod === "append") {
@@ -1439,11 +1457,13 @@ sircl.addRequestHandler("afterRender", function sircl_history_afterRender_reques
             html: "",
             cached: false
         };
-        if (req._historyMode.indexOf("push") >= 0) {
-            window.history.pushState(finalState, document.title, finalState.url);
-            sircl._afterHistory();
+        if (req._historyMode.indexOf("skip") >= 0) {
+            // Do nothing
         } else if (req._historyMode.indexOf("replace") >= 0) {
             window.history.replaceState(finalState, document.title, finalState.url);
+            sircl._afterHistory();
+        } else { // if "push":
+            window.history.pushState(finalState, document.title, finalState.url);
             sircl._afterHistory();
         }
     }
