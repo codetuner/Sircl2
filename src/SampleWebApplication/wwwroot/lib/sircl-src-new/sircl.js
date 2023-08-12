@@ -505,7 +505,7 @@ sircl.addRequestHandler = function (phase, handler) {
  * @param {any} $trigger The href holding element triggering the request.
  * @param {any} url The URL to be requested.
  * @param {any} $target The initial target of the request.
- * @param [any] targetMethod The method to use to fill the target.
+ * @param [any] targetMethod The method to use to fill the target ('content', 'prepend', 'append', 'replace'). Null for default.
  * @param {any} loadComplete Optional. Called when load is complete.
  */
 sircl._loadUrl = function ($trigger, url, $target, targetMethod, loadComplete) {
@@ -627,6 +627,7 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
     req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
     // Start processing:
