@@ -860,7 +860,7 @@ SirclRequestProcessor.prototype._process = function (req) {
         } else if (req.action == "history:reload" || req.action == "history:refresh") {
             // If X-Sircl-Target=_self header was set, or in MultiPage mode, perform a full page reload:
             if (sircl.singlePageMode == false || req.$finalTarget == null) {
-                window.location.reload();
+                window.location.href = req.action;
             } else {
                 // Else reload only the main target:
                 //sircl.ext.$mainTarget().load(window.location.href);
