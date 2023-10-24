@@ -815,8 +815,8 @@ SirclRequestProcessor.prototype._send = function (req) {
                 req.action = "history:back";
             } else if (history == "back-uncached") {
                 req.action = "history:back-uncached";
-            } else if (history == "refresh") {
-                req.action = "history:refresh";
+            } else if (history == "reload" || history == "refresh") {
+                req.action = "history:reload";
             }
             // Then for history-replace header:
             req.historyReplace = req.xhr.getResponseHeader("X-Sircl-History-Replace");
@@ -857,12 +857,12 @@ SirclRequestProcessor.prototype._process = function (req) {
         } else if (req.action == "history:back-uncached") {
             sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
             window.history.back();
-        } else if (req.action == "history:refresh") {
-            // If X-Sircl-Target=_self header was set, or in MultiPage mode, perform a full page refresh:
+        } else if (req.action == "history:reload" || req.action == "history:refresh") {
+            // If X-Sircl-Target=_self header was set, or in MultiPage mode, perform a full page reload:
             if (sircl.singlePageMode == false || req.$finalTarget == null) {
                 window.location.href = req.action;
             } else {
-                // Else refresh main target:
+                // Else reload only the main target:
                 //sircl.ext.$mainTarget().load(window.location.href);
                 sircl._processRequest({
                     $trigger: null,
@@ -1045,7 +1045,7 @@ $(document).ready(function () {
         } else if (href === "history:back-uncached") {
             sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
             window.history.back();
-        } else if (href === "history:refresh") {
+        } else if (href === "history:reload" || href === "history:refresh") {
             // Perform page navigation preparation:
             sircl._onPageNavigate(event, $(this));
             // Reload page:
@@ -2144,11 +2144,11 @@ $$(function sircl_onload_processHandler() {
         url = sircl.ext.subtituteFields(url, $(this), true);
         // Actually load the URL (and replace '{rnd}'):
         $(this).load(url.replace("{rnd}", Math.random()));
-        // Hande onload-refreshafter and noreload:
-        var loadRefresh = $(this).attr("onload-reloadafter");
-        if (loadRefresh) {
+        // Hande onload-reloadafter and noreload:
+        var reloadAfter = $(this).attr("onload-reloadafter");
+        if (reloadAfter) {
             // Parse delay ("seconds" or "[hh:]mm:ss"):
-            var delaypart = loadRefresh.split(":");
+            var delaypart = reloadAfter.split(":");
             var delay = 0;
             for (var i = 0; i < delaypart.length; i++) delay = parseFloat(delaypart[i]) + (60 * delay);
             // Set timer:

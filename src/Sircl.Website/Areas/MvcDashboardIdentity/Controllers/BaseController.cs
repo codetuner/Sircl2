@@ -58,7 +58,7 @@ namespace Sircl.Website.Areas.MvcDashboardIdentity.Controllers
 
         protected IActionResult DialogOk()
         {
-            Response.Headers["X-Sircl-History"] = "refresh";
+            Response.Headers["X-Sircl-History"] = "reload-main";
             return this.StatusCode(204);
         }
     }

@@ -385,7 +385,7 @@ $(function () {
         } else if (href === "history:back-uncached") {
             sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
             window.history.back();
-        } else if (href === "history:refresh") {
+        } else if (href === "history:reload" || href === "history:refresh") {
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
             sircl.ext.alert(this, href.substr(6), event);
