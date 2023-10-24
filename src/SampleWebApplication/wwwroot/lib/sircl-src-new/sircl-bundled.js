@@ -399,11 +399,11 @@ sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
  */
 sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
     // Find trigger:
-    var $trigger = (event.originalEvent) ? (event.originalEvent.submitter) ? event.originalEvent.submitter : null : null;
+    var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : null : null : null;
     $trigger = ($trigger) ? $trigger : (form._formTrigger) ? $(form._formTrigger) : $(form);
     // If trigger has onsubmit-confirm, ask confirmation:
     if ($trigger.hasAttr("onsubmit-confirm") || $(form).hasAttr("onsubmit-confirm")) {
-        if (!sircl.ext.confirm(form, $trigger.attr("onsubmit-confirm") | $(form).attr("onsubmit-confirm"), event)) {
+        if (!sircl.ext.confirm(form, $trigger.attr("onsubmit-confirm") || $(form).attr("onsubmit-confirm"), event)) {
             event.preventDefault();
             event.stopPropagation();
             return;
@@ -2032,6 +2032,23 @@ $$(function sircl_dialogs_processHandler() {
 
 //#region Core event-actions
 
+// Click event-actions:
+///////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+    /// Buttons and link can have a confirmation dialog:
+    /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
+    $(document.body).on("click", "*[onclick-confirm]", function (event) {
+        var confirmMessage = $(this).attr("onclick-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+});
+
 // Change and Input event-actions:
 //////////////////////////////////
 
@@ -3564,17 +3581,6 @@ $$(function sircl_ext_ifinview_processHandler() {
 //#region Confirmation dialogs
 
 document.addEventListener("DOMContentLoaded", function () {
-    /// Buttons and link can have a confirmation dialog:
-    /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
-    $(document.body).on("click", "*[onclick-confirm]", function (event) {
-        var confirmMessage = $(this).attr("onclick-confirm");
-        if (confirmMessage) {
-            if (!sircl.ext.confirm(this, confirmMessage, event)) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        }
-    });
 
     /// Checkboxes can have a change confirm dialog:
     /// <input type="checkbox" onchange-confirm="Are you sure ?" />

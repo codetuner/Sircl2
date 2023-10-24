@@ -1289,17 +1289,6 @@ $$(function sircl_ext_ifinview_processHandler() {
 //#region Confirmation dialogs
 
 document.addEventListener("DOMContentLoaded", function () {
-    /// Buttons and link can have a confirmation dialog:
-    /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
-    $(document.body).on("click", "*[onclick-confirm]", function (event) {
-        var confirmMessage = $(this).attr("onclick-confirm");
-        if (confirmMessage) {
-            if (!sircl.ext.confirm(this, confirmMessage, event)) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        }
-    });
 
     /// Checkboxes can have a change confirm dialog:
     /// <input type="checkbox" onchange-confirm="Are you sure ?" />

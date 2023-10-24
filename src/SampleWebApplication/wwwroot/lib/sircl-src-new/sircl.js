@@ -401,6 +401,14 @@ sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
     // Find trigger:
     var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : null : null : null;
     $trigger = ($trigger) ? $trigger : (form._formTrigger) ? $(form._formTrigger) : $(form);
+    // If trigger has onsubmit-confirm, ask confirmation:
+    if ($trigger.hasAttr("onsubmit-confirm") || $(form).hasAttr("onsubmit-confirm")) {
+        if (!sircl.ext.confirm(form, $trigger.attr("onsubmit-confirm") || $(form).attr("onsubmit-confirm"), event)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+    }
     // Handle submit:
     if ($(form).is("FORM:not([download]):not([method=dialog])")) {
         // Find target of submit request:
@@ -2023,6 +2031,23 @@ $$(function sircl_dialogs_processHandler() {
 //#endregion
 
 //#region Core event-actions
+
+// Click event-actions:
+///////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+    /// Buttons and link can have a confirmation dialog:
+    /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
+    $(document.body).on("click", "*[onclick-confirm]", function (event) {
+        var confirmMessage = $(this).attr("onclick-confirm");
+        if (confirmMessage) {
+            if (!sircl.ext.confirm(this, confirmMessage, event)) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        }
+    });
+});
 
 // Change and Input event-actions:
 //////////////////////////////////
