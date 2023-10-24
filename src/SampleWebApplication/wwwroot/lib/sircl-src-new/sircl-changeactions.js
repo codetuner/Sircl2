@@ -200,7 +200,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     req.xhr.send(data);
 };
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // On change of an ungrouped radio:
     $(document).on("change", "INPUT[type=radio][onchange-action]", function (event) {
         var $this = $(this);

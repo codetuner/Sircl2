@@ -860,7 +860,7 @@ SirclRequestProcessor.prototype._process = function (req) {
         } else if (req.action == "history:reload" || req.action == "history:refresh") {
             // If X-Sircl-Target=_self header was set, or in MultiPage mode, perform a full page reload:
             if (sircl.singlePageMode == false || req.$finalTarget == null) {
-                window.location.href = req.action;
+                window.location.reload();
             } else {
                 // Else reload only the main target:
                 //sircl.ext.$mainTarget().load(window.location.href);
@@ -1470,7 +1470,7 @@ sircl.addRequestHandler("afterRender", function sircl_history_afterRender_reques
     this.next(req);
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // On browser back or forward:
     window.onpopstate = function (event) {
         var state = event.state;
@@ -1831,7 +1831,7 @@ sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_re
 
 sircl.addAttributeAlias(".onclick-closedialog", "onclick-closedialog", "<DIALOG");
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// Opens the given dialog when clicked:
     /// <* onclick-showdialog="selector" >
@@ -2015,7 +2015,7 @@ $$(function sircl_dialogs_processHandler() {
 sircl.addAttributeAlias(".oninput-change", "oninput-changeafter", "0.8");
 sircl.addAttributeAlias(".onchange-submit", "onchange-submit", ":form");
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// <* onchange-submit="form-selector"> Triggers form submission on change.
     $(document).on("change", "[onchange-submit]", function (event) {
@@ -2112,7 +2112,7 @@ sircl.addPageNavigateHandler("cancel", function sircl_submit_cancelPageNavigate_
 /// Propagate event-actions:
 ////////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// <* on<click|dblclick|change|input>-propagate="on|off"> If off, blocks propagation of the event.
     $(document.body).on("click", "*[onclick-propagate=off]", function (event) { event.stopPropagation(); });
     $(document.body).on("dblclick", "*[ondblclick-propagate=off]", function (event) { event.stopPropagation(); });
@@ -2201,7 +2201,7 @@ sircl.addRequestHandler("afterRender", function (req) {
 });
 
 // On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change", "FORM[onchange-set]", function (event) {
         if ($(event.target).closest(".sircl-content-processing").length == 0) {
             $(this).addClass("form-changed");
@@ -2391,7 +2391,7 @@ $$(function sircl_ext_onload_processHandler() {
 // Change event-actions:
 ////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onchange-check="selector"> On change, checks the matching checkbox.
     $(document).on("change", "[onchange-check]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onchange-check")).each(function () {
@@ -2434,7 +2434,7 @@ $(function () {
 // Key event-actions take as value the pressed key in the format "[Alt+][Ctrl+][Shift+]Key".
 // I.e: "a", "+", "Ctrl+ArrowLeft", "Enter", "Escape" or "F1"
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onkeydown-click="<key>"> On key down of the given key on the page (not a form element), clicks the decorated element.
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
@@ -2461,7 +2461,7 @@ $(function () {
 // Click event-actions:
 ///////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.
     $(document).on("click", "*[onclick-click]", function (event) {
@@ -2625,7 +2625,7 @@ $(function () {
 // Dblclick event-actions:
 //////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // <* ondblclick-load="url"> On doubleclick, calls the given URL.
     $(document).on("dblclick", "*[ondblclick-load]", function (event) {
@@ -2733,7 +2733,7 @@ $(function () {
 /// Hover event-actions:
 ////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// <* onhover-hide="selector"> On hover, hides elements matching the given selector.
     $(document).on("mouseenter", "*[onhover-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), false);
@@ -2778,7 +2778,7 @@ $(function () {
 /// Checked event-actions:
 //////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
     $(document).on("change", "*[onchecked-click]:checked", function (event) {
         var targetSelector = this.getAttribute("onchecked-click");
@@ -3403,7 +3403,7 @@ $$(function sircl_ext_ifvalid_processHandler() {
     });
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change input invalid", "[ifvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
     });
@@ -3458,7 +3458,7 @@ sircl.isElementInView = function (el) {
     );
 };
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     $(window).on("DOMContentLoaded load resize scroll", function () {
 
@@ -3535,7 +3535,7 @@ $$(function sircl_ext_ifinview_processHandler() {
 
 //#region Confirmation dialogs
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// Buttons and link can have a confirmation dialog:
     /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
     $(document.body).on("click", "*[onclick-confirm]", function (event) {
@@ -3588,7 +3588,7 @@ $$(function sircl_ext_onchangeConfirm_processHandler() {
 
 //#region Drag & Drop
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// Limit file count on file input
     $(document.body).on("change", "INPUT[type='file'][multiple][maxcount], INPUT[type='file']:not([multiple])", function (event) {
@@ -3758,7 +3758,7 @@ $(function () {
 });
 
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     $(document).on("dragstart", "[draggable]", function (event) {
         if ($(this).hasAttr("drop-type")) {
@@ -3854,7 +3854,7 @@ $$(function sircl_ext_onclickShare_processHandler() {
     }
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-share]", function () {
         if (navigator.share) {
             var $target = sircl.ext.$select($(this), $(this).attr("onclick-share"));
@@ -4076,7 +4076,7 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
     req.xhr.send(data);
 };
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // On change of an ungrouped radio:
     $(document).on("change", "INPUT[type=radio][onchange-action]", function (event) {
         var $this = $(this);

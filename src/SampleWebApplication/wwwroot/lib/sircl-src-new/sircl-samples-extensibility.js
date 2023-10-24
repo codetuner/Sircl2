@@ -39,7 +39,7 @@ sircl.ext.confirm = function (subject, message, event) {
     }
 };
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // When OK button clicked, prepare to execute confirmAction and close modal:
     $(document).on("click", "#confirm-modal button[name=okButton]", function (event) {

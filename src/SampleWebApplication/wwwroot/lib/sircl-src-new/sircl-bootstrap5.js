@@ -165,7 +165,7 @@ sircl.addRequestHandler("afterRender", function sircl_bs5_modal_afterRender_requ
     }
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Perform onOpen action once:
     $(document).on("shown.bs.modal", ".modal", function (event) {
         if (this._onOpenOnce) {
@@ -239,7 +239,7 @@ $$(function sircl_bs5_modal_processHandler () {
 
 //#region Handling Bootstrap Tab & Pill navs
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Dynamically load content on showing tab:
     $(document).on("show.bs.tab", "[data-bs-toggle='tab'], [data-bs-toggle='pill']", function (event) {
         // Find target tab:
@@ -298,7 +298,7 @@ $$(function sircl_bs5_toasts_processHandler () {
 
 //#region Handling Bootstrap Collapse
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // On check checkbox, expand, else collapse:
     $(document.body).on("change", "INPUT[type=checkbox][ifchecked-expand]", function (event) {
         var $this = $(this);
@@ -489,7 +489,7 @@ sircl.addRequestHandler("afterSend", function sircl_bs5_loadprogess_afterSend_re
 //#region Hash routed tabs and pills
 
 // Write hash value in location.href for hash-routed elements:
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // Write hash value in location.href for hash-routed elements:
     $(document).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
@@ -518,7 +518,7 @@ sircl.addAfterHistoryHandler(function sircl_bs5_hashRoute_afterHistoryHandler ()
     if (location.hash != null && location.hash.length > 0) {
         var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
         if ($target.length > 0) {
-            $(function () {
+            document.addEventListener("DOMContentLoaded", function () {
                 $("A[href=\\" + $target.attr("href") + "]").tab("show");
             });
         }
@@ -656,7 +656,7 @@ sircl.addRequestHandler("afterRender", function (req) {
     }
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Perform onOpen action once:
     $(document).on("shown.bs.offcanvas", ".offcanvas", function (event) {
         if (this._onOpenOnce) {

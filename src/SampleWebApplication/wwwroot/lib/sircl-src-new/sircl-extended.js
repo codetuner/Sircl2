@@ -139,7 +139,7 @@ $$(function sircl_ext_onload_processHandler() {
 // Change event-actions:
 ////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onchange-check="selector"> On change, checks the matching checkbox.
     $(document).on("change", "[onchange-check]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onchange-check")).each(function () {
@@ -182,7 +182,7 @@ $(function () {
 // Key event-actions take as value the pressed key in the format "[Alt+][Ctrl+][Shift+]Key".
 // I.e: "a", "+", "Ctrl+ArrowLeft", "Enter", "Escape" or "F1"
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onkeydown-click="<key>"> On key down of the given key on the page (not a form element), clicks the decorated element.
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
@@ -209,7 +209,7 @@ $(function () {
 // Click event-actions:
 ///////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-click="selector"> On click, triggers a click event on the elements matching the given selector.
     $(document).on("click", "*[onclick-click]", function (event) {
@@ -373,7 +373,7 @@ $(function () {
 // Dblclick event-actions:
 //////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // <* ondblclick-load="url"> On doubleclick, calls the given URL.
     $(document).on("dblclick", "*[ondblclick-load]", function (event) {
@@ -481,7 +481,7 @@ $(function () {
 /// Hover event-actions:
 ////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// <* onhover-hide="selector"> On hover, hides elements matching the given selector.
     $(document).on("mouseenter", "*[onhover-hide]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), false);
@@ -526,7 +526,7 @@ $(function () {
 /// Checked event-actions:
 //////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // <* onchecked-click="selector"> When checked (only by event, not initially), triggers a click event on the elements matching the given selector.
     $(document).on("change", "*[onchecked-click]:checked", function (event) {
         var targetSelector = this.getAttribute("onchecked-click");
@@ -1151,7 +1151,7 @@ $$(function sircl_ext_ifvalid_processHandler() {
     });
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change input invalid", "[ifvalid-show]", function (event) {
         sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
     });
@@ -1206,7 +1206,7 @@ sircl.isElementInView = function (el) {
     );
 };
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     $(window).on("DOMContentLoaded load resize scroll", function () {
 
@@ -1283,7 +1283,7 @@ $$(function sircl_ext_ifinview_processHandler() {
 
 //#region Confirmation dialogs
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// Buttons and link can have a confirmation dialog:
     /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
     $(document.body).on("click", "*[onclick-confirm]", function (event) {
@@ -1336,7 +1336,7 @@ $$(function sircl_ext_onchangeConfirm_processHandler() {
 
 //#region Drag & Drop
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// Limit file count on file input
     $(document.body).on("change", "INPUT[type='file'][multiple][maxcount], INPUT[type='file']:not([multiple])", function (event) {
@@ -1506,7 +1506,7 @@ $(function () {
 });
 
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     $(document).on("dragstart", "[draggable]", function (event) {
         if ($(this).hasAttr("drop-type")) {
@@ -1602,7 +1602,7 @@ $$(function sircl_ext_onclickShare_processHandler() {
     }
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-share]", function () {
         if (navigator.share) {
             var $target = sircl.ext.$select($(this), $(this).attr("onclick-share"));

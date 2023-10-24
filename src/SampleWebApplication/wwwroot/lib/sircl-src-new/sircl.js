@@ -1470,7 +1470,7 @@ sircl.addRequestHandler("afterRender", function sircl_history_afterRender_reques
     this.next(req);
 });
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // On browser back or forward:
     window.onpopstate = function (event) {
         var state = event.state;
@@ -1831,7 +1831,7 @@ sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_re
 
 sircl.addAttributeAlias(".onclick-closedialog", "onclick-closedialog", "<DIALOG");
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// Opens the given dialog when clicked:
     /// <* onclick-showdialog="selector" >
@@ -2015,7 +2015,7 @@ $$(function sircl_dialogs_processHandler() {
 sircl.addAttributeAlias(".oninput-change", "oninput-changeafter", "0.8");
 sircl.addAttributeAlias(".onchange-submit", "onchange-submit", ":form");
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     /// <* onchange-submit="form-selector"> Triggers form submission on change.
     $(document).on("change", "[onchange-submit]", function (event) {
@@ -2112,7 +2112,7 @@ sircl.addPageNavigateHandler("cancel", function sircl_submit_cancelPageNavigate_
 /// Propagate event-actions:
 ////////////////////////////
 
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     /// <* on<click|dblclick|change|input>-propagate="on|off"> If off, blocks propagation of the event.
     $(document.body).on("click", "*[onclick-propagate=off]", function (event) { event.stopPropagation(); });
     $(document.body).on("dblclick", "*[ondblclick-propagate=off]", function (event) { event.stopPropagation(); });
@@ -2201,7 +2201,7 @@ sircl.addRequestHandler("afterRender", function (req) {
 });
 
 // On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change", "FORM[onchange-set]", function (event) {
         if ($(event.target).closest(".sircl-content-processing").length == 0) {
             $(this).addClass("form-changed");
