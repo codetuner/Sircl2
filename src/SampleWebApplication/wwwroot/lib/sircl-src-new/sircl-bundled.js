@@ -364,7 +364,7 @@ sircl.ext.toggleClass = function sircl_ext_toggleClass($scope, classExpression) 
  * Shows an alert message.
  * @param {any} subject Sender of the alert request.
  * @param {any} message Message to show.
- * @param {any} event Event that triggered the confirm request.
+ * @param {any} event Event that triggered the alert request.
  */
 sircl.ext.alert = function sircl_ext_alert(subject, message, event) {
     window.alert(message);
@@ -1041,7 +1041,19 @@ $(document).ready(function () {
         if (href === "null" || href === "") {
             // Ignore
         } else if (href === "history:back") {
-            window.history.back();
+            if (history.length <= 1) {
+                if ($(this).hasAttr("onback-allowclose")) {
+                    if (sircl.ext.confirm(this, $(this).attr("onback-allowclose"), event)) {
+                        window.close();
+                    }
+                } else if ($(this).hasClass("onback-allowclose")) {
+                    window.close();
+                } else {
+                    console.warn("Link to \"history:back\" on first page without \"onback-allowclose\" attribute or class does nothing.");
+                }
+            } else {
+                window.history.back();
+            }
         } else if (href === "history:back-uncached") {
             sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
             window.history.back();
