@@ -398,9 +398,12 @@ sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
  * @param {any} event Event initiating the submit request.
  */
 sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
+    // Find trigger:
+    var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : null : null : null;
+    $trigger = ($trigger) ? $trigger : (form._formTrigger) ? $(form._formTrigger) : $(form);
+    // Handle submit:
     if ($(form).is("FORM:not([download]):not([method=dialog])")) {
         // Find target of submit request:
-        var $trigger = (form._formTrigger) ? $(form._formTrigger) : $(form);
         var target = null;
         var targetMethod = null;
         var $targetScope = $(form);
