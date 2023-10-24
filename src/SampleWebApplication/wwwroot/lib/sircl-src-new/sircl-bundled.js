@@ -2360,6 +2360,11 @@ $$(function sircl_ext_onload_processHandler() {
         $(this).change();
     });
 
+    // <* onclick-scrollintoview="selector"> On click scrolls the (first) match of the selector into the view.
+    $(this).find(".onload-scrollintoview").each(function () {
+        this.scrollIntoView();
+    });
+
     /// <SELECT onload-defaultselect="value"> When initializing, will automatically select the corresponding item if the select had an empty value.
     /// The value of the onload-defaultselect attribute is either:
     /// - ":singleton" to select the only element with a non-empty value, if there is only one;
