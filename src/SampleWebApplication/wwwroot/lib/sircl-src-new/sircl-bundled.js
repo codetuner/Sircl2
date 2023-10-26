@@ -2225,6 +2225,15 @@ $$(function sircl_onload_processHandler() {
             $(this).load(url.replace("{rnd}", Math.random()));
         });
     });
+
+    /// <FORM class="onload-submit"> Submits the form as soon as it gets loaded.
+    /// I.e. to create initial output or to POST data.
+    $$(function () {
+        /// As soon as the form is loaded, it also gets submitted:
+        $(this).find("FORM.onload-submit").each(function () {
+            $(this).submit();
+        });
+    });
 });
 
 //#endregion
