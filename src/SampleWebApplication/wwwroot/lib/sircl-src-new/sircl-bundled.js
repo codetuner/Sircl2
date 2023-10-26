@@ -620,6 +620,7 @@ sircl._processRequest = function (req, loadComplete) {
 
     // Configure HTTP request object:
     req.xhr = new XMLHttpRequest();
+    req.allResponseHeaders = [];
     req.xhr.open(req.method, req.action);
     if (typeof req.formData === "object") {
         // Leave Content-Type to be set by FormData.
@@ -740,6 +741,10 @@ SirclRequestProcessor.prototype._send = function (req) {
         req.status = req.xhr.status;
         req.statusText = req.xhr.statusText;
         req.responseText = req.xhr.responseText;
+        // Keep track of all response headers (concatenated over multiple requests if "Location" header causes multiple requests):
+        req.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach(function (line) {
+            req.allResponseHeaders.push(line.split(": "));
+        });
         // Check for reload sections:
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Load");
         // Execute additional reload requests:
@@ -822,10 +827,25 @@ SirclRequestProcessor.prototype._send = function (req) {
             }
             // Then for history header:
             var history = req.xhr.getResponseHeader("X-Sircl-History");
-            if (history == "back") {
-                req.action = "history:back";
-            } else if (history == "back-uncached") {
-                req.action = "history:back-uncached";
+            if (history == "back" || history == "back-uncached") {
+                if (window.history.length <= 1) {
+                    var allowClose = req.xhr.getResponseHeader("X-Sircl-History-AllowClose");
+                    if (allowClose && allowClose.toLowerCase() == "true") {
+                        window.close();
+                        return;
+                    } else if (allowClose) {
+                        if (sircl.ext.confirm(null, allowClose, null)) {
+                            window.close();
+                            return;
+                        }
+                    } else {
+                        console.warn("\"X-Sircl-History: back\" header with no previous page and without \"X-Sircl-History-AllowClose\" header has no effect.");
+                    }
+                } else if (history == "back") {
+                    req.action = "history:back";
+                } else if (history == "back-uncached") {
+                    req.action = "history:back-uncached";
+                }
             } else if (history == "reload" || history == "refresh") {
                 req.action = "history:reload";
             }
@@ -1051,8 +1071,8 @@ $(document).ready(function () {
         // Process href:
         if (href === "null" || href === "") {
             // Ignore
-        } else if (href === "history:back") {
-            if (history.length <= 1) {
+        } else if (href === "history:back" || href === "history:back-uncached") {
+            if (window.history.length <= 1) {
                 if ($(this).hasAttr("onback-allowclose")) {
                     if (sircl.ext.confirm(this, $(this).attr("onback-allowclose"), event)) {
                         window.close();
@@ -1062,12 +1082,12 @@ $(document).ready(function () {
                 } else {
                     console.warn("Link to \"history:back\" on first page without \"onback-allowclose\" attribute or class does nothing.");
                 }
-            } else {
+            } else if (href === "history:back") {
+                window.history.back();
+            } else if (href === "history:back-uncached") {
+                sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
                 window.history.back();
             }
-        } else if (href === "history:back-uncached") {
-            sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
-            window.history.back();
         } else if (href === "history:reload" || href === "history:refresh") {
             // Perform page navigation preparation:
             sircl._onPageNavigate(event, $(this));
@@ -1806,7 +1826,7 @@ sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_reque
 
 sircl.addRequestHandler("afterSend", function sircl_diffcheck_afterSend_requestHandler(req) {
     // If diffcheck:
-    if (req.$finalTarget.is(".diffcheck")) {
+    if (req.$finalTarget && req.$finalTarget.is(".diffcheck")) {
         // If call succeeded:
         if (req.succeeded && req.$finalTarget.length == 1) {
             // And if cached data same as response text:

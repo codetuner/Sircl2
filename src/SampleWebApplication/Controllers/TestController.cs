@@ -28,5 +28,14 @@ namespace SampleWebApplication.Controllers
             ViewBag.Files = files;
             return View();
         }
+
+        [HttpGet, HttpPost]
+        public IActionResult BackOrClose()
+        {
+            Response.Headers["X-Sircl-History-AllowClose"] = "True";
+            Response.Headers["X-Sircl-History"] = "back-uncached";
+            return NoContent();
+        }
+
     }
 }

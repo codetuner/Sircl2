@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Toastr extension
 // www.getsircl.com
-// Copyright (c) 2019-2021 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
@@ -15,14 +15,17 @@ if ($.isFunction($.fn.fadeIn)) {
 
     // X-Sircl-Toastr response header support:
     sircl.addRequestHandler("afterSend", function sircl_toastr_afterSend_requestHandler (req) {
-        if (req.xhr != null) {
-            var toastrHeader = req.xhr.getResponseHeader("X-Sircl-Toastr");
-            if (toastrHeader != null && toastrHeader.indexOf("|") > 1) {
-                var toastrHeaderParts = toastrHeader.split("|");
-                var toastrType = toastrHeaderParts[0];
-                toastrHeaderParts.splice(0, 1);
-                toastr[toastrType].apply(null, toastrHeaderParts);
-            }
+        if (req.allResponseHeaders != null) {
+            req.allResponseHeaders.forEach(function sircl_toastr_afterSend_requestHandler_each(rh) {
+                if (rh[0] == "x-sircl-toastr") {
+                    if (rh.length > 1 && rh[1].indexOf("|") > 1) {
+                        var toastrHeaderParts = rh[1].split("|");
+                        var toastrType = toastrHeaderParts[0];
+                        toastrHeaderParts.splice(0, 1);
+                        toastr[toastrType].apply(null, toastrHeaderParts);
+                    }
+                }
+            });
         }
         // Move to next handler:
         this.next(req);
