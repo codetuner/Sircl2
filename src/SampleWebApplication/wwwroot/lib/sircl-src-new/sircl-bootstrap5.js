@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Bootstrap5 extension
 // www.getsircl.com
-// Copyright (c) 2019-2022 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
@@ -25,12 +25,20 @@ sircl.html_spinner = '<span class="sircl-spinner spinner-border spinner-border-s
 $$("before", function sircl_bs5_init_beforeHandler () {
     // Hide all popovers in scope:
     $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").each(function () { 
-        bootstrap.Popover.getInstance(this).dispose();
+        try {
+            bootstrap.Popover.getInstance(this).dispose();
+        } catch (ex) {
+            console.warn("Error trying to dispose Bootstrap 5 popover in scope.", ex, "sircl_bs5_init_beforeHandler", this);
+        }
     });
 
     // Hide all tooltips in scope:
     $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").each(function () {
-        bootstrap.Tooltip.getInstance(this).dispose();
+        try {
+            bootstrap.Tooltip.getInstance(this).dispose();
+        } catch (ex) {
+            console.warn("Error trying to dispose Bootstrap 5 tooltip in scope.", ex, "sircl_bs5_init_beforeHandler", this);
+        }
     });
 });
 

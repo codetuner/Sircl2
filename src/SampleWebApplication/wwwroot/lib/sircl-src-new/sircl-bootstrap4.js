@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Bootstrap4 extension
 // www.getsircl.com
-// Copyright (c) 2019-2022 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
@@ -23,11 +23,15 @@ sircl.html_spinner = '<span class="sircl-spinner spinner-border spinner-border-s
 //#region Hide or dispose elements before unloading their container
 
 $$("before", function sircl_bs4_init_beforeHandler () {
-    // Hide all popovers in scope:
-    $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("dispose");
+    try {
+        // Hide all popovers in scope:
+        $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("dispose");
 
-    // Hide all tooltips in scope:
-    $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("dispose");
+        // Hide all tooltips in scope:
+        $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("dispose");
+    } catch (ex) {
+        console.warn("Error trying to dispose Bootstrap 4 popovers and tooltips in scope.", ex, "sircl_bs4_init_beforeHandler");
+    }
 });
 
 //#endregion

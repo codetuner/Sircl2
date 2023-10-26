@@ -20,11 +20,15 @@ if (typeof $().modal === "undefined") console.warn("The 'sircl-bootstrap3' compo
 //#region Hide or dispose elements before unloading their container
 
 $$("before", function sircl_bs3_init_beforeHandler() {
-    // Hide all popovers in scope:
-    $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("destroy");
+    try {
+        // Hide all popovers in scope:
+        $(this).find("[data-bs-toggle='popover'], [data-toggle='popover']").popover("destroy");
 
-    // Hide all tooltips in scope:
-    $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("destroy");
+        // Hide all tooltips in scope:
+        $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").tooltip("destroy");
+    } catch (ex) {
+        console.warn("Error trying to dispose Bootstrap 3 popovers and tooltips in scope.", ex, "sircl_bs3_init_beforeHandler");
+    }
 });
 
 //#endregion
