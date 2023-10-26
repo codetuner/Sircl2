@@ -1187,14 +1187,20 @@ document.addEventListener("DOMContentLoaded", function () {
 ////////////////////////
 
 /// <INPUT class="onfocus-select"> Select all text when element gets focus:
-$(document).on("focus", "INPUT.onfocus-select:not([type=checkbox]):not([type=radio]):not([type=button])", function (event) {
-    $(this)[0].select();
+/// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
+$(document).on("focus", ".onfocus-select", function (event) {
+    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect)")) {
+        event.target.select();
+    }
 });
 
 /// <INPUT class="onfocusout-trim"> Trims the text on focus out:
+/// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
 /// (Though named an onfocusout event-action, technically implemented using a change event on document body, so it is done before all other change events.)
-$(document.body).on("change", "INPUT.onfocusout-trim:not([type=checkbox]):not([type=radio]):not([type=button])", function (event) {
-    $(this)[0].value = ($(this)[0].value + "").trim()
+$(document.body).on("change", ".onfocusout-trim", function (event) {
+    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocusout-notrim)")) {
+        event.target.value = (event.target.value + "").trim()
+    }
 });
 
 /// Scroll/Viewport event-actions:

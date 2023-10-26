@@ -1,8 +1,15 @@
 ﻿<hr />
 
-<form action="/Test/BackOrClose">
-    <button type="submit">Back or close</button><br />
+<div>
+    <form action="/Time?delay=2000" class="onfocus-select onfocusout-trim " target="<DIV|>.output">
+    <label><input type="checkbox" value="abc" /> abc</label><br/>
+    <input type="text" value="  abc    " class="form-control onfocusout-notrim" /><br />
+    <input type="text" value="  abc    " class="form-control onfocus-noselect" /><br />
+    <button type="submit" class="btn btn-primary onsubmit-disable">Back or close</button>
+    <button type="submit" class="btn btn-primary onsubmit-disable">Save and stay</button><br />
 </form>
+<p class="output"></p>
+</div>
 
 <hr />
 
