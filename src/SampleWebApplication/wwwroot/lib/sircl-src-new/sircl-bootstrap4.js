@@ -491,6 +491,14 @@ document.addEventListener("DOMContentLoaded", function () {
             $(this).click();
         });
     });
+
+    // Set initial tab active on full page load:
+    if (location.hash != null && location.hash.length > 0) {
+        var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
+        if ($target.length > 0) {
+            $("A[href=\\" + $target.attr("href") + "]").tab("show");
+        }
+    }
 });
 
 // If location contains hash, activate matching tab:
