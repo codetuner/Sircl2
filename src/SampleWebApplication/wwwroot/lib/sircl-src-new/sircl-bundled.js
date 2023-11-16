@@ -107,6 +107,8 @@ sircl.mainTargetSelector$ = ".main-target";
 
 sircl.lastPageNavigationObject = null;
 
+sircl.showHideDuration = 200;
+
 //#endregion
 
 //#region Sircl extensions library
@@ -123,14 +125,44 @@ sircl.ext.firstOrNull = function sircl_ext_firstOrNull(array) { if (array) { if 
  * Get current visible state or set visible state of given element or selector.
  * @param {any} elementOrSelector Element or selector.
  * @param {any} visible True to make it visible, false to make it hidden. Absent to get current visible state.
+ * @param {any} allowAnimation True to allow animation. False or absent for no animation (i.e. in initial rendering).
+ *    Animation will only happen if allowed and element has "animate" class.
+ * @param {any} callback If set, function called after setting hiding/showing.
  */
-sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible) {
+sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allowAnimation, callback) {
     if (visible === undefined) {
-        return !$(elementOrSelector).hasAttr("hidden");
-    } else if (visible) {
-        $(elementOrSelector).removeAttr("hidden");
+        return !$(elementOrSelector).hasAttr("hidden") && !$(elementOrSelector).hasAttr("hiding");
     } else {
-        $(elementOrSelector).attr("hidden", "hidden");
+        $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])").each(function () {
+            var animate = allowAnimation && $(this).hasClass("animate");
+            if (visible) {
+                if (animate) {
+                    $(this).stop(false, true);
+                    $(this).hide();
+                    $(this).removeAttr("hidden");
+                    $(this).show(sircl.showHideDuration, callback);
+                } else {
+                    $(this).removeAttr("hidden");
+                    $(this).show();
+                    if (callback) callback();
+                }
+            } else {
+                if (animate) {
+                    $(this).attr("hiding", "hiding");
+                    $(this).stop(false, true);
+                    $(this).show();
+                    $(this).hide(sircl.showHideDuration, function () {
+                        $(this).attr("hidden", "hidden");
+                        $(this).removeAttr("hiding");
+                        if (callback) callback();
+                    });
+                } else {
+                    $(this).attr("hidden", "hidden");
+                    $(this).hide();
+                    if (callback) callback();
+                }
+            }
+        });
     }
 };
 
@@ -1002,10 +1034,9 @@ SirclRequestProcessor.prototype._render = function (req) {
         // Else, replace inner html of target:
         $realTarget.html(realResponseText);
     }
-    // Make sure target is visible:
-    req.$finalTarget.each(function () { sircl.ext.visible(this, true); });
-    // Proceed with next (afterRender):
-    this.next(req);
+    // Make sure target is visible & proceed with next (afterRender):
+    var processor = this;
+    req.$finalTarget.each(function () { sircl.ext.visible(this, true, false, function () { processor.next(req); }); });
 };
 
 SirclRequestProcessor.prototype.next = function (req) {
@@ -1689,7 +1720,7 @@ sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestH
         // Make rootoverlays visible:
         $rootoverlays.each(function () {
             $(this).parent().css("position", "relative");
-            sircl.ext.visible(this, true);
+            sircl.ext.visible(this, true, false);
         });
     }
     // Move to next handler:
@@ -1716,7 +1747,7 @@ sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHan
         }
         // Make rootoverlays hidden:
         $rootoverlays.each(function () {
-            sircl.ext.visible(this, false);
+            sircl.ext.visible(this, false, false);
         });
     }
     // Move to next handler:
@@ -1768,7 +1799,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
                 // Make hidden progresses visible:
                 if (!sircl.ext.visible(this)) {
                     req._progressToHideAfterSend.push(this);
-                    sircl.ext.visible(this, true);
+                    sircl.ext.visible(this, true, false);
                 }
             });
             // Add event handler to show upload progress:
@@ -1790,7 +1821,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
                 // Make hidden progresses visible:
                 if (!sircl.ext.visible(this)) {
                     req._progressToHideAfterSend.push(this);
-                    sircl.ext.visible(this, true);
+                    sircl.ext.visible(this, true, false);
                 }
             });
             // Add event handler to show download progress:
@@ -1810,7 +1841,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
 sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_requestHandler(req) {
     // Hide progresses that were hidden before send:
     req._progressToHideAfterSend.forEach(function (elem) {
-        sircl.ext.visible(elem, false);
+        sircl.ext.visible(elem, false, false);
     });
     // Reset progresses to 0:
     req._progressToResetAfterSend.forEach(function (elem) {
@@ -2228,11 +2259,8 @@ $$(function sircl_onload_processHandler() {
 
     /// <FORM class="onload-submit"> Submits the form as soon as it gets loaded.
     /// I.e. to create initial output or to POST data.
-    $$(function () {
-        /// As soon as the form is loaded, it also gets submitted:
-        $(this).find("FORM.onload-submit").each(function () {
-            $(this).submit();
-        });
+    $(this).find("FORM.onload-submit").each(function () {
+        $(this).submit();
     });
 });
 
@@ -2492,12 +2520,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onchange-hide="selector"> On change, hides the elements matching the given selector.
     $(document).on("change", "*[onchange-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-hide")), false);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-hide")), false, true);
     });
 
     // <* onchange-show="selector"> On change, shows the elements matching the given selector.
     $(document).on("change", "*[onchange-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-show")), true);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onchange-show")), true, true);
     });
 
 });
@@ -2558,18 +2586,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-hide="selector"> On click hides the elements matching the given selector.
     $(document).on("click", "[onclick-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-hide")), false);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-hide")), false, true);
     });
 
     // <* onclick-show="selector"> On click shows the elements matching the given selector.
     $(document).on("click", "[onclick-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-show")), true);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onclick-show")), true, true);
     });
 
     // <* onclick-toggleshow="selector"> On click shows/hides the elements matching the given selector.
     $(document).on("click", "[onclick-toggleshow]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-toggleshow")).each(function () {
-            sircl.ext.visible($(this), !sircl.ext.visible($(this)));
+            sircl.ext.visible($(this), !sircl.ext.visible($(this)), true);
         });
     });
 
@@ -2766,18 +2794,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* ondblclick-hide="selector"> On doubleclick hides the elements matching the given selector.
     $(document).on("dblclick", "[ondblclick-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-hide")), false);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-hide")), false, true);
     });
 
     // <* ondblclick-show="selector"> On doubleclick shows the elements matching the given selector.
     $(document).on("dblclick", "[ondblclick-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-show")), true);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ondblclick-show")), true, true);
     });
 
     // <* ondblclick-toggleshow="selector"> On doubleclick shows/hides the elements matching the given selector.
     $(document).on("dblclick", "[ondblclick-toggleshow]", function (event) {
         sircl.ext.$select($(this), $(this).attr("ondblclick-toggleshow")).each(function () {
-            sircl.ext.visible($(this), !sircl.ext.visible($(this)));
+            sircl.ext.visible($(this), !sircl.ext.visible($(this)), true);
         });
     });
 
@@ -2810,18 +2838,18 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     /// <* onhover-hide="selector"> On hover, hides elements matching the given selector.
     $(document).on("mouseenter", "*[onhover-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), false);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), false, true);
     });
     $(document).on("mouseleave", "*[onhover-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), true);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-hide")), true, true);
     });
 
     /// <* onhover-show="selector"> On hover, displays elements matching the given selector.
     $(document).on("mouseenter", "*[onhover-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), true);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), true, true);
     });
     $(document).on("mouseleave", "*[onhover-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), false);
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhover-show")), false, true);
     });
 
     /// <* onhover-removeclass="class [on selector]"> On hover, removes the class, on leave, adds the class.
@@ -2890,11 +2918,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $(document).on("change", "[ifchecked-hide]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked);
+        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-hide")), !this.checked, true);
     });
 
     $(document).on("change", "[ifchecked-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-show")), this.checked);
+        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifchecked-show")), this.checked, true);
     });
 
     $(document).on("change", "[ifchecked-disable]", function (event) {
@@ -3073,10 +3101,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Perform only net show/hides:
         actions.toshow.forEach(function (elem) {
-            sircl.ext.visible(elem, true);
+            sircl.ext.visible(elem, true, true);
         });
         actions.tohide.forEach(function (elem) {
-            sircl.ext.visible(elem, false);
+            sircl.ext.visible(elem, false, true);
         });
         // Perform only net enable/disables:
         actions.toenable.forEach(function (elem) {
@@ -3415,7 +3443,7 @@ $$(function sircl_ext_actionEvents_processHandler() {
         var $this = $(this);
         var $all = sircl.ext.$select($this, $this.attr("show-ifallchecked"));
         sircl.ext.$select($this, $this.attr("show-ifallchecked")).on("change", function () {
-            sircl.ext.visible($this, $all.filter(":checked").length == $all.length)
+            sircl.ext.visible($this, $all.filter(":checked").length == $all.length, true)
         });
         sircl.ext.visible($this, $all.filter(":checked").length == $all.length)
     });
@@ -3425,7 +3453,7 @@ $$(function sircl_ext_actionEvents_processHandler() {
         var $this = $(this);
         var $any = sircl.ext.$select($this, $this.attr("show-ifanychecked"));
         sircl.ext.$select($this, $this.attr("show-ifanychecked")).on("change", function () {
-            sircl.ext.visible($this, $any.filter(":checked").length > 0)
+            sircl.ext.visible($this, $any.filter(":checked").length > 0, true)
         });
         sircl.ext.visible($this, $any.filter(":checked").length > 0)
     });
@@ -3479,10 +3507,10 @@ $$(function sircl_ext_ifvalid_processHandler() {
 
 document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change input invalid", "[ifvalid-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)));
+        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifvalid-show")), sircl.ext.isValid($(this)), true);
     });
     $(document).on("change input invalid", "[ifinvalid-show]", function (event) {
-        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifinvalid-show")), !sircl.ext.isValid($(this)));
+        sircl.ext.visible(sircl.ext.$select($(this), this.getAttribute("ifinvalid-show")), !sircl.ext.isValid($(this)), true);
     });
     $(document).on("change input invalid", "[ifvalid-addclass]", function (event) {
         if (sircl.ext.isValid($(this)))

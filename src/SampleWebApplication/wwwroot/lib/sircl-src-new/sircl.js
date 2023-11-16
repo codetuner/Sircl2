@@ -107,6 +107,8 @@ sircl.mainTargetSelector$ = ".main-target";
 
 sircl.lastPageNavigationObject = null;
 
+sircl.showHideDuration = 200;
+
 //#endregion
 
 //#region Sircl extensions library
@@ -123,14 +125,44 @@ sircl.ext.firstOrNull = function sircl_ext_firstOrNull(array) { if (array) { if 
  * Get current visible state or set visible state of given element or selector.
  * @param {any} elementOrSelector Element or selector.
  * @param {any} visible True to make it visible, false to make it hidden. Absent to get current visible state.
+ * @param {any} allowAnimation True to allow animation. False or absent for no animation (i.e. in initial rendering).
+ *    Animation will only happen if allowed and element has "animate" class.
+ * @param {any} callback If set, function called after setting hiding/showing.
  */
-sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible) {
+sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allowAnimation, callback) {
     if (visible === undefined) {
-        return !$(elementOrSelector).hasAttr("hidden");
-    } else if (visible) {
-        $(elementOrSelector).removeAttr("hidden");
+        return !$(elementOrSelector).hasAttr("hidden") && !$(elementOrSelector).hasAttr("hiding");
     } else {
-        $(elementOrSelector).attr("hidden", "hidden");
+        $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])").each(function () {
+            var animate = allowAnimation && $(this).hasClass("animate");
+            if (visible) {
+                if (animate) {
+                    $(this).stop(false, true);
+                    $(this).hide();
+                    $(this).removeAttr("hidden");
+                    $(this).show(sircl.showHideDuration, callback);
+                } else {
+                    $(this).removeAttr("hidden");
+                    $(this).show();
+                    if (callback) callback();
+                }
+            } else {
+                if (animate) {
+                    $(this).attr("hiding", "hiding");
+                    $(this).stop(false, true);
+                    $(this).show();
+                    $(this).hide(sircl.showHideDuration, function () {
+                        $(this).attr("hidden", "hidden");
+                        $(this).removeAttr("hiding");
+                        if (callback) callback();
+                    });
+                } else {
+                    $(this).attr("hidden", "hidden");
+                    $(this).hide();
+                    if (callback) callback();
+                }
+            }
+        });
     }
 };
 
@@ -1002,10 +1034,9 @@ SirclRequestProcessor.prototype._render = function (req) {
         // Else, replace inner html of target:
         $realTarget.html(realResponseText);
     }
-    // Make sure target is visible:
-    req.$finalTarget.each(function () { sircl.ext.visible(this, true); });
-    // Proceed with next (afterRender):
-    this.next(req);
+    // Make sure target is visible & proceed with next (afterRender):
+    var processor = this;
+    req.$finalTarget.each(function () { sircl.ext.visible(this, true, false, function () { processor.next(req); }); });
 };
 
 SirclRequestProcessor.prototype.next = function (req) {
@@ -1689,7 +1720,7 @@ sircl.addRequestHandler("beforeSend", function sircl_overlay_beforeSend_requestH
         // Make rootoverlays visible:
         $rootoverlays.each(function () {
             $(this).parent().css("position", "relative");
-            sircl.ext.visible(this, true);
+            sircl.ext.visible(this, true, false);
         });
     }
     // Move to next handler:
@@ -1716,7 +1747,7 @@ sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHan
         }
         // Make rootoverlays hidden:
         $rootoverlays.each(function () {
-            sircl.ext.visible(this, false);
+            sircl.ext.visible(this, false, false);
         });
     }
     // Move to next handler:
@@ -1768,7 +1799,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
                 // Make hidden progresses visible:
                 if (!sircl.ext.visible(this)) {
                     req._progressToHideAfterSend.push(this);
-                    sircl.ext.visible(this, true);
+                    sircl.ext.visible(this, true, false);
                 }
             });
             // Add event handler to show upload progress:
@@ -1790,7 +1821,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
                 // Make hidden progresses visible:
                 if (!sircl.ext.visible(this)) {
                     req._progressToHideAfterSend.push(this);
-                    sircl.ext.visible(this, true);
+                    sircl.ext.visible(this, true, false);
                 }
             });
             // Add event handler to show download progress:
@@ -1810,7 +1841,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadProgress_beforeSend_req
 sircl.addRequestHandler("afterSend", function sircl_loadProgress_afterSend_requestHandler(req) {
     // Hide progresses that were hidden before send:
     req._progressToHideAfterSend.forEach(function (elem) {
-        sircl.ext.visible(elem, false);
+        sircl.ext.visible(elem, false, false);
     });
     // Reset progresses to 0:
     req._progressToResetAfterSend.forEach(function (elem) {
