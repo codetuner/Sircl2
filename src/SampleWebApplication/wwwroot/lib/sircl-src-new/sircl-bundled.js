@@ -2270,17 +2270,24 @@ $$(function sircl_onload_processHandler() {
 
 // On initial load, if onchange-set input is true, add .form-changed class to form:
 $$(function sircl_formState_processHandler() {
-    $(this).find("FORM[onchange-set]").each(function () {
+    if ($(this).is("FORM[onchange-set]")) {
         var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
             $(this).addClass("form-changed");
         }
-    });
+    } else {
+        $(this).find("FORM[onchange-set]").each(function () {
+            var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
+            if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
+                $(this).addClass("form-changed");
+            }
+        });
+    }
 });
 
 // When loading part of a form, if response has header "X-Sircl-Form-Changed", set form changed:
 sircl.addRequestHandler("afterRender", function (req) {
-    // If response has "X-Sircl-Form-Changed" header "true", mark closest form channged:
+    // If response has "X-Sircl-Form-Changed" header "true", mark closest form changed:
     if (req != null && req.xhr != null) {
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Form-Changed");
         if (reloadSection !== null && reloadSection.toLowerCase() === "true") {
