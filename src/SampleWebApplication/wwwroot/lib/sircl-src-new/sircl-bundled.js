@@ -1235,7 +1235,7 @@ $(document).ready(function () {
 
     /// Handle onkeyenter-click:
     $(document).on("keydown", "[onkeyenter-click]", function (event) {
-        if (event.key === "Enter" && event.target.tagName !== "TEXTAREA") {
+        if (event.key === "Enter" && event.target.tagName !== "TEXTAREA" && event.target.tagName !== "BUTTON" && event.target.tagName !== "A") {
             event.preventDefault();
             var $this = $(this);
             var $target = sircl.ext.$select($this, $this.attr("onkeyenter-click"));
