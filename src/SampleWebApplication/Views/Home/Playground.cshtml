@@ -1,5 +1,9 @@
 ﻿<hr />
 
+<button type="submit" class="btn btn-link" onclick-share=":this" data-share-text=""><i class="fas fa-solid fa-share-alt spinner"></i> Share this page</button>
+
+<hr />
+
 <div class="chapter">
     <div><label><input type="radio" name="x4456" ifchecked-hide="<.chapter|>.section" ifchecked-show="#x4456a" checked /> Section A (animated)</label></div>
     <div id="x4456a" class="section animate" hidden>This is section A</div>
@@ -49,10 +53,10 @@
     <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br/>
     <input type="text" onload-setvalue="5+3" /><br/>
     <br/>
-    <button type="button" onclick-copytext="FooBar!">FooBar!</button>
-    <button type="button" onclick-copyvalue="[name=TimeZone]">Value</button>
-    <button type="button" onclick-copyinnertext="<DIV|>P">Text</button>
-    <button type="button" onclick-copyinnerhtml="<DIV">HTML</button>
+    <button type="button" class="btn btn-primary" onclick-copytext="FooBar!"><i class="fas fa-solid fa-clipboard spinner"></i> FooBar!</button>
+    <button type="button" class="btn btn-primary" onclick-copyvalue="[name=TimeZone]"><i class="fas fa-solid fa-clipboard spinner"></i> Value</button>
+    <button type="button" class="btn btn-primary" onclick-copyinnertext="<DIV|>P"><i class="fas fa-solid fa-clipboard spinner"></i> Text</button>
+    <button type="button" class="btn btn-primary" onclick-copyinnerhtml="<DIV"><i class="fas fa-solid fa-clipboard spinner"></i> HTML</button>
     <p>Hello there !</p>
     <textarea></textarea>
 </div>

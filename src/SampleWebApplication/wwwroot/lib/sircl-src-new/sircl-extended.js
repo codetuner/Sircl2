@@ -342,28 +342,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-copytext="text"> Copies the given text to the clipboard.
     $(document).on("click", "[onclick-copytext]", function (event) {
+        // Get & copy to clipboard:
         var text = this.getAttribute("onclick-copytext");
         navigator.clipboard.writeText(text);
+        // Display spinner:
+        var $spinners = $(this).find("> .spinner");
+        if ($spinners.length > 0) {
+            var $trigger = $(this);
+            var _spinner_to_restore = $trigger[0].innerHTML;
+            setTimeout(function () {
+                $trigger[0].innerHTML = _spinner_to_restore;
+            }, 250);
+            $spinners[0].outerHTML = sircl.html_spinner;
+        }
     });
 
     // <* onclick-copyinnertext="selector"> Copies the innerText of the matching element to the clipboard.
     $(document).on("click", "[onclick-copyinnertext]", function (event) {
+        // Get & copy to clipboard:
         var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnertext")).text();
         navigator.clipboard.writeText(text);
+        // Display spinner:
+        var $spinners = $(this).find("> .spinner");
+        if ($spinners.length > 0) {
+            var $trigger = $(this);
+            var _spinner_to_restore = $trigger[0].innerHTML;
+            setTimeout(function () {
+                $trigger[0].innerHTML = _spinner_to_restore;
+            }, 250);
+            $spinners[0].outerHTML = sircl.html_spinner;
+        }
     });
 
     // <* onclick-copyinnerhtml="selector"> Copies the innerHTML of the matching element to the clipboard.
     $(document).on("click", "[onclick-copyinnerhtml]", function (event) {
+        // Get & copy to clipboard:
         var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnerhtml")).html();
         navigator.clipboard.writeText(text);
+        // Display spinner:
+        var $spinners = $(this).find("> .spinner");
+        if ($spinners.length > 0) {
+            var $trigger = $(this);
+            var _spinner_to_restore = $trigger[0].innerHTML;
+            setTimeout(function () {
+                $trigger[0].innerHTML = _spinner_to_restore;
+            }, 250);
+            $spinners[0].outerHTML = sircl.html_spinner;
+        }
     });
 
     // <* onclick-copyvalue="selector"> Copies the value of the (first) matching (INPUT) element to the clipboard.
     $(document).on("click", "[onclick-copyvalue]", function (event) {
         var $elem = sircl.ext.$select($(this), $(this).attr("onclick-copyvalue"));
         if ($elem.length > 0) {
+            // Get & copy to clipboard:
             var text = sircl.ext.effectiveValue($elem[0]);
             navigator.clipboard.writeText(text);
+            // Display spinner:
+            var $spinners = $(this).find("> .spinner");
+            if ($spinners.length > 0) {
+                var $trigger = $(this);
+                var _spinner_to_restore = $trigger[0].innerHTML;
+                setTimeout(function () {
+                    $trigger[0].innerHTML = _spinner_to_restore;
+                }, 250);
+                $spinners[0].outerHTML = sircl.html_spinner;
+            }
         }
     });
 
@@ -1605,10 +1649,22 @@ $$(function sircl_ext_onclickShare_processHandler() {
 document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-share]", function () {
         if (navigator.share) {
+            // Display spinner:
+            var $spinners = $(this).find("> .spinner");
+            if ($spinners.length > 0) {
+                var $trigger = $(this);
+                var _spinner_to_restore = $trigger[0].innerHTML;
+                setTimeout(function () {
+                    $trigger[0].innerHTML = _spinner_to_restore;
+                }, 250);
+                $spinners[0].outerHTML = sircl.html_spinner;
+            }
+            // Retrieve sharing info:
             var $target = sircl.ext.$select($(this), $(this).attr("onclick-share"));
             var title = $target.attr("data-share-title") || $target.attr("title") || (($target.hasAttr("data-share-title")) ? undefined : document.title);
             var url = $target.attr("data-share-url") || $target.attr("href") || (($target.hasAttr("data-share-url")) ? undefined : window.location.href);
             var text = $target.attr("data-share-text") || $target.text();
+            // Share:
             navigator.share({
                 title: title,
                 text: text,
