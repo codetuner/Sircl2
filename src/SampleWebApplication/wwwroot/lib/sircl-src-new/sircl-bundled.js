@@ -142,7 +142,9 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
                     $(this).stop(false, true);
                     $(this).hide();
                     $(this).removeAttr("hidden");
-                    $(this).show(sircl.showHideDuration, function () { if (callback) { if (--matchcount === 0) callback(); } });
+                    $(this).show(sircl.showHideDuration, function () {
+                        if (callback) { if (--matchcount === 0) callback(); }
+                    });
                 } else {
                     $(this).removeAttr("hidden");
                     $(this).show();
