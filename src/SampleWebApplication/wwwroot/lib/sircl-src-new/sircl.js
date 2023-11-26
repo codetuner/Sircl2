@@ -1025,7 +1025,7 @@ SirclRequestProcessor.prototype._render = function (req) {
             var elem = $realTargetParent.children()[pos];
             if (elem.id == null || elem.id == "") elem.id = realTargetId;
         }
-        // If if replaced by one or more elements, apply afterLoad to the new elements:
+        // If replaced by one or more elements, apply afterLoad to the new elements:
         if (pos > -1 && finalLength >= initialLength) {
             $realTargetParent.children().slice(pos, pos + finalLength - initialLength + 1).each(function () { sircl._afterLoad(this); });
             // Otherwise, replace just removed the element, no afterLoad needed.
@@ -2086,7 +2086,10 @@ $$(function sircl_dialogs_processHandler() {
 // Click event-actions:
 ///////////////////////
 
+sircl.addAttributeAlias(".onclick-setchanged", "onclick-setchanged", ":form");
+
 document.addEventListener("DOMContentLoaded", function () {
+
     /// Buttons and link can have a confirmation dialog:
     /// <a href="http://www.example.com" onclick-confirm="Are you sure ?">...</a>
     $(document.body).on("click", "*[onclick-confirm]", function (event) {
@@ -2098,6 +2101,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    /// Mark form as changed:
+    $(document).on("click", "[onclick-setchanged]", function () {
+        sircl.ext.$select($(this), $(this).attr("onclick-setchanged")).each(function () {
+            $(this).addClass("form-changed");
+            var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
+            if ($input.length > 0) {
+                $input.val(true);
+            }
+        });
+    });
+
 });
 
 // Change and Input event-actions:

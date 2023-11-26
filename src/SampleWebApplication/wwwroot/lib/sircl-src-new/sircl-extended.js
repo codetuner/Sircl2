@@ -335,6 +335,58 @@ document.addEventListener("DOMContentLoaded", function () {
         sircl.ext.$select($(this), $(this).attr("onclick-copyto")).html($(this).html());
     });
 
+    // <* onclick-appendto="selector"> On click appends the content of the current element to the target.
+    $(document).on("click", "[onclick-appendto]", function () {
+        var $target = $($(this).attr("onclick-appendto"));
+        // Append HTML and force afterLoad:
+        var initialLength = $target.children().length;
+        $target.append($(this).html());
+        $target.children().slice(initialLength).each(function () { sircl._afterLoad(this); });
+    });
+
+    // <* onclick-prependto="selector"> On click prepends the content of the current element to the target.
+    $(document).on("click", "[onclick-prependto]", function () {
+        var $target = $($(this).attr("onclick-prependto"));
+        // Prepend HTML and force afterLoad:
+        var initialLength = $target.children().length;
+        $target.prepend($(this).html());
+        var finalLength = $target.children().length;
+        $target.children().slice(0, finalLength - initialLength).each(function () { sircl._afterLoad(this); });
+    });
+
+    // <* onclick-replaceto="selector"> On click replaces the target by the current element.
+    // If original element had no id and only single element replaced, keep id.
+    $(document).on("click", "[onclick-replaceto]", function () {
+        var $target = $($(this).attr("onclick-replaceto"));
+        // Replace HTML and force afterLoad:
+        var targetId = ($target.length == 1) ? sircl.ext.getId($target[0], false) : null;
+        var $targetParent = $target.parent();
+        var $targetSiblings = $targetParent.children();
+        var initialLength = $targetSiblings.length;
+        // Retrieve position of element to be replaced:
+        var id = sircl.ext.getId($target, true);
+        var pos = -1;
+        for (var i = 0; i < initialLength; i++) {
+            if ($targetSiblings[i].id === id) {
+                pos = i;
+                break;
+            }
+        }
+        // Perform replacement:
+        $target.replaceWith($(this).html());
+        var finalLength = $targetParent.children().length;
+        // If replaced by a single element with no id, copy id from original:
+        if (pos > -1 && initialLength === finalLength && targetId !== null) {
+            var elem = $targetParent.children()[pos];
+            if (elem.id == null || elem.id == "") elem.id = targetId;
+        }
+        // If replaced by one or more elements, apply afterLoad to the new elements:
+        if (pos > -1 && finalLength >= initialLength) {
+            $targetParent.children().slice(pos, pos + finalLength - initialLength + 1).each(function () { sircl._afterLoad(this); });
+            // Otherwise, replace just removed the element, no afterLoad needed.
+        }
+    });
+
     // <* onclick-alert="selector"> On click shows an alert.
     $(document).on("click", "[onclick-alert]", function (event) {
         sircl.ext.alert(this, $(this).attr("onclick-alert"), event);
