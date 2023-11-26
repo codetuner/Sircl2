@@ -133,18 +133,20 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
     if (visible === undefined) {
         return !$(elementOrSelector).hasAttr("hidden") && !$(elementOrSelector).hasAttr("hiding");
     } else {
-        $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])").each(function () {
+        var matches = $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])");
+        var matchcount = matches.length;
+        matches.each(function () {
             var animate = allowAnimation && $(this).hasClass("animate");
             if (visible) {
                 if (animate) {
                     $(this).stop(false, true);
                     $(this).hide();
                     $(this).removeAttr("hidden");
-                    $(this).show(sircl.showHideDuration, callback);
+                    $(this).show(sircl.showHideDuration, function () { if (callback) { if (--matchcount === 0) callback(); } });
                 } else {
                     $(this).removeAttr("hidden");
                     $(this).show();
-                    if (callback) callback();
+                    if (callback) { if (--matchcount === 0) callback(); }
                 }
             } else {
                 if (animate) {
@@ -154,15 +156,17 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
                     $(this).hide(sircl.showHideDuration, function () {
                         $(this).attr("hidden", "hidden");
                         $(this).removeAttr("hiding");
-                        if (callback) callback();
+                        if (callback) { if (--matchcount === 0) callback(); }
                     });
                 } else {
                     $(this).attr("hidden", "hidden");
                     $(this).hide();
-                    if (callback) callback();
+                    if (callback) { if (--matchcount === 0) callback(); }
                 }
             }
         });
+        // If no matches, just execute callback:
+        if (matches.length == 0) if (callback) callback();
     }
 };
 
