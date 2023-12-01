@@ -53,13 +53,17 @@
     <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br/>
     <input type="text" onload-setvalue="5+3" /><br/>
     <br/>
-    <button type="button" class="btn btn-primary" onclick-copytext="FooBar!"><i class="fas fa-solid fa-clipboard spinner"></i> FooBar!</button>
-    <button type="button" class="btn btn-primary" onclick-copyvalue="[name=TimeZone]"><i class="fas fa-solid fa-clipboard spinner"></i> Value</button>
-    <button type="button" class="btn btn-primary" onclick-copyinnertext="<DIV|>P"><i class="fas fa-solid fa-clipboard spinner"></i> Text</button>
-    <button type="button" class="btn btn-primary" onclick-copyinnerhtml="<DIV"><i class="fas fa-solid fa-clipboard spinner"></i> HTML</button>
+    <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copytext="FooBar!"><i class="fas fa-solid fa-clipboard spinner"></i> FooBar!</button>
+    <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyvalue="[name=TimeZone]"><i class="fas fa-solid fa-clipboard spinner"></i> Value</button>
+    <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyinnertext="<DIV|>P"><i class="fas fa-solid fa-clipboard spinner"></i> Text</button>
+    <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyinnerhtml="<DIV"><i class="fas fa-solid fa-clipboard spinner"></i> HTML</button>
     <p>Hello there !</p>
     <textarea></textarea>
 </div>
+
+<div class="octoast" data-toastr-type="success" data-toastr-title="Copied to clipboard" hidden>  The data has been copied to the clipboard.</div>
+
+<template class="octoast" data-toastr-type="warning" data-toastr-title="Confidentiality">  Data in the clipboard may contain confidential info!</template>
 
 <hr/>
 
