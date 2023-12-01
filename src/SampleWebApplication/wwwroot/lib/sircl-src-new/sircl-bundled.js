@@ -134,7 +134,7 @@ sircl.ext.firstOrNull = function sircl_ext_firstOrNull(array) { if (array) { if 
 sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allowAnimation, callback) {
     if (visible === undefined) {
         return !$(elementOrSelector).hasAttr("hidden") && !$(elementOrSelector).hasAttr("hiding");
-    } else {
+    } else if ($.isFunction($.fn.stop)) { // stop is not available in slim version if jQuery
         var matches = $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])");
         var matchcount = matches.length;
         matches.each(function () {
@@ -171,6 +171,13 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
         });
         // If no matches, just execute callback:
         if (matches.length == 0) if (callback) callback();
+    } else {
+        if (visible) {
+            $(elementOrSelector).removeAttr("hidden");
+        } else {
+            $(elementOrSelector).attr("hidden", "hidden");
+        }
+        if (callback) callback();
     }
 };
 
