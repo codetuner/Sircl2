@@ -52,7 +52,9 @@ $.fn.load = function (url, data, callback) {
     var req = {
         $trigger: this,
         $initialTarget: this,
+        $newTarget: null,
         targetMethod: this.attr("target-method") || null,
+        newTargetMethod: null,
         action: url,
         method: "get",
         enctype: null,
@@ -562,7 +564,9 @@ sircl._loadUrl = function ($trigger, url, $target, targetMethod, loadComplete) {
     var req = {
         $trigger: $trigger,
         $initialTarget: $target,
+        $newTarget: null,
         targetMethod: targetMethod,
+        newTargetMethod: null,
         action: url,
         method: "get",
         accept: $trigger.attr("type"),
@@ -588,7 +592,9 @@ sircl._submitForm = function ($trigger, $form, $target, targetMethod, event, loa
         $form: $form,
         $trigger: $trigger,
         $initialTarget: $target,
+        $newTarget: null,
         targetMethod: targetMethod,
+        newTargetMethod: null,
         event: event,
         action: ($trigger.attr("formaction") || $form.attr("action") || window.location.href),
         method: ($trigger.attr("formmethod") || $form.attr("method") || "get").toLowerCase(),
@@ -783,6 +789,17 @@ SirclRequestProcessor.prototype._send = function (req) {
         req.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach(function (line) {
             req.allResponseHeaders.push(line.split(": "));
         });
+        // Keep track of last target and targetMethod:
+        if (req.xhr.getResponseHeader("X-Sircl-Target") !== null) {
+            req.$newTarget = req.xhr.getResponseHeader("X-Sircl-Target");
+        }
+        if (req.xhr.getResponseHeader("X-Sircl-Target-Method") !== null) {
+            req.newTargetMethod = req.xhr.getResponseHeader("X-Sircl-Target-Method");
+        } else if (req.xhr.getResponseHeader("X-Sircl-Render-Mode") !== null) {
+            // DEPRECATED: "X-Sircl-Render-Mode" has been replaced by "X-Sircl-Target-Method":
+            req.newTargetMethod = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
+            console.warn("X-Sircl-Render-Mode response header is deprecated and replaced by X-Sircl-Target-Method.");
+        }
         // Check for reload sections:
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Load");
         // Execute additional reload requests:
@@ -828,42 +845,7 @@ SirclRequestProcessor.prototype._send = function (req) {
                 }
             }
         } else {
-            // Else, check for target override:
-            var newTarget$ = req.xhr.getResponseHeader("X-Sircl-Target");
-            if (newTarget$ == "_self") {
-                if (req.method == "get") {
-                    req.$finalTarget = null;
-                    req.targetMethod = null;
-                    req.targetHasChanged = true;
-                } else {
-                    console.warn("X-Sircl-Target response header value '_self' is only vaid for 'get' requests.");
-                }
-            } else if (newTarget$ == "main") {
-                req.$finalTarget = sircl.ext.$mainTarget();
-                req.targetMethod = null;
-                req.targetHasChanged = true;
-            } else if (newTarget$ != null) {
-                req.$finalTarget = sircl.ext.$select(req.$trigger, newTarget$);
-                req.targetMethod = null;
-                req.targetHasChanged = true;
-            }
-            // Then for document title:
-            req.documentTitle = req.xhr.getResponseHeader("X-Sircl-Document-Title");
-            // Then for document language:
-            req.documentLanguage = req.xhr.getResponseHeader("X-Sircl-Document-Language");
-            // Then for alert message header:
-            req.alertMsg = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
-            // Then for target method:
-            if (req.xhr.getResponseHeader("X-Sircl-Target-Method") !== null) {
-                req.targetMethod = req.xhr.getResponseHeader("X-Sircl-Target-Method");
-            } else if (req.xhr.getResponseHeader("X-Sircl-Render-Mode") !== null) {
-                // DEPRECATED: "X-Sircl-Render-Mode" has been replaced by "X-Sircl-Target-Method":
-                req.targetMethod = req.xhr.getResponseHeader("X-Sircl-Render-Mode");
-                console.warn("X-Sircl-Render-Mode response header is deprecated and replaced by X-Sircl-Target-Method.");
-            } else if (req.targetMethod == null && req.$finalTarget != null) {
-                req.targetMethod = req.$finalTarget.attr("target-method");
-            }
-            // Then for history header:
+            // Else check for history header:
             var history = req.xhr.getResponseHeader("X-Sircl-History");
             if (history == "back" || history == "back-uncached") {
                 if (window.history.length <= 1) {
@@ -877,7 +859,7 @@ SirclRequestProcessor.prototype._send = function (req) {
                             return;
                         }
                     } else {
-                        console.warn("\"X-Sircl-History: back\" header with no previous page and without \"X-Sircl-History-AllowClose\" header has no effect.");
+                        console.info("\"X-Sircl-History: back\" header with no previous page and without \"X-Sircl-History-AllowClose\" header has no effect.");
                     }
                 } else if (history == "back") {
                     req.action = "history:back";
@@ -886,6 +868,36 @@ SirclRequestProcessor.prototype._send = function (req) {
                 }
             } else if (history == "reload" || history == "refresh") {
                 req.action = "history:reload";
+            }
+            // Then for target override:
+            if (req.$newTarget == "_self") {
+                if (req.method == "get" || history != null) {
+                    req.$finalTarget = null;
+                    req.targetMethod = null;
+                    req.targetHasChanged = true;
+                } else {
+                    console.warn("X-Sircl-Target response header value '_self' is only vaid for 'get' requests.");
+                }
+            } else if (req.$newTarget == "main") {
+                req.$finalTarget = sircl.ext.$mainTarget();
+                req.targetMethod = null;
+                req.targetHasChanged = true;
+            } else if (req.$newTarget != null) {
+                req.$finalTarget = sircl.ext.$select(req.$trigger, req.$newTarget);
+                req.targetMethod = null;
+                req.targetHasChanged = true;
+            }
+            // Then for document title:
+            req.documentTitle = req.xhr.getResponseHeader("X-Sircl-Document-Title");
+            // Then for document language:
+            req.documentLanguage = req.xhr.getResponseHeader("X-Sircl-Document-Language");
+            // Then for alert message header:
+            req.alertMsg = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
+            // Then for target method:
+            if (req.newTargetMethod !== null) {
+                req.targetMethod = req.newTargetMethod;
+            } else if (req.targetMethod == null && req.$finalTarget != null) {
+                req.targetMethod = req.$finalTarget.attr("target-method");
             }
             // Then for history-replace header:
             req.historyReplace = req.xhr.getResponseHeader("X-Sircl-History-Replace");
@@ -1143,7 +1155,7 @@ $(document).ready(function () {
             // Perform page navigation preparation:
             sircl._onPageNavigate(event, $(this));
             // Navigate link through default behavior:
-            return; 
+            return;
         } else if (href.indexOf("#") === 0) {
             // Perform page navigation preparation:
             sircl._onPageNavigate(event, $(this));
@@ -2569,7 +2581,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
         if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
-        if (e.altKey || e.ctrlKey || ["BODY", "A", "BUTTON"].indexOf(e.target.nodeName) != -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12
+        if (e.altKey || e.ctrlKey || ["INPUT", "TEXTAREA", "SELECT"].indexOf(e.target.nodeName) === -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Escape"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12 and a few others
             var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
             if (e.key == "F1") console.log(key, e.target);
             var $targets;
@@ -3662,7 +3674,14 @@ document.addEventListener("DOMContentLoaded", function () {
 /// <INPUT class="onfocus-select"> Select all text when element gets focus:
 /// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
 $(document).on("focus", ".onfocus-select", function (event) {
-    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect)")) {
+    // If we get a focus event, select all content:
+    if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect)")) {
+        event.target.select();
+    }
+});
+$(document).on("change", ".onfocus-select", function (event) {
+    // If we get a change on the active element, it's probably an autofill (unless it has an oninput-changeafter attribute), we then reselect all content:
+    if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect):not(.oninput-changeafter)")) {
         event.target.select();
     }
 });
@@ -3671,7 +3690,7 @@ $(document).on("focus", ".onfocus-select", function (event) {
 /// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
 /// (Though named an onfocusout event-action, technically implemented using a change event on document body, so it is done before all other change events.)
 $(document.body).on("change", ".onfocusout-trim", function (event) {
-    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocusout-notrim)")) {
+    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocusout-notrim):not(.oninput-changeafter)")) {
         event.target.value = (event.target.value + "").trim()
     }
 });
