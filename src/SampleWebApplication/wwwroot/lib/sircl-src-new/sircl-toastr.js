@@ -8,13 +8,13 @@
 // Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-toastr' component should be registered after the 'sircl' component. Please review order of script files.");
 if (typeof toastr === "undefined") console.warn("The 'sircl-toastr' component requires the 'toastr.js' component. See https://github.com/CodeSeven/toastr");
-if (typeof jQuery !== "undefined" &&  $.isFunction($.fn.fadeIn) == false) console.warn("The 'sircl-toastr' component requires the full edition of jQuery. The slim edition is not sufficient.");
+if (typeof jQuery !== "undefined" && $.isFunction($.fn.fadeIn) == false) console.warn("The 'sircl-toastr' component requires the full edition of jQuery. The slim edition is not sufficient.");
 
 // Disables Toasts if "slim" edition of jQuery is loaded:
 if ($.isFunction($.fn.fadeIn)) {
 
     // X-Sircl-Toastr response header support:
-    sircl.addRequestHandler("afterSend", function sircl_toastr_afterSend_requestHandler (req) {
+    sircl.addRequestHandler("afterSend", function sircl_toastr_afterSend_requestHandler(req) {
         if (req.allResponseHeaders != null) {
             req.allResponseHeaders.forEach(function sircl_toastr_afterSend_requestHandler_each(rh) {
                 if (rh[0] == "x-sircl-toastr") {
@@ -35,7 +35,7 @@ if ($.isFunction($.fn.fadeIn)) {
     // <div class="onload-showtoastr" hidden data-toastr-type="info" data-toastr-title="Welcome!">
     //   You are on the <b>Products</b> page.
     // </div>
-    $$(function sircl_toastr_processHandler () {
+    $$(function sircl_toastr_processHandler() {
         $(this).find(".onload-showtoastr").each(function () {
             var toastrType = $(this).data("toastr-type") || "info";
             var toastrArgs = [$(this).html()];
