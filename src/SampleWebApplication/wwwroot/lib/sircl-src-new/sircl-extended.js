@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("keydown", function (e) {
         if (e.isComposing || e.keyCode === 229) return; // Ignore compositions
         if (e.key === "Alt" || e.key === "AltGraph" || e.key === "Control" || e.key === "Shift") return; // Ignore Alt, Control or Shift alone
-        if (e.altKey || e.ctrlKey || ["BODY", "A", "BUTTON"].indexOf(e.target.nodeName) != -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12
+        if (e.altKey || e.ctrlKey || ["INPUT", "TEXTAREA", "SELECT"].indexOf(e.target.nodeName) === -1 || ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Escape"].indexOf(e.key) != -1) { // Ignore keys in form control elements, except for F1-F12 and a few others
             var key = (e.altKey ? "Alt+" : "") + (e.ctrlKey ? "Ctrl+" : "") + (e.shiftKey ? "Shift+" : "") + e.key;
             if (e.key == "F1") console.log(key, e.target);
             var $targets;
@@ -1285,7 +1285,14 @@ document.addEventListener("DOMContentLoaded", function () {
 /// <INPUT class="onfocus-select"> Select all text when element gets focus:
 /// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
 $(document).on("focus", ".onfocus-select", function (event) {
-    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect)")) {
+    // If we get a focus event, select all content:
+    if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect)")) {
+        event.target.select();
+    }
+});
+$(document).on("change", ".onfocus-select", function (event) {
+    // If we get a change on the active element, it's probably an autofill (unless it has an oninput-changeafter attribute), we then reselect all content:
+    if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect):not(.oninput-changeafter)")) {
         event.target.select();
     }
 });
@@ -1294,7 +1301,7 @@ $(document).on("focus", ".onfocus-select", function (event) {
 /// (Can be placed on the input element itself, or one of its parents, i.e. the FORM element)
 /// (Though named an onfocusout event-action, technically implemented using a change event on document body, so it is done before all other change events.)
 $(document.body).on("change", ".onfocusout-trim", function (event) {
-    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocusout-notrim)")) {
+    if ($(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocusout-notrim):not(.oninput-changeafter)")) {
         event.target.value = (event.target.value + "").trim()
     }
 });
