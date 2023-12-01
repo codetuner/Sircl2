@@ -44,8 +44,6 @@ if ($.isFunction($.fn.fadeIn)) {
         });
     });
 
-    sircl.addAttributeAlias(".onclick-showtoastr", "onclick-showtoastr", ":this");
-
     document.addEventListener("DOMContentLoaded", function () {
 
         // <* onclick-showtoastr="selector"> On click, shows the toaster(s) pointed by the selector.
