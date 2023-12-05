@@ -60,6 +60,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-media.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-media.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-fa.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl-fa.js"
@@ -75,6 +81,12 @@
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-toastr.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl-toastr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-qrious.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-qrious.js"
     ]
   },
   {

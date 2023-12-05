@@ -131,3 +131,9 @@ form.form-changed {
     }
 
 /***********************/
+
+
+.highlighted {
+    border: solid 2px yellow;
+    background-color: yellow;
+}

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SampleWebApplication.Data;
@@ -155,6 +157,21 @@ namespace SampleWebApplication.Controllers
         public IActionResult PlaygroundBs5()
         {
             return View("PlaygroundBs5");
+        }
+
+        public IActionResult Media()
+        {
+            return View("Media");
+        }
+
+        public IActionResult UploadFile(IFormFile file)
+        {
+            using (var stream = new FileStream(@"C:\Trash\" + file.FileName, FileMode.Create, FileAccess.Write))
+            {
+                file.CopyTo(stream);
+            }
+
+            return NoContent();
         }
 
         public IActionResult Infinite(int page)
