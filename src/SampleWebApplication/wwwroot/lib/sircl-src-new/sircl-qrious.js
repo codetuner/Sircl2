@@ -15,7 +15,6 @@ $$(function () {
     $(this).find("CANVAS[qr-code]").each(function drawQrCodes() {
         var element = this;
         var size = Math.min(element.width, element.height);
-        console.log(location.href);
         new QRious({
             element: element,
             size: size,
