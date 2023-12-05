@@ -1,9 +1,11 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Core
 // www.getsircl.com
-// Copyright (c) 2019-2022 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
+
+/* tslint:disabled */
 
 // Coding conventions:
 // - Within selectors, write tagnames capitalized, i.e: "A[href]".
@@ -134,7 +136,7 @@ sircl.ext.firstOrNull = function sircl_ext_firstOrNull(array) { if (array) { if 
 sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allowAnimation, callback) {
     if (visible === undefined) {
         return !$(elementOrSelector).hasAttr("hidden") && !$(elementOrSelector).hasAttr("hiding");
-    } else if ($.isFunction($.fn.stop)) { // stop is not available in slim version if jQuery
+    } else if ($.fn.stop) { // stop is not available in slim version if jQuery
         var matches = $(elementOrSelector).filter(visible ? "[hidden], [hiding]" : ":not([hidden]):not([hiding])");
         var matchcount = matches.length;
         matches.each(function () {
@@ -300,7 +302,7 @@ sircl.ext.$select = function sircl_ext_$select($context, selector$) {
                 // Ignore
             } else if (sel$.indexOf("|") >= 0 && sel$.indexOf("|=") < sel$.indexOf("|")) { // Break on "|" but not on "|=" as in https://api.jquery.com/attribute-contains-prefix-selector/
                 var breakpos = sel$.indexOf("|");
-                $result = $result.add(sircl.ext.$select(sircl.ext.$select($context, sel$.substr(0, breakpos)), sel$.substr(breakpos + 1)));
+                $result = $result.add(sircl.ext.$select(sircl.ext.$select($context, sel$.substring(0, breakpos)), sel$.substr(breakpos + 1)));
             } else if (sel$ === ":this") {
                 $result = $result.add($context);
             } else if (sel$ === ":parent") {
@@ -312,13 +314,13 @@ sircl.ext.$select = function sircl_ext_$select($context, selector$) {
                     $result = $result.add($context.closest("FORM"));
                 }
             } else if (sel$.indexOf(">") === 0) {
-                $result = $result.add($context.find(sel$.substr(1)));
+                $result = $result.add($context.find(sel$.substring(1)));
             } else if (sel$.indexOf("&gt;") === 0) {
-                $result = $result.add($context.find(sel$.substr(4)));
+                $result = $result.add($context.find(sel$.substring(4)));
             } else if (sel$.indexOf("<") === 0) {
-                $result = $result.add($context.closest(sel$.substr(1)));
+                $result = $result.add($context.closest(sel$.substring(1)));
             } else if (sel$.indexOf("&lt;") === 0) {
-                $result = $result.add($context.closest(sel$.substr(4)));
+                $result = $result.add($context.closest(sel$.substring(4)));
             } else {
                 $result = $result.add($(sel$));
             }
@@ -511,8 +513,8 @@ sircl.ext.subtituteFields = function sircl_ext_substituteFields(url, $source, mu
         var fieldvalue;
         for (var f = 0; f < fieldnames.length; f++) {
             var fieldname = (fieldnames[f].charAt(0) === "[")
-                ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
-                : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
+                ? fieldnames[f].substring(1, fieldnames[f].length - 1)  // Fieldname surrounded by '[' and ']'
+                : fieldnames[f].substring(3, fieldnames[f].length - 3); // Fieldname surrounded by '%5B' and '%5D'
             var fields = $formscope.find("[name='" + fieldname + "']");
             if (fields.length == 1) {
                 fieldvalue = sircl.ext.effectiveValue(fields[0]);
@@ -933,7 +935,7 @@ SirclRequestProcessor.prototype._process = function (req) {
         if (state != null) {
             state.url = req.historyReplace;
         }
-        window.history.replaceState(state, document.title, req.historyReplace);
+        window.history.replaceState(state, req.documentTitle || window.document.title, req.historyReplace);
     }
     // Handle 'Alert-Message' header if any:
     if (req.alertMsg) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), req.alertMsg, null);
@@ -972,6 +974,18 @@ SirclRequestProcessor.prototype._process = function (req) {
 };
 
 SirclRequestProcessor.prototype._render = function (req) {
+    // If request is a "get" request on the main target and history handling is not to be skipped:
+    if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
+        // Store (update) the current state in history:
+        req._historyMode = req.getAttr("history") || "push";
+        req._historyCached = req._historyMode.indexOf("cache") >= 0;
+        var initialState = {
+            url: window.location.href,
+            html: (req._historyCached) ? req.$finalTarget.html() : "",
+            cached: req._historyCached
+        };
+        window.history.replaceState(initialState, window.document.title, initialState.url);
+    }
     // Set document title:
     if (req.documentTitle != null) {
         window.document.title = req.documentTitle;
@@ -979,6 +993,23 @@ SirclRequestProcessor.prototype._render = function (req) {
     // Set document language:
     if (req.documentLanguage != null) {
         $("HTML").attr("lang", req.documentLanguage);
+    }
+    // Push or replace new state in history:
+    if (req._historyMode) {
+        var finalState = {
+            url: req.action,
+            html: "",
+            cached: false
+        };
+        if (req._historyMode.indexOf("skip") >= 0) {
+            // Do nothing
+        } else if (req._historyMode.indexOf("replace") >= 0) {
+            window.history.replaceState(finalState, window.document.title, finalState.url);
+            sircl._afterHistory();
+        } else { // if "push":
+            window.history.pushState(finalState, window.document.title, finalState.url);
+            sircl._afterHistory();
+        }
     }
     // Retrieve target and responseText:
     var $realTarget = req.$finalTarget;
@@ -1150,13 +1181,13 @@ $(document).ready(function () {
             // Reload page:
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
-            sircl.ext.alert(this, href.substr(6), event);
+            sircl.ext.alert(this, href.substring(6), event);
         } else if (href.indexOf("javascript:") === 0) {
             var nonce = this.getAttribute("nonce");
             if (nonce) {
-                jQuery.globalEval(href.substr(11), { nonce: nonce });
+                jQuery.globalEval(href.substring(11), { nonce: nonce });
             } else {
-                jQuery.globalEval(href.substr(11));
+                jQuery.globalEval(href.substring(11));
             }
         } else if (canBeHandledByBrowser && href.indexOf("#") === 0) {
             // Perform page navigation preparation:
@@ -1532,42 +1563,6 @@ sircl._afterHistory = function () {
     });
 };
 
-sircl.addRequestHandler("beforeRender", function sircl_history_beforeRender_requestHandler(req) {
-    // If request is a "get" request on the main target and history handling is not to be skipped:
-    if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
-        // Store the current state in history:
-        req._historyMode = req.getAttr("history") || "push";
-        req._historyCached = req._historyMode.indexOf("cache") >= 0;
-        var initialState = {
-            url: window.location.href,
-            html: (req._historyCached) ? req.$finalTarget.html() : "",
-            cached: req._historyCached
-        };
-        window.history.replaceState(initialState, document.title, initialState.url);
-    }
-    this.next(req);
-});
-
-sircl.addRequestHandler("afterRender", function sircl_history_afterRender_requestHandler(req) {
-    if (req._historyMode) {
-        // Push or replace new state in history:
-        var finalState = {
-            url: req.action,
-            html: "",
-            cached: false
-        };
-        if (req._historyMode.indexOf("skip") >= 0) {
-            // Do nothing
-        } else if (req._historyMode.indexOf("replace") >= 0) {
-            window.history.replaceState(finalState, document.title, finalState.url);
-            sircl._afterHistory();
-        } else { // if "push":
-            window.history.pushState(finalState, document.title, finalState.url);
-            sircl._afterHistory();
-        }
-    }
-    this.next(req);
-});
 
 document.addEventListener("DOMContentLoaded", function () {
     // On browser back or forward:

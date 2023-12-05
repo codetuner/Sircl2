@@ -1,9 +1,11 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - ChangeActions extension
 // www.getsircl.com
-// Copyright (c) 2019-2022 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
+
+/* tslint:disabled */
 
 // Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-changeactions' component should be registered after the 'sircl' component. Please review order of script files.");
@@ -64,8 +66,8 @@ sircl._actionCall = function (triggerElement, $subjects, $scope, url, name, valu
         var fieldvalue;
         for (var f = 0; f < fieldnames.length; f++) {
             var fieldname = (fieldnames[f].charAt(0) === "[")
-                ? fieldnames[f].substr(1, fieldnames[f].length - 2)  // Fieldname surrounded by '[' and ']'
-                : fieldnames[f].substr(3, fieldnames[f].length - 6); // Fieldname surrounded by '%5B' and '%5D'
+                ? fieldnames[f].substring(1, fieldnames[f].length - 1)  // Fieldname surrounded by '[' and ']'
+                : fieldnames[f].substring(3, fieldnames[f].length - 3); // Fieldname surrounded by '%5B' and '%5D'
             var fields = $formscope.find("[name='" + fieldname + "']");
             if (fields.length == 1) {
                 fieldvalue = sircl.ext.effectiveValue(fields[0]);

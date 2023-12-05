@@ -1,9 +1,11 @@
 ﻿/////////////////////////////////////////////////////////////////
 // Sircl 2.x - Core extension
 // www.getsircl.com
-// Copyright (c) 2019-2022 Rudi Breedenraedt
+// Copyright (c) 2019-2023 Rudi Breedenraedt
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
+
+/* tslint:disabled */
 
 // Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-extended' component should be registered after the 'sircl' component. Please review order of script files.");
@@ -489,13 +491,13 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (href === "history:reload" || href === "history:refresh") {
             location.reload();
         } else if (href.indexOf("alert:") === 0) {
-            sircl.ext.alert(this, href.substr(6), event);
+            sircl.ext.alert(this, href.substring(6), event);
         } else if (href.indexOf("javascript:") === 0) {
             var nonce = this.getAttribute("nonce");
             if (nonce) {
-                jQuery.globalEval(href.substr(11), { nonce: nonce });
+                jQuery.globalEval(href.substring(11), { nonce: nonce });
             } else {
-                jQuery.globalEval(href.substr(11));
+                jQuery.globalEval(href.substring(11));
             }
         } else if (href.indexOf("#") === 0) {
             window.location.hash = href;
@@ -1310,7 +1312,7 @@ $(document.body).on("change", ".onfocusout-trim", function (event) {
 /////////////////////////
 
 // From: https://stackoverflow.com/a/7557433/323122
-sircl.isElementInView = function (el) {
+sircl.isElementInView = sircl.isElementInView || function (el) {
     var rect = el.getBoundingClientRect();
     return (
         rect.top >= 0 &&
@@ -1326,12 +1328,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         /// <* class="onscrolltop-fade"> Makes the element visible when scrolling down (using a fading animation), hidden when scrolled at top.
         if ($(this).scrollTop() > 100) {
-            if ($.isFunction($.fn.fadeIn)) { // fadeIn/Out is not available in slim version if jQuery
+            if ($.fn.fadeIn) { // fadeIn/Out is not available in slim version if jQuery
                 $(".onscrolltop-fade").fadeIn(800);
             }
             sircl.ext.visible($(".onscrolltop-fade"), true);
         } else {
-            if ($.isFunction($.fn.fadeOut)) { // fadeIn/Out is not available in slim version if jQuery
+            if ($.fn.fadeOut) { // fadeIn/Out is not available in slim version if jQuery
                 $(".onscrolltop-fade").fadeOut(400);
             }
             sircl.ext.visible($(".onscrolltop-fade"), false);
@@ -1360,7 +1362,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /// <* class="onclick-scrolltop"> If clicked, scrolls the page to top (in slow, animated way).
     $(document).on("click", ".onclick-scrolltop", function (event) {
-        if ($.isFunction($.fn.animate)) { // animate is not available in slim version if jQuery
+        if ($.fn.animate) { // animate is not available in slim version if jQuery
             $("body,html").animate({
                 scrollTop: 0
             }, 500);
@@ -1553,7 +1555,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var $this = $(this);
         if (this.files.length > 0) {
             var filename = this.files[0].name;
-            if (filename.indexOf('.') >= 0) filename = filename.substr(0, filename.lastIndexOf('.'));
+            if (filename.indexOf('.') >= 0) filename = filename.substring(0, filename.lastIndexOf('.'));
             var $target = sircl.ext.$select($this, $this.attr("onchange-setbasename"));
             $target.each(function () {
                 this.value = filename;

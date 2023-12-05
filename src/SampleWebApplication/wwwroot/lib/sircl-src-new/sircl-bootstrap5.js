@@ -5,6 +5,8 @@
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
+/* tslint:disabled */
+
 // Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-bootstrap5' component should be registered after the 'sircl' component. Please review order of script files.");
 if (typeof bootstrap === "undefined") console.warn("The 'sircl-bootstrap5' component requires the 'bootstrap' component. See https://getbootstrap.com/");

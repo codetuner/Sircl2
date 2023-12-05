@@ -5,13 +5,15 @@
 // Sircl is released under the MIT license, see sircl-license.txt
 /////////////////////////////////////////////////////////////////
 
+/* tslint:disabled */
+
 // Initialize sircl lib:
 if (typeof sircl === "undefined") console.warn("The 'sircl-toastr' component should be registered after the 'sircl' component. Please review order of script files.");
 if (typeof toastr === "undefined") console.warn("The 'sircl-toastr' component requires the 'toastr.js' component. See https://github.com/CodeSeven/toastr");
 if (typeof jQuery !== "undefined" && $.isFunction($.fn.fadeIn) == false) console.warn("The 'sircl-toastr' component requires the full edition of jQuery. The slim edition is not sufficient.");
 
 // Disables Toasts if "slim" edition of jQuery is loaded:
-if ($.isFunction($.fn.fadeIn)) {
+if ($.fn.fadeIn) {
 
     // X-Sircl-Toastr response header support:
     sircl.addRequestHandler("afterSend", function sircl_toastr_afterSend_requestHandler(req) {
