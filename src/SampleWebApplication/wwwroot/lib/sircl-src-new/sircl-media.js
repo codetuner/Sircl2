@@ -133,14 +133,23 @@ document.addEventListener("DOMContentLoaded", function sircl_media_eventHandlers
             }
             if (deviceId != "") {
                 navigator.mediaDevices
-                    .getUserMedia({ video: { exact: deviceId } })
-                    .then((stream) => {
+                    .getUserMedia({ video: { deviceId: deviceId } })
+                    .then(stream => {
                         this.srcObject = stream;
                         if (autoplay) this.play();
                     })
                     .catch((err) => {
                         console.error("Sircl [onchange-setvideosource]: An error occurred.", err);
                     });
+            }
+        });
+    });
+
+    $(document).on("change", "INPUT[ifchecked-playmedia]", function () {
+        var cb = this;
+        sircl.ext.$select($(this), $(this).attr("ifchecked-playmedia")).each(function () {
+            if (cb.checked == this.paused) {
+                if (this.paused) this.play(); else this.pause();
             }
         });
     });
@@ -371,7 +380,27 @@ $$(function sircl_media_processHandler() {
     //    })
     //});
 
+    // Check actions:
     // Click actions:
+
+    $(this).find("[onplaymedia-check]").each(function () {
+        this.addEventListener("play", function () {
+            sircl.ext.$select($(this), $(this).attr("onplaymedia-check")).filter("INPUT:where([type='checkbox'], [type='radio'])").each(function () {
+                if (!this.checked) {
+                    this.checked = true;
+                    $(this).change();
+                }
+            });
+        })
+        this.addEventListener("pause", function () {
+            sircl.ext.$select($(this), $(this).attr("onplaymedia-check")).filter("INPUT:where([type='checkbox'], [type='radio'])").each(function () {
+                if (this.checked) {
+                    this.checked = false;
+                    $(this).change();
+                }
+            });
+        })
+    });
 
     $(this).find("[onplaymedia-click]").each(function () {
         this.addEventListener("play", function () {
@@ -434,10 +463,8 @@ $$(function sircl_media_processHandler() {
         var audio = !this.hasAttribute("muted");
         if (source === "any") {
             constraints = { video: true, audio: audio };
-        } else if (source === "user") {
-            constraints = { video: { facingMode: { ideal: "user" } }, audio: audio };
-        } else if (source === "environment") {
-            constraints = { video: { facingMode: { ideal: "environment" } }, audio: audio };
+        } else {
+            constraints = { video: { facingMode: { ideal: source } }, audio: audio };
         }
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {

@@ -4,7 +4,7 @@
     <span id="cmdline">ngrok http https://localhost:44386 --domain=glad-proud-ant.ngrok-free.app --host-header="localhost:44386"</span>
 </div>
 
-<video id="video1" controls="controls" width="320" height="240"
+@* <video id="video1" controls="controls" width="320" height="240"
        onplaymedia-hide="#replaybtn" onendedmedia-show="#replaybtn"
        onplaymedia-show="#playing1" onpausemedia-hide="#playing1"
        onplaymedia-removeclass="highlighted on #playing1P"
@@ -24,10 +24,10 @@
 <p id="playing1P" class="highlighted">
     <div id="playing1" class="animate" hidden>Media now playing</div>
 </p>
-
+ *@
 <hr />
 
-<audio id="audio1" controls="controls"
+@* <audio id="audio1" controls="controls"
        onplaymedia-show="#playinga1" onpausemedia-hide="#playinga1"
        onplaymedia-removeclass="highlighted on #playinga1p"
        onpausemedia-addclass="highlighted on #playinga1p">
@@ -43,7 +43,7 @@
 <p id="playinga1p" class="highlighted">
     <div id="playinga1" class="animate" hidden>Sound now playing</div>
 </p>
-
+ *@
 <hr />
 
 @*
@@ -107,9 +107,16 @@
     Barcode API not available...
 </div>
 
+<p>
+    <select class="onload-addvideodevices" onchange-setvideosource="#video3">
+        <option value="">(Select a source)</option>
+    </select>
+</p>
+
 <div class="ifcanusebarcodescanner-show" hidden>
-    <video id="video3" controls="controls" class="barcode-scanner xxonbarcodedetected-navigate" width="320" height="240" onload-setvideosource="environment" onplaymedia-show="#playing3" onplaymedia-hide=".when-paused" onpausemedia-hide="#playing3" onpausemedia-show=".when-paused"
+    <video id="video3" controls="controls" class="barcode-scanner xxonbarcodedetected-navigate" width="320" height="240" onload-setvideosource="user" onplaymedia-show="#playing3" onplaymedia-hide=".when-paused" onpausemedia-hide="#playing3" onpausemedia-show=".when-paused"
            barcode-formats="foobar code_39 code_128 qr_code" onbarcodedetected-setvalue="#bc3" onbarcodedetected-setformat="#bc3f"
+           onplaymedia-check="#cb3"
            autoplay muted>
     </video>
     <p class="when-paused animate">
@@ -117,6 +124,9 @@
     </p>
     <p>
         <div id="playing3" class="animate" hidden>Scanning</div>
+    </p>
+    <p>
+        <label><input id="cb3" type="checkbox" ifchecked-playmedia="#video3" />Play</label>
     </p>
 
     <form action="/Test/RequestInfo?form" method="post" target="#output3">
