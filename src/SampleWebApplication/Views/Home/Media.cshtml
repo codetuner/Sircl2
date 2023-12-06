@@ -137,7 +137,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        $(document).on("barcodedetected", "VIDEO", function (event) {
+        $(document).on("barcodedetected", "VIDEO.barcode-scanner", function (event) {
             alert(event.detail.barCodes[0].rawValue);
         });
     });
