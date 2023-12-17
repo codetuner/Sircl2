@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function sircl_media_eventHandlers
                         var filename = video.getAttribute("picture-filename") || "picture.png";
                         var filetype = video.getAttribute("picture-filetype") ||
                             (filename.toLowerCase().endsWith(".jpg") ? "image/jpeg" :
-                                filename.toLowerCase().endsWith(".jpeg") ? "image/jpeg" : "image.png");
+                                filename.toLowerCase().endsWith(".jpeg") ? "image/jpeg" : "image/png");
                         var file = new File([blob], filename, { type: filetype })
                         var container = new DataTransfer();
                         container.items.add(file);
@@ -507,7 +507,7 @@ sircl.mediaStartBarcodeScanner = function sircl_mediaStartBarcodeScanner(video) 
                     if (video.classList.contains("onbarcodedetected-navigate")
                         && (codes[0].rawValue.toLowerCase().startsWith("http://")
                             || codes[0].rawValue.toLowerCase().startsWith("https://")
-                            || codes[0].rawValue.toLowerCase().startsWith("mailto://")
+                            || codes[0].rawValue.toLowerCase().startsWith("mailto:")
                         )) {
                         window.location.href = codes[0].rawValue;
                     } else {
