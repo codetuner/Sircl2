@@ -146,7 +146,7 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
                     $(this).stop(false, true);
                     $(this).hide();
                     $(this).removeAttr("hidden");
-                    $(this).show(sircl.showHideDuration, function () {
+                    $(this).slideDown(sircl.showHideDuration, function () {
                         if (callback) { if (--matchcount === 0) callback(); }
                     });
                 } else {
@@ -159,7 +159,7 @@ sircl.ext.visible = function sircl_ext_visible(elementOrSelector, visible, allow
                     $(this).attr("hiding", "hiding");
                     $(this).stop(false, true);
                     $(this).show();
-                    $(this).hide(sircl.showHideDuration, function () {
+                    $(this).slideUp(sircl.showHideDuration, function () {
                         $(this).attr("hidden", "hidden");
                         $(this).removeAttr("hiding");
                         if (callback) { if (--matchcount === 0) callback(); }
