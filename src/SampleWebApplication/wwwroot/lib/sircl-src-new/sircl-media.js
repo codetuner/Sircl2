@@ -435,6 +435,7 @@ $$(function sircl_media_processHandler() {
     // Load actions:
 
     $(this).find("SELECT.onload-addvideodevices").each(function () {
+        this.classList.remove("onload-addvideodevices"); // Do not rerun if tag copied or moved
         if (navigator.mediaDevices == null || navigator.mediaDevices.enumerateDevices == null) {
             console.warn("Sircl .onload-addvideodevices: enumerateDevices() not supported.");
         } else {
