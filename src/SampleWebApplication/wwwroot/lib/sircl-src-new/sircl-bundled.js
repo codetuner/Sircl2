@@ -4083,6 +4083,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $(document).on("drop", ".ondrop-submit", function (event) {
+        // Verify accept types:
+        if ($(this).hasAttr("ondrop-accept")) {
+            var allowDrop = false;
+            var acceptTypes = $(this).attr("ondrop-accept").split(" ");
+            for (var i = 0; i < acceptTypes.length; i++) {
+                for (var j = 0; j < event.originalEvent.dataTransfer.types.length; j++) {
+                    if (acceptTypes[i].trim().toLowerCase() == event.originalEvent.dataTransfer.types[j]) {
+                        // If a match is found, allow drop:
+                        allowDrop = true;
+                    }
+                }
+            }
+            if (!allowDrop) return;
+        }
+        // Perform drop submit:
         var $this = $(this);
         var $form = ($this.hasAttr("form"))
             ? $("#" + $this.attr("form"))
