@@ -303,6 +303,9 @@ sircl.ext.$select = function sircl_ext_$select($context, selector$) {
             } else if (sel$.indexOf("|") >= 0 && sel$.indexOf("|=") < sel$.indexOf("|")) { // Break on "|" but not on "|=" as in https://api.jquery.com/attribute-contains-prefix-selector/
                 var breakpos = sel$.indexOf("|");
                 $result = $result.add(sircl.ext.$select(sircl.ext.$select($context, sel$.substring(0, breakpos)), sel$.substr(breakpos + 1)));
+            } else if (sel$.endsWith(":nth(1)")) {
+                var matches = sircl.ext.$select($context, sel$.substring(0, sel$.length - 7));
+                if (matches.length > 0) $result = $result.add(matches[0]);
             } else if (sel$ === ":this") {
                 $result = $result.add($context);
             } else if (sel$ === ":parent") {
