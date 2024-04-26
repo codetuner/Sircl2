@@ -2905,6 +2905,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+$$(function () {
+    $(this).find(".ifcanuseclipboard-show").each(function () {
+        sircl.ext.visible($(this), ('clipboard' in navigator), false);
+    });
+
+    $(this).find(".ifcanuseclipboard-hide").each(function () {
+        sircl.ext.visible($(this), !('clipboard' in navigator), false);
+    });
+});
+
+
 // Dblclick event-actions:
 //////////////////////////
 
@@ -4158,7 +4169,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
             btn += "/>";
             $form.append(btn);
-            $("#" + btnid).click();
+            $("#" + btnid)[0].click();
         }
     });
 
@@ -4175,6 +4186,14 @@ $$(function sircl_ext_onclickShare_processHandler() {
             sircl.ext.visible(this, false);
         });
     }
+
+    $(this).find(".ifcanuseshare-show").each(function () {
+        sircl.ext.visible($(this), ('share' in navigator), false);
+    });
+
+    $(this).find(".ifcanuseshare-hide").each(function () {
+        sircl.ext.visible($(this), !('share' in navigator), false);
+    });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
