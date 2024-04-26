@@ -2379,6 +2379,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //#endregion
 
+//#region Hash routing
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Write hash value in location.href for hash-routed elements:
+    $(document).on("click", ".hash-routed[href^=\\#]", function (event) {
+        var hash = this.getAttribute("href");
+        var url = window.location.href.replace(/(#.*|$)/i, hash); // Add or update the hash:
+        var state = window.history.state;
+        if (state != null) { state.url = url }
+        if ($(this).closest(".hash-routed").is("[history=push]")) {
+            window.history.pushState(state, document.title, url);
+        } else {
+            window.history.replaceState(state, document.title, url);
+        }
+    });
+
+    // Support links to elements when no (partial) page loading occures:
+    $(window).on("hashchange", function (event) {
+        var $target = $(document).find(".hash-routed[href=\\" + location.hash + "]");
+        if ($target.length > 0) {
+            event.preventDefault();
+            $target.each(function () { this.click(); });
+        }
+    });
+});
+
+sircl.addContentReadyHandler("process", function () {
+    $(this).find(".hash-routed [href^=\\#]:not([download])").each(function () {
+        $(this).addClass("hash-routed");
+    });
+    if (location.hash != null && location.hash.length > 0) {
+        $(this).find(".hash-routed[href=\\" + location.hash + "]").each(function () { this.click(); });
+    }
+});
+
+//#endregion
+
 //#region Document ready handler executing initial afterLoad
 
 $(document).ready(function () {

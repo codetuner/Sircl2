@@ -457,55 +457,6 @@ sircl.addRequestHandler("afterSend", function sircl_bs3_loadprogess_afterSend_re
 
 //#endregion
 
-//#region Hash routed tabs and pills
-
-// Write hash value in location.href for hash-routed elements:
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Write hash value in location.href for hash-routed elements:
-    $(document).on("click", ".hash-routed A[href^=\\#]:not([download])", function (event) {
-        var hash = this.getAttribute("href");
-        var url = window.location.href.replace(/(#.*|$)/i, hash); // Add or update the hash:
-        var state = window.history.state;
-        if (state != null) { state.url = url }
-        if ($(this).closest(".hash-routed").is("[history=push]")) {
-            window.history.pushState(state, document.title, url);
-        } else {
-            window.history.replaceState(state, document.title, url);
-        }
-    });
-
-    // Support links to tabs when the page URL is the same:
-    $(window).on("hashchange", function (event) {
-        $(".hash-routed").find("[href='" + location.hash + "']").each(function () {
-            event.preventDefault();
-            $(this).click();
-        });
-    });
-
-    // Set initial tab active on full page load:
-    if (location.hash != null && location.hash.length > 0) {
-        var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
-        if ($target.length > 0) {
-            $("A[href=\\" + $target.attr("href") + "]").tab("show");
-        }
-    }
-});
-
-// If location contains hash, activate matching tab:
-sircl.addAfterHistoryHandler(function sircl_bs3_hashRoute_afterHistoryHandler() {
-    if (location.hash != null && location.hash.length > 0) {
-        var $target = $(document).find(".hash-routed A[href=\\" + location.hash + "]:not([download])");
-        if ($target.length > 0) {
-            document.addEventListener("DOMContentLoaded", function () {
-                $("A[href=\\" + $target.attr("href") + "]").tab("show");
-            });
-        }
-    }
-});
-
-//#endregion
-
 //#region ifroute-setactive
 
 sircl.addAfterHistoryHandler(function sircl_bs3_activeRoute_afterHistoryHandler() {

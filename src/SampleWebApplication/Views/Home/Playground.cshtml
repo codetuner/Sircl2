@@ -1,4 +1,23 @@
-﻿<hr />
+﻿
+<p class="hash-routed">
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Link with href
+    </a>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Button with data-target
+    </button>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+    </div>
+</div>
+
+<br>
+<a href="#collapseExample">Go</a>
+
+
+<hr />
 
 <button type="submit" class="btn btn-link" onclick-share=":this" data-share-text=""><i class="fas fa-solid fa-share-alt spinner"></i> Share this page</button>
 
@@ -12,6 +31,30 @@
     <div><label><input type="radio" name="x4456" ifchecked-hide="<.chapter|>.section" ifchecked-show="#x4456c" /> Section C (not animated)</label></div>
     <div id="x4456c" class="section " hidden>This is section C</div>
 </div>
+
+<hr />
+
+<ul class="nav nav-tabs hash-routed">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#intro">Intro</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#details">Details</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#pics">Pictures</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="intro">Intro...</div>
+    <div class="tab-pane" id="details">Details...</div>
+    <div class="tab-pane" id="pics">Pictures...</div>
+</div>
+
+<a href="#intro">Intro</a>
+- <a href="#details">Details</a>
+- <a href="#pics">Pictures</a>
 
 <hr />
 
@@ -68,30 +111,6 @@
 <hr/>
 
 <div onload-load="/Time?Format=HH:mm" xx-onload-reloadafter="5" class="diffcheck"></div>
-
-<hr/>
-
-<ul class="nav nav-tabs hash-routed">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#intro">Intro</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#details">Details</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#pics">Pictures</a>
-    </li>
-</ul>
-
-<div class="tab-content">
-    <div class="tab-pane active" id="intro">Intro...</div>
-    <div class="tab-pane" id="details">Details...</div>
-    <div class="tab-pane" id="pics">Pictures...</div>
-</div>
-
-<a href="#intro">Intro</a>
-- <a href="#details">Details</a>
-- <a href="#pics">Pictures</a>
 
 <hr/>
 
@@ -445,7 +464,9 @@
 
 <hr />
 
-<form>
+<p>Collapse with hrefs</p>
+
+<form class="hash-routed">
     <div>
         <a class="btn btn-primary" data-toggle="collapse" href="#cdetails1">Details</a>
     </div>
@@ -468,12 +489,19 @@
     <input type="text" name="ExpState1" value="true" />
     <input type="text" name="ExpState2" value="" />
     <input type="text" name="ExpState3" value="" />
+
 </form>
+
+<p>
+    <a href="#cdetails1">cdetails1</a>
+    - <a href="#cdetails2">cdetails2</a>
+    - <a href="#cdetails3">cdetails3</a>
+</p>
 
 <hr />
 
 <div>
-    <a class="btn btn-primary" data-toggle="collapse" href="#cdetails">Details</a>
+    <a class="btn btn-primary hash-routed" data-toggle="collapse" href="#cdetails">Details</a>
 </div>
 
 <div class="collapse show" id="cdetails" ifexpanded-load="/Time">
