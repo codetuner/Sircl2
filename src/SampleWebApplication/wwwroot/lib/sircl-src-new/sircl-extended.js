@@ -1194,7 +1194,7 @@ $$(function sircl_ext_actionEvents_processHandler() {
         sircl.ext.$select($this, $this.attr("show-ifallchecked")).on("change", function () {
             sircl.ext.visible($this, $all.filter(":checked").length == $all.length, true)
         });
-        sircl.ext.visible($this, $all.filter(":checked").length == $all.length)
+        sircl.ext.visible($this, $all.filter(":checked").length == $all.length);
     });
 
     /// <* show-ifanychecked="selection"> If any of the selection is checked, show, else hide this.
@@ -1204,7 +1204,27 @@ $$(function sircl_ext_actionEvents_processHandler() {
         sircl.ext.$select($this, $this.attr("show-ifanychecked")).on("change", function () {
             sircl.ext.visible($this, $any.filter(":checked").length > 0, true)
         });
-        sircl.ext.visible($this, $any.filter(":checked").length > 0)
+        sircl.ext.visible($this, $any.filter(":checked").length > 0);
+    });
+
+    /// <* hide-ifallchecked="selection"> If all of the selection is checked, hide, else show this.
+    $(this).find("[hide-ifallchecked]").each(function () {
+        var $this = $(this);
+        var $all = sircl.ext.$select($this, $this.attr("hide-ifallchecked"));
+        sircl.ext.$select($this, $this.attr("hide-ifallchecked")).on("change", function () {
+            sircl.ext.visible($this, !($all.filter(":checked").length == $all.length), true)
+        });
+        sircl.ext.visible($this, !($all.filter(":checked").length == $all.length));
+    });
+
+    /// <* hide-ifanychecked="selection"> If any of the selection is checked, hide, else show this.
+    $(this).find("[hide-ifanychecked]").each(function () {
+        var $this = $(this);
+        var $any = sircl.ext.$select($this, $this.attr("hide-ifanychecked"));
+        sircl.ext.$select($this, $this.attr("hide-ifanychecked")).on("change", function () {
+            sircl.ext.visible($this, !($any.filter(":checked").length > 0), true)
+        });
+        sircl.ext.visible($this, !($any.filter(":checked").length > 0));
     });
 });
 
