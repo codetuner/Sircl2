@@ -2168,7 +2168,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clearTimeout(this._oninput_changeafter_timeout);
         }
         this._oninput_changeafter_timeout = setTimeout(function (elem) {
-            $(elem).change();
+            $(elem).trigger("change");
         }, timeout, this);
     });
     /// Prevent change event if value has not really changed since last change event:

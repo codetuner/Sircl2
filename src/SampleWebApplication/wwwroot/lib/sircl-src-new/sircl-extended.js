@@ -89,13 +89,13 @@ $$(function sircl_ext_onload_processHandler() {
         var value = eval(jsexpr);
         this.value = value;
         this.removeAttribute("onload-setvalue");
-        $(this).change();
+        $(this).trigger("change");
     });
 
     /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
     $(this).find("[onload-setvaluefromquery]").each(function () {
         $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
-        $(this).change();
+        $(this).trigger("change");
     });
 
     // <* onclick-scrollintoview="selector"> On click scrolls the (first) match of the selector into the view.
@@ -120,14 +120,14 @@ $$(function sircl_ext_onload_processHandler() {
             }
             if (singleton != -1) {
                 $(this).val(options[singleton].value);
-                $(this).change();
+                $(this).trigger("change");
             }
         } else if (value.toLowerCase() == ":first") {
             var first = -1;
             for (var i = 0; i < options.length; i++) {
                 if (options[i].value != "") {
                     $(this).val(options[i].value);
-                    $(this).change();
+                    $(this).trigger("change");
                     break;
                 }
             }
@@ -135,7 +135,7 @@ $$(function sircl_ext_onload_processHandler() {
             for (var i = 0; i < options.length; i++) {
                 if (options[i].value == value) {
                     $(this).val(value);
-                    $(this).change();
+                    $(this).trigger("change");
                     break;
                 }
             }
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         sircl.ext.$select($(this), $(this).attr("onchange-check")).each(function () {
             if (!this.checked) {
                 this.checked = true;
-                $(this).change();
+                $(this).trigger("change");
             }
         });
     });
@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-clearvalue]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-clearvalue")).each(function () {
             $(this).val("");
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-uncheck]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-uncheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = false;
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-check]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-check")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = true;
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click", "[onclick-togglecheck]", function (event) {
         sircl.ext.$select($(this), $(this).attr("onclick-togglecheck")).filter("INPUT[type=checkbox], INPUT[type=radio]").each(function () {
             this.checked = !this.checked;
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -641,28 +641,28 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change", "[onchecked-uncheck]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("onchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[onchecked-check]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("onchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[onunchecked-uncheck]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("onunchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[onunchecked-check]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("onunchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -709,42 +709,42 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change", "[ifchecked-clearvalue]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-clearvalue")).each(function () {
             $(this).val("");
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[ifunchecked-clearvalue]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-clearvalue")).each(function () {
             $(this).val("");
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[ifchecked-uncheck]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[ifchecked-check]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[ifunchecked-uncheck]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(document).on("change", "[ifunchecked-check]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -872,16 +872,16 @@ document.addEventListener("DOMContentLoaded", function () {
         // Perform only net clearvalues and trigger change event:
         actions.toclearvalue.forEach(function (elem) {
             $(elem).val("");
-            $(elem).change();
+            $(elem).trigger("change");
         });
         // Perform only net check/unchecks and trigger change event:
         actions.tocheck.forEach(function (elem) {
             elem.checked = true;
-            $(elem).change();
+            $(elem).trigger("change");
         });
         actions.touncheck.forEach(function (elem) {
             elem.checked = false;
-            $(elem).change();
+            $(elem).trigger("change");
         });
     });
 });
@@ -931,42 +931,42 @@ $$(function sircl_ext_ifchecked_processHandler() {
     $(this).find("[ifchecked-clearvalue]").each(function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-clearvalue")).each(function () {
             $(this).val("");
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(this).find("[ifunchecked-clearvalue]").each(function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-clearvalue")).each(function () {
             $(this).val("");
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(this).find("[ifchecked-uncheck]").each(function () {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(this).find("[ifchecked-check]").each(function () {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("ifchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(this).find("[ifunchecked-uncheck]").each(function () {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-uncheck")).filter(":checked").each(function () {
             $(this).prop("checked", false);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
     $(this).find("[ifunchecked-check]").each(function () {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("ifunchecked-check")).filter(":not(:checked)").each(function () {
             $(this).prop("checked", true);
-            $(this).change();
+            $(this).trigger("change");
         });
     });
 
@@ -1098,16 +1098,16 @@ $$(function sircl_ext_ifchecked_processHandler() {
         // Perform only net clearvalues and trigger change event:
         actions.toclearvalue.forEach(function (elem) {
             $(elem).val("");
-            $(elem).change();
+            $(elem).trigger("change");
         });
         // Perform only net check/unchecks and trigger change event:
         actions.tocheck.forEach(function (elem) {
             elem.checked = true;
-            $(elem).change();
+            $(elem).trigger("change");
         });
         actions.touncheck.forEach(function (elem) {
             elem.checked = false;
-            $(elem).change();
+            $(elem).trigger("change");
         });
     });
 });
@@ -1612,7 +1612,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var $file = sircl.ext.$select($this, $(this).attr("ondropfile-set"));
         if ($file.length > 0) {
             $file[0].files = event.originalEvent.dataTransfer.files;
-            $($file[0]).change();
+            $($file[0]).trigger("change");
         }
     });
 

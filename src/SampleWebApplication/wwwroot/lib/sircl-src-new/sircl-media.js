@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function sircl_media_eventHandlers
                         var container = new DataTransfer();
                         container.items.add(file);
                         this.files = container.files;
-                        $(this).change();
+                        $(this).trigger("change");
                     }
                 }, 'image/jpeg');
             });
@@ -388,7 +388,7 @@ $$(function sircl_media_processHandler() {
             sircl.ext.$select($(this), $(this).attr("onplaymedia-check")).filter("INPUT:where([type='checkbox'], [type='radio'])").each(function () {
                 if (!this.checked) {
                     this.checked = true;
-                    $(this).change();
+                    $(this).trigger("change");
                 }
             });
         })
@@ -396,7 +396,7 @@ $$(function sircl_media_processHandler() {
             sircl.ext.$select($(this), $(this).attr("onplaymedia-check")).filter("INPUT:where([type='checkbox'], [type='radio'])").each(function () {
                 if (this.checked) {
                     this.checked = false;
-                    $(this).change();
+                    $(this).trigger("change");
                 }
             });
         })
@@ -520,7 +520,7 @@ sircl.mediaStartBarcodeScanner = function sircl_mediaStartBarcodeScanner(video) 
                             }
                             sircl.ext.$select($(video), video.getAttribute("onbarcodedetected-setvalue")).each(function () {
                                 this.value = codes[0].rawValue;
-                                $(this).change();
+                                $(this).trigger("change");
                             });
                         }
                         if (video.getAttribute("onbarcodedetected-click")) {
