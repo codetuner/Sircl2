@@ -201,11 +201,25 @@ document.addEventListener("DOMContentLoaded", function () {
             try { this.select(); } catch (x) { }
         });
     });
+    
+    // On change, make backdrop static:
+    $(document).on("change", ".modal.onchange-backdropstatic", function (event) {
+        var mdl = bootstrap.Modal.getInstance(this);
+        if (mdl !== null) {
+            mdl._config.backdrop = "static";
+        }
+    });
 
     // Reset content of a modal with onclose-restore when closing the modal:
     $(document).on("hidden.bs.modal", ".modal.onclose-restore", function (event) {
+        // Restore original content:
         var originalContent = $(this)[0]._originalContent;
         if (originalContent !== undefined) $(this).html(originalContent);
+        // Restore from static backdrop:
+        var mdl = bootstrap.Modal.getInstance(this);
+        if (mdl !== null && $(this).hasClass("onchange-backdropstatic")) {
+            mdl._config.backdrop = true;
+        }
     });
 
     // Dynamically load content on showing modal:
@@ -652,10 +666,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // On change, make backdrop static:
+    $(document).on("change", ".offcanvas.onchange-backdropstatic", function (event) {
+        var offc = bootstrap.Offcanvas.getInstance(this);
+        if (offc !== null) {
+            offc._config.backdrop = "static";
+        }
+    });
+
     // Reset content of a offcanvas with onclose-restore when closing the offcanvas:
     $(document).on("hidden.bs.offcanvas", ".offcanvas.onclose-restore", function (event) {
+        // Restore content:
         var originalContent = $(this)[0]._originalContent;
         if (originalContent !== undefined) $(this).html(originalContent);
+        // Restore from static backdrop:
+        var offc = bootstrap.Offcanvas.getInstance(this);
+        if (offc !== null && $(this).hasClass("onchange-backdropstatic")) {
+            offc._config.backdrop = true;
+        }
     });
 
     // Dynamically load content on showing offcanvas:

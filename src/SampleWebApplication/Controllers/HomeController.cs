@@ -41,6 +41,11 @@ namespace SampleWebApplication.Controllers
             return View("Index");
         }
 
+        public IActionResult NoContentResponse()
+        {
+            return NoContent();
+        }
+
         public IActionResult Redirect()
         {
             Response.Headers["X-Sircl-Toastr"] = $"success|Redirected to home";
