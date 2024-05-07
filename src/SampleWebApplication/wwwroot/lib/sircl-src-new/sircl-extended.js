@@ -1730,7 +1730,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Submit form (add a submit button, then click that button):
             var btnid = "sircl-autoid-" + new Date().getTime();
             var btn = "<input hidden id=\"" + btnid + "\" type=\"submit\" ";
-            if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction").replaceAll("{drop-value}", dropvalue || "") + "\" ";
+            if ($this.hasAttr("formaction")) btn += "formaction=\"" + $this.attr("formaction").replaceAll("{drop-value}", dropvalue || "").replaceAll("%7Bdrop-value%7D", dropvalue || "") + "\" ";
             if ($this.hasAttr("formenctype")) btn += "formenctype=\"" + $this.attr("formenctype") + "\" ";
             if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
             if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
