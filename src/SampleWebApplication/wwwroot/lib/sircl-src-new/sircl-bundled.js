@@ -695,6 +695,7 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
     if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
     req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
@@ -851,6 +852,7 @@ SirclRequestProcessor.prototype._send = function (req) {
                     req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
                     req.xhr.setRequestHeader("Pragma", "no-cache");
                     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+                    if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
                     req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
                     req.xhr.send();
                     // Xhr's load event should be fired again (recursively).

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SampleWebApplication.Data;
 using SampleWebApplication.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SampleWebApplication.Controllers
 {
@@ -38,6 +39,13 @@ namespace SampleWebApplication.Controllers
             ViewBag.IsDataSeeded = context.Country.Any(c => c.Name == "Belgium");
 
             return View("Index");
+        }
+
+        public IActionResult Redirect()
+        {
+            Response.Headers["X-Sircl-Toastr"] = $"success|Redirected to home";
+            Response.Headers["Location"] = "/Home";
+            return NoContent();
         }
 
         public IActionResult DialogContent(string target)
