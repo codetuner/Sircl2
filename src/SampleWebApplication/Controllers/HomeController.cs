@@ -229,6 +229,11 @@ namespace SampleWebApplication.Controllers
             return View("TargetResult");
         }
 
+        public IActionResult ProductList()
+        {
+            return View();
+        }
+
         //[Route("/{**catchAll}")]
         //public IActionResult CatchAll(string catchAll)
         //{

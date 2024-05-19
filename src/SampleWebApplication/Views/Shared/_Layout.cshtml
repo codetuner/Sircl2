@@ -18,7 +18,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SampleWebApplication</title>
+    <title>Sircl2 Samples &amp; Tests</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
@@ -38,7 +38,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SampleWebApplication</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Sircl2</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -57,6 +57,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PlaygroundBs5" target="_self">BS5</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ProductList">Prods</a>
                         </li>
                         <li class="nav-item" ifroute-setactive="^\/ToDo(\/|$)">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ToDo" asp-action="Index">ToDos</a>
@@ -172,6 +175,7 @@
     <script src="~/lib/sortable/Sortable.js"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js" integrity="sha512-pUhApVQtLbnpLtJn6DuzDD5o2xtmLJnJ7oBoMsBnzOkVkpqofGLGPaBJ6ayD2zQe3lCgCibhJBi4cj5wAxwVKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     @if (minified)
     {
         <script src="~/lib/sircl-src-new/sircl-bundled.min.js"></script>
@@ -181,6 +185,7 @@
         <script src="~/lib/sircl-src-new/sircl-toastr.min.js"></script>
         <script src="~/lib/sircl-src-new/sircl-sortable.min.js"></script>
         <script src="~/lib/sircl-src-new/sircl-qrious.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-vue.min.js"></script>
     }
     else
     {
@@ -194,6 +199,7 @@
         <script src="~/lib/sircl-src-new/sircl-toastr.js"></script>
         <script src="~/lib/sircl-src-new/sircl-sortable.js"></script>
         <script src="~/lib/sircl-src-new/sircl-qrious.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-vue.js"></script>
         <script src="~/lib/sircl-src-new/sircl-debugging.js"></script>
     }
 

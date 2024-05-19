@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +101,16 @@ namespace SampleWebApplication.Controllers
             Context.SaveChanges();
 
             return Back(false);
+        }
+
+        public IActionResult List()
+        {
+            Thread.Sleep(300);
+
+            var model = new ListModel();
+            model.Products.AddRange(Context.Product);
+
+            return Json(model);
         }
     }
 }

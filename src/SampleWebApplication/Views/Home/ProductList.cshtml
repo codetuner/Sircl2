@@ -1,0 +1,21 @@
+﻿<h2>All products</h2>
+<div vue-dataurl="@Url.Action("List", "Products")">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Barcode</th>
+                <th>Label</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="product in products">
+                <td>{{ product.id }}</td>
+                <td>{{ product.barcode }}</td>
+                <td>{{ product.label }}</td>
+                <td>{{ product.unitPrice }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
