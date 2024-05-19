@@ -90,6 +90,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-vue.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-vue.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-bundled.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl.js",
