@@ -904,9 +904,14 @@ SirclRequestProcessor.prototype._send = function (req) {
                 req.targetHasChanged = true;
             }
             // Handle response header AppId given but different from current AppId while target is *[sircl-appid]:
-            if (req.method == "get" && req.$finalTarget !== null && req.$finalTarget.is("*[sircl-appid]") && req.xhr.getResponseHeader("X-Sircl-AppId") !== null && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
-                window.location.href = req.action;
-                return;
+            if (req.method == "get" && req.$finalTarget !== null && req.$finalTarget.is("*[sircl-appid]")) {
+                if (req.$finalTarget.is("*[scirl-appmode='strict']") && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                    window.location.href = req.action;
+                    return;
+                } else if (req.xhr.getResponseHeader("X-Sircl-AppId") !== null && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                    window.location.href = req.action;
+                    return;
+                }
             }
             // Then for document title:
             req.documentTitle = req.xhr.getResponseHeader("X-Sircl-Document-Title");
