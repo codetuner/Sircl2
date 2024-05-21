@@ -3870,6 +3870,85 @@ $$(function sircl_ext_ifinview_processHandler() {
     });
 });
 
+
+// Animation event-actions:
+///////////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // <* onanimationcancel-click="selector"> On animationcancel, triggers a click event on the elements matching the given selector.
+    $(document).on("animationcancel", "*[onanimationcancel-click]", function (event) {
+        var targetSelector = $(this).attr("onanimationcancel-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* onanimationend-click="selector"> On animationend, triggers a click event on the elements matching the given selector.
+    $(document).on("animationend", "*[onanimationend-click]", function (event) {
+        var targetSelector = $(this).attr("onanimationend-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* onanimationiteration-click="selector"> On animationiteration, triggers a click event on the elements matching the given selector.
+    $(document).on("animationiteration", "*[onanimationiteration-click]", function (event) {
+        var targetSelector = $(this).attr("onanimationiteration-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* onanimationstart-click="selector"> On animationstart, triggers a click event on the elements matching the given selector.
+    $(document).on("animationstart", "*[onanimationstart-click]", function (event) {
+        var targetSelector = $(this).attr("onanimationstart-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // <* onanimationend-remove="selector"> On animationend or animationcancel removes the elements matching the given selector.
+    $(document).on("animationend animationcancel", "[onanimationend-remove]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onanimationend-remove")).remove();
+    });
+
+    // <* onanimationend-hide="selector"> On animationend or animationcancel hides the elements matching the given selector.
+    $(document).on("animationend animationcancel", "[onanimationend-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onanimationend-hide")), false, true);
+    });
+
+    // <* onanimationend-show="selector"> On animationend or animationcancel shows the elements matching the given selector.
+    $(document).on("animationend animationcancel", "[onanimationend-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onanimationend-show")), true, true);
+    });
+
+    /// <* onanimationend-removeclass="class [on selector]"> On animationend or animationcancel, removes the class.
+    $(document).on("animationend animationcancel", "[onanimationend-removeclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("onanimationend-removeclass"));
+    });
+
+    /// <* onanimationend-addclass="class [on selector]"> On animationend or animationcancel, adds the class.
+    $(document).on("animationend animationcancel", "[onanimationend-addclass]", function (event) {
+        sircl.ext.addClass($(this), $(this).attr("onanimationend-addclass"));
+    });
+
+    // <* onanimationend-scrollintoview="selector"> On animationend or animationcancel scrolls the (first) match of the selector into the view.
+    $(document).on("animationend animationcancel", "[onanimationend-scrollintoview]", function (event) {
+        var $target = sircl.ext.$select($(this), $(this).attr("onanimationend-scrollintoview"));
+        if ($target.length > 0) $target[0].scrollIntoView();
+    });
+});
+
+
 //#endregion
 
 //#region Confirmation dialogs

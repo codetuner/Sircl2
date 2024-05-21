@@ -1,4 +1,64 @@
 ﻿
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+
+<hr />
+
+<style>
+    @@keyframes no-animation { }
+
+    .wait-2s {
+        animation: no-animation 2s;
+    }
+
+</style>
+
+<a href="" onclick-addclass="wait-2s" onanimationend-show="#sdqd56465qs65">Click and wait for 2 seconds</a>
+
+<p id="sdqd56465qs65" hidden>
+    You clicked 2 seconds ago. Reload the page to try again.
+</p>
+
+<hr />
+
+<style>
+    @@keyframes bg-fade-blue-to-none {
+        0% {
+            background: lightblue;
+        }
+
+        100% {
+            background: none;
+        }
+    }
+
+    .bg-fade-blue-to-none-animation {
+        animation: bg-fade-blue-to-none 1s ease-in;
+    }
+</style>
+
+<p id="newitemsq5d4" 
+   onanimationstart-click="#newitemsq5d4s"
+   onanimationend-hide="#newitemsq5d4b"
+   onanimationend-removeclass="bg-fade-blue-to-none-animation">New item</p>
+<span id="newitemsq5d4s" onclick-show="#newitemsq5d4b"></span>
+
+<button type="button" onclick-addclass="bg-fade-blue-to-none-animation on #newitemsq5d4">Add</button>
+
+<p id="newitemsq5d4b" hidden class="animate">Animation busy</p>
+
+<hr />
+
+
 <p class="hash-routed">
     <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
         Link with href
@@ -60,13 +120,13 @@
 
 <div>
     <form action="/Time?delay=1234" class="onfocus-select onfocusout-trim onsubmit-disable onload-submit" target="<DIV|>.output">
-    <label><input type="checkbox" value="abc" /> abc</label><br/>
-    <input type="text" value="  abc    " class="form-control onfocusout-notrim" /><br />
-    <input type="text" value="  abc    " class="form-control onfocus-noselect" /><br />
-    <button type="submit" class="btn btn-primary onsubmit-disable">Back or close</button>
-    <button type="submit" class="btn btn-primary onsubmit-disable">Save and stay</button><br />
-</form>
-<p class="output"></p>
+        <label><input type="checkbox" value="abc" /> abc</label><br />
+        <input type="text" value="  abc    " class="form-control onfocusout-notrim" /><br />
+        <input type="text" value="  abc    " class="form-control onfocus-noselect" /><br />
+        <button type="submit" class="btn btn-primary onsubmit-disable">Back or close</button>
+        <button type="submit" class="btn btn-primary onsubmit-disable">Save and stay</button><br />
+    </form>
+    <p class="output"></p>
 </div>
 
 <hr />
@@ -80,22 +140,24 @@
         <button type="submit" onsubmit-confirm="OK?" formnovalidate>OK (novalidate)?</button><br />
         <span class="onclick-submit" onsubmit-confirm="OK?">OK?</span><br />
         <span class="onclick-submit">Submit</span><br />
-        <label><input type="checkbox" class="onchange-submit" onsubmit-confirm="Proceed?" />Proceed</label><br/>
+        <label><input type="checkbox" class="onchange-submit" onsubmit-confirm="Proceed?" />Proceed</label><br />
     </div>
 </form>
 
-<hr/>
+<hr />
 
-<a href="history:back">Back</a><br />
-<a href="history:back" onback-allowclose="Ready to close browser page ?">Back with onback-allowclose attr</a><br/>
+<a href="history:back">Back</a>
+<br />
+<a href="history:back" onback-allowclose="Ready to close browser page ?">Back with onback-allowclose attr</a>
+<br />
 <a href="history:back" class="onback-allowclose">Back with onback-allowclose class</a>
 
-<hr/>
+<hr />
 
 <div>
-    <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br/>
-    <input type="text" onload-setvalue="5+3" /><br/>
-    <br/>
+    <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br />
+    <input type="text" onload-setvalue="5+3" /><br />
+    <br />
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copytext="FooBar!"><i class="fas fa-solid fa-clipboard spinner"></i> FooBar!</button>
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyvalue="[name=TimeZone]"><i class="fas fa-solid fa-clipboard spinner"></i> Value</button>
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyinnertext="<DIV|>P"><i class="fas fa-solid fa-clipboard spinner"></i> Text</button>
@@ -108,59 +170,59 @@
 
 <template class="octoast" data-toastr-type="warning" data-toastr-title="Confidentiality">  Data in the clipboard may contain confidential info!</template>
 
-<hr/>
+<hr />
 
 <div onload-load="/Time?Format=HH:mm" xx-onload-reloadafter="5" class="diffcheck"></div>
 
-<hr/>
+<hr />
 
 <form class="" action="/Test/RequestInfo?form" enctype="multipart/form-data" method="post">
     <div ondropfile-set="#fileinp" ondragover-addclass="red">
         <p>Drop file here...</p>
         <div>
-            <input type="text" name="hi" class="onchange-submit"/>
+            <input type="text" name="hi" class="onchange-submit" />
         </div>
         <input id="fileinp" name="files" type="file" multiple
-            accept=".pdf,.docx,image/*"
-            accept-alert="File type not supported"
-            maxcount="4"
-            maxcount-alert="Too many files"
-            maxsize="5 MB"
-            maxsize-alert="File is more than 100 KB"
-            maxtotalsize="20 MB"
-            maxtotalsize-alert="All files together should be less than 200 KB"
-            onchange-setname="<DIV|>P"
-            class="onchange-submit" formaction="/Test/RequestInfo?input" formenctype="multipart/form-data" formmethod="post">
+               accept=".pdf,.docx,image/*"
+               accept-alert="File type not supported"
+               maxcount="4"
+               maxcount-alert="Too many files"
+               maxsize="5 MB"
+               maxsize-alert="File is more than 100 KB"
+               maxtotalsize="20 MB"
+               maxtotalsize-alert="All files together should be less than 200 KB"
+               onchange-setname="<DIV|>P"
+               class="onchange-submit" formaction="/Test/RequestInfo?input" formenctype="multipart/form-data" formmethod="post">
     </div>
     <button type="submit">OK</button>
 </form>
 
-<hr/>
+<hr />
 
 <form action="/Test/RequestInfo?form" method="post">
-  <input type="text" name="Name" placeholder="Enter name" />
-  <div class="ondropfile-set" style="border: solid 1px green;">
-    <p>Drop your picture here</p>
-    <input class="onchange-submit" type="file" name="files"
-        accept="image/*"
-        maxsize="4 MB"
-        accept-alert="Only images are accepted."
-        maxcount-alert="Only a single file is accepted."
-        maxsize-alert="Please upload a file smaller than 4 MB."
-        formaction="/Test/RequestInfo?form"
-        formmethod="post"
-        formenctype="multipart/form-data"
-        formtarget="<DIV"
-        hidden>
-  </div>
-  <button type="submit">OK</button>
+    <input type="text" name="Name" placeholder="Enter name" />
+    <div class="ondropfile-set" style="border: solid 1px green;">
+        <p>Drop your picture here</p>
+        <input class="onchange-submit" type="file" name="files"
+               accept="image/*"
+               maxsize="4 MB"
+               accept-alert="Only images are accepted."
+               maxcount-alert="Only a single file is accepted."
+               maxsize-alert="Please upload a file smaller than 4 MB."
+               formaction="/Test/RequestInfo?form"
+               formmethod="post"
+               formenctype="multipart/form-data"
+               formtarget="<DIV"
+               hidden>
+    </div>
+    <button type="submit">OK</button>
 </form>
 
 
 <hr />
 
 <a href="#bottom">Go to bottom of page</a>
-<br/>
+<br />
 <i href="#bottom">Go to bottom of page</i>
 
 
@@ -180,8 +242,8 @@
 <p>Spinner onnavigate Form</p>
 
 <form action="/Time" method="get" class="onsubmit-disable onnavigate" target="_self">
-<input type="number" name="delay" value="2000" /><br/>
-<button type="submit"><i class="spinner"></i> Submit</button>
+    <input type="number" name="delay" value="2000" /><br />
+    <button type="submit"><i class="spinner"></i> Submit</button>
 </form>
 
 <hr />
@@ -189,16 +251,16 @@
 <p>Onclick-submit:</p>
 
 <div>
-<form id="ocsf1" action="/Query?src=form" target="<DIV|>.output">
-    Value : <input type="text" name="value" />
-    <p>
-        <button type="button" class="onclick-submit" formaction="/Query?src=Submit3">Submit 3</button>
-    </p>
-</form>
-<div class="output"></div>
+    <form id="ocsf1" action="/Query?src=form" target="<DIV|>.output">
+        Value : <input type="text" name="value" />
+        <p>
+            <button type="button" class="onclick-submit" formaction="/Query?src=Submit3">Submit 3</button>
+        </p>
+    </form>
+    <div class="output"></div>
 </div>
 <button type="button" class="onclick-submit" form="ocsf1" onclick-confirm="This BUTTON has no target; will load in new page. Proceed ?">Submit</button>
-<br/>
+<br />
 
 <p class="onclick-submit mt-3" style="padding: 6px; background-color: lightcyan;" form="ocsf1" formaction="/Query?src=Submit2" formtarget="#ocsf1|<DIV|>.output">Submit 2 (click on me)</p>
 
@@ -210,7 +272,7 @@
 
 <form action="/Time?delay=100" target="#submitWithOnClick" class="onsubmit-disable">
     <input type="text" name="t" />
-    <br/>
+    <br />
     <button id="submitWithOnClickBtn" type="submit" onclick="submitWithOnClick();">Submit</button>
 </form>
 <div id="submitWithOnClick">
@@ -226,9 +288,14 @@
 
 <a id="disabledhref" href="https://www.google.com" target="_self" disabled>Disabled link</a>
 <style>
-[href][disabled] { color: gray; text-decoration: none; }
+    [href][disabled] {
+        color: gray;
+        text-decoration: none;
+    }
 </style>
-<br/><button type="button" onclick-enable="#disabledhref">Enable</button><button type="button" onclick-disable="#disabledhref">Disable</button>
+<br />
+<button type="button" onclick-enable="#disabledhref">Enable</button>
+<button type="button" onclick-disable="#disabledhref">Disable</button>
 
 <hr />
 
@@ -256,7 +323,10 @@
 </div>
 
 <style>
-    .disabled { color: gray; background-color: lightgray; }
+    .disabled {
+        color: gray;
+        background-color: lightgray;
+    }
 </style>
 
 <hr />
