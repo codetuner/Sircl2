@@ -13,6 +13,9 @@
                 <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
             </form>
         </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="AnApp" asp-action="Index" asp-controller="Home" target="_self">Apps</a>
+        </li>
     }
     else
     {
@@ -21,6 +24,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login" target="_self">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="AnApp" asp-action="Index" asp-controller="Home" target="_self">Apps</a>
         </li>
     }
     <li class="nav-item">

@@ -34,6 +34,7 @@ namespace SampleWebApplication
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
@@ -64,6 +65,8 @@ namespace SampleWebApplication
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapAreaControllerRoute(null, "AnApp", "AnApp/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapAreaControllerRoute(null, "AnotherApp", "AnotherApp/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

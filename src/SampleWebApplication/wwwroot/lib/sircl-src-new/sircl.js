@@ -103,15 +103,15 @@ sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue) 
 
 //#region Miscellaneous settings
 
-sircl.html_spinner = '<i class="sircl-spinner sircl-spinning"></i> ';
+sircl.html_spinner = sircl.html_spinner || '<i class="sircl-spinner sircl-spinning"></i> ';
 
-sircl.max_redirects = 20;
+sircl.max_redirects = sircl.max_redirects || 20;
 
-sircl.mainTargetSelector$ = ".main-target";
+sircl.mainTargetSelector$ = sircl.mainTargetSelector$ || "*[sircl-appid], .main-target";
 
 sircl.lastPageNavigationObject = null;
 
-sircl.showHideDuration = 200;
+sircl.showHideDuration = sircl.showHideDuration || 200;
 
 //#endregion
 
@@ -695,6 +695,8 @@ sircl._processRequest = function (req, loadComplete) {
     }
     req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
     req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+    req.appId = (req.$finalTarget.length === 1 && req.$finalTarget.is("*[sircl-appid]")) ? req.$finalTarget.attr("sircl-appid") : null;
+    if (req.appId !== null) req.xhr.setRequestHeader("X-Sircl-AppId", req.appId);
     if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
     if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
     req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
@@ -900,6 +902,11 @@ SirclRequestProcessor.prototype._send = function (req) {
                 req.$finalTarget = sircl.ext.$select(req.$trigger, req.$newTarget);
                 req.targetMethod = null;
                 req.targetHasChanged = true;
+            }
+            // Handle response header AppId given but different from current AppId while target is *[sircl-appid]:
+            if (req.method == "get" && req.$finalTarget !== null && req.$finalTarget.is("*[sircl-appid]") && req.xhr.getResponseHeader("X-Sircl-AppId") !== null && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                window.location.href = req.action;
+                return;
             }
             // Then for document title:
             req.documentTitle = req.xhr.getResponseHeader("X-Sircl-Document-Title");

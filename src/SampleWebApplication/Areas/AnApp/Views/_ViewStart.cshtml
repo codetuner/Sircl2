@@ -1,0 +1,5 @@
+﻿@{
+    Layout = (Context.Request.Headers["X-Sircl-Request-Type"] == "ChangeAction") ? "_ActionLayout" 
+        : (Context.Request.Headers["X-Sircl-Request-Type"] == "Partial") ? "_PartLayout" 
+        : "_PageLayout";
+}
