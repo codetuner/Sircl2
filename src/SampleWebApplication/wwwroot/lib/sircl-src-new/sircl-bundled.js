@@ -903,12 +903,20 @@ SirclRequestProcessor.prototype._send = function (req) {
                 req.targetMethod = null;
                 req.targetHasChanged = true;
             }
+            // Handle full-page response:
+            if (req.method == "get" && req.responseText != null && req.responseText.length > 1024 && req.responseText.substr(0, 1024).indexOf("<html") >= 0) {
+                console.warn("The request to '" + req.action + "' returned a full page and has been re-issued to handle as full page. Consider returning a partial page or set target='_self' on the link to avoid double request.");
+                window.location.href = req.action;
+                return;
+            }
             // Handle response header AppId given but different from current AppId while target is *[sircl-appid]:
             if (req.method == "get" && req.$finalTarget !== null && req.$finalTarget.is("*[sircl-appid]")) {
                 if (req.$finalTarget.is("*[scirl-appmode='strict']") && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                    console.warn("The request to '" + req.action + "' is part of another application and has been re-issued as full page request. Consider using a target='_self' on the link to avoid double request.");
                     window.location.href = req.action;
                     return;
                 } else if (req.xhr.getResponseHeader("X-Sircl-AppId") !== null && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                    console.warn("The request to '" + req.action + "' is part of another application and has been re-issued as full page request. Consider using a target='_self' on the link to avoid double request.");
                     window.location.href = req.action;
                     return;
                 }
