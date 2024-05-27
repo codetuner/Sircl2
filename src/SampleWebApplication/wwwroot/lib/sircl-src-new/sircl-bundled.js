@@ -3105,6 +3105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $(document).on("change", "[onchecked-uncheck]", function (event) {
         if (this.checked) sircl.ext.$select($(this), this.getAttribute("onchecked-uncheck")).filter(":checked").each(function () {
+            if (this == event.target) return;
             $(this).prop("checked", false);
             $(this).trigger("change");
         });
@@ -3126,6 +3127,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $(document).on("change", "[onunchecked-check]", function (event) {
         if (!this.checked) sircl.ext.$select($(this), this.getAttribute("onunchecked-check")).filter(":not(:checked)").each(function () {
+            if (this == event.target) return;
             $(this).prop("checked", true);
             $(this).trigger("change");
         });
