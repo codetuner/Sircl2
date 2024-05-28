@@ -204,9 +204,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // On change, make backdrop static:
     $(document).on("change", ".modal.onchange-backdropstatic", function (event) {
-        var mdl = bootstrap.Modal.getInstance(this);
-        if (mdl !== null) {
-            mdl._config.backdrop = "static";
+        if ($(event.target).closest(".sircl-content-processing").length == 0) {
+            var mdl = bootstrap.Modal.getInstance(this);
+            if (mdl !== null) {
+                mdl._config.backdrop = "static";
+            }
         }
     });
 
