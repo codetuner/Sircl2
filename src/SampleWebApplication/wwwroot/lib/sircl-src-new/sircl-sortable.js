@@ -40,15 +40,19 @@ $$(function site_onload_process_handler() {
                     var form = $form[0];
                     // Set fromindex/toindex input values:
                     $form.find("INPUT.onsort-setfromlist").each(function () {
+                        $(this).removeAttr("disabled");
                         $(this).val(event.from.getAttribute("sort-name"));
                     });
                     $form.find("INPUT.onsort-setfromindex").each(function () {
+                        $(this).removeAttr("disabled");
                         $(this).val(event.oldIndex);
                     });
                     $form.find("INPUT.onsort-settolist").each(function () {
+                        $(this).removeAttr("disabled");
                         $(this).val(event.to.getAttribute("sort-name"));
                     });
                     $form.find("INPUT.onsort-settoindex").each(function () {
+                        $(this).removeAttr("disabled");
                         $(this).val(event.newIndex);
                     });
                     // Submit form (add a submit button, then click that button):
