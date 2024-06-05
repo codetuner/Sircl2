@@ -1367,10 +1367,11 @@ sircl._contentReadyHandlers.before = [];
 sircl._contentReadyHandlers.content = [];
 sircl._contentReadyHandlers.enrich = [];
 sircl._contentReadyHandlers.process = [];
+sircl._contentReadyHandlers.after = [];
 
 /**
  * Adds a content ready handler.
- * @param {string} phase Phase at which the handler is to be called: "before", "content", "enrich" or "process".
+ * @param {string} phase Phase at which the handler is to be called: "before", "content", "enrich", "process" or "after".
  * @param {any} handler Handler function.
  */
 sircl.addContentReadyHandler = function (phase, handler) {
@@ -1379,7 +1380,7 @@ sircl.addContentReadyHandler = function (phase, handler) {
 
 /**
  * Convenience method to add a content ready handler.
- * Either pass a "process" handler, or pass phase ("before", "content", "enrich" or "process") and handler.
+ * Either pass a "process" handler, or pass phase ("before", "content", "enrich", "process" or "after") and handler.
  */
 function $$() {
     if (arguments.length >= 2)
@@ -1436,6 +1437,14 @@ sircl._afterLoad = function (scope) {
     });
     // Remove "sircl-content-processing" class:
     $(scope).removeClass("sircl-content-processing");
+    // Execute all "after" afterLoad handlers:
+    sircl._contentReadyHandlers.after.forEach(function (handler) {
+        try {
+            handler.call(scope);
+        } catch (ex) {
+            sircl.handleError("S125", "Error executing an AfterLoad process handler: " + ex, { exception: ex, fx: handler });
+        }
+    });
 };
 
 //#endregion
@@ -1583,7 +1592,7 @@ sircl._afterHistory = function () {
         try {
             handler();
         } catch (ex) {
-            sircl.handleError("S125", "Error executing an After history handler: " + ex, { exception: ex, fx: handler });
+            sircl.handleError("S130", "Error executing an After history handler: " + ex, { exception: ex, fx: handler });
         }
     });
 };
@@ -2329,17 +2338,19 @@ $$(function sircl_onload_processHandler() {
 //#region Form changed state handling
 
 // On initial load, if onchange-set input is true, add .form-changed class to form:
-$$(function sircl_formState_processHandler() {
+$$("after", function sircl_formState_processHandler() {
     if ($(this).is("FORM[onchange-set]")) {
         var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
             $(this).addClass("form-changed");
+            $(this).trigger("change");
         }
     } else {
         $(this).find("FORM[onchange-set]").each(function () {
             var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
             if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
                 $(this).addClass("form-changed");
+                $(this).trigger("change");
             }
         });
     }
@@ -2353,6 +2364,7 @@ sircl.addRequestHandler("afterRender", function (req) {
         if (reloadSection !== null && reloadSection.toLowerCase() === "true") {
             req.$finalTarget.closest("FORM[onchange-set]").each(function () {
                 $(this).addClass("form-changed");
+                $(this).trigger("change");
                 var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
                 if ($input.length > 0) {
                     $input.val(true);
@@ -2367,7 +2379,7 @@ sircl.addRequestHandler("afterRender", function (req) {
 // On change event on a form with [onchange-set], add .form-changed class and set corresponding input to true:
 document.addEventListener("DOMContentLoaded", function () {
     $(document).on("change", "FORM[onchange-set]", function (event) {
-        if ($(event.target).closest(".sircl-content-processing").length == 0) {
+        if ($(event.target).closest(".onchange-ignore").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             $(this).addClass("form-changed");
             var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
             if ($input.length > 0) {
