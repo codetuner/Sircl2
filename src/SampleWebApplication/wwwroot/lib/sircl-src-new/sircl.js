@@ -1112,7 +1112,8 @@ SirclRequestProcessor.prototype._render = function (req) {
             // Otherwise, replace just removed the element, no afterLoad needed.
         }
     } else {
-        // Else, replace inner html of target:
+        // Else, replace inner html of target and scroll to top if main target and not history navigation:
+        if (req._historyMode !== "skip" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo(0, 0); }
         $realTarget.html(realResponseText);
     }
     // Make sure target is visible & proceed with next (afterRender):
