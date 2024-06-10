@@ -1493,7 +1493,13 @@ sircl.cancelPageNavigate = function sircl_cancelPageNavigate() {
 
 //#region Default Content Ready handlers
 
-$$("content", function sircl_default_contentHandler() {
+sircl_elementIdToFocus = null;
+sircl.addContentReadyHandler("before", function sircl_default_beforeHandler() {
+    /// Store focus:
+    sircl_elementIdToFocus = sircl.ext.getId(document.activeElement, false);
+});
+
+sircl.addContentReadyHandler("content", function sircl_default_contentHandler() {
     /// <* onload-copyto="selector"> Copies the content to the given selector.
     $(this).filter("[onload-copyto]").add($(this).find("*[onload-copyto]")).each(function () {
         var html = $(this).html();
@@ -1508,7 +1514,15 @@ $$("content", function sircl_default_contentHandler() {
     });
 });
 
-$$(function sircl_default_processHandler() {
+sircl.addContentReadyHandler("process", function sircl_default_processHandler() {
+    /// Restore focus:
+    if (sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
+        $(this).find("#" + sircl_elementIdToFocus).each(function () {
+            this.focus();
+        });
+    }
+    sircl_elementIdToFocus = null;
+
     /// <* document-title="document title"> Sets the document title.
     var documentTitleElement = $(this).find("[document-title]");
     if (documentTitleElement.length > 0) {
@@ -2083,7 +2097,7 @@ sircl.addRequestHandler("afterRender", function sircl_dialogs_afterRender_reques
     processor.next(req);
 });
 
-$$(function sircl_dialogs_processHandler() {
+sircl.addContentReadyHandler("process", function sircl_dialogs_processHandler() {
     // Disable cancelling of dialog with .dialog-nocancel:
     $(this).find("DIALOG").each(function (index, elem) {
         elem.addEventListener("cancel", function (event) {
@@ -2285,7 +2299,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 sircl.addAttributeAlias(".onload-click", "onload-click", ":this");
 
-$$(function sircl_onload_processHandler() {
+sircl.addContentReadyHandler("process", function sircl_onload_processHandler() {
 
     /// <* onload-click="selector"> On init, triggers a click event on the selector matches.
     $(this).find("[onload-click]").each(function () {
@@ -2338,7 +2352,7 @@ $$(function sircl_onload_processHandler() {
 //#region Form changed state handling
 
 // On initial load, if onchange-set input is true, add .form-changed class to form:
-$$("after", function sircl_formState_processHandler() {
+sircl.addContentReadyHandler("after", function sircl_formState_processHandler() {
     if ($(this).is("FORM[onchange-set]")) {
         var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
         if ($input.length > 0 && (["true", "on"].indexOf(($input.val() || "false").toLowerCase()) >= 0)) {
