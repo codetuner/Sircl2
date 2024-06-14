@@ -1516,25 +1516,37 @@ sircl.addContentReadyHandler("content", function sircl_default_contentHandler() 
 });
 
 sircl.addContentReadyHandler("process", function sircl_default_processHandler() {
-    /// Restore focus:
-    if (sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
+
+    var focusSet = false;
+
+    // If an autofocus attribute is set, set focus to it:
+    // <* autofocus> Fix autofocus for lazy-loaded html.
+    $(this).find("*[autofocus]:first").each(function (index) {
+        try { this.focus(); focusSet = true; } catch (x) { }
+        try { this.select(); focusSet = true; } catch (x) { }
+    });
+
+    // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
+    if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
         $(this).find("#" + sircl_elementIdToFocus).each(function () {
             this.focus();
+            focusSet = true;
         });
     }
     sircl_elementIdToFocus = null;
 
+    // Final attempt, if target has .onload-autofocus, set focus on first focussable element:
+    if (focusSet === false && $(this).hasClass("onload-autofocus")) {
+        var focussables = $(this).find("INPUT:not([type='hidden']), SELECT, TEXTARA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])");
+        if (focussables.length > 0) focussables[0].focus();
+    }
+
+    // Update document title:
     /// <* document-title="document title"> Sets the document title.
     var documentTitleElement = $(this).find("[document-title]");
     if (documentTitleElement.length > 0) {
         document.title = documentTitleElement[0].getAttribute("document-title");
     };
-
-    // <* autofocus> Fix autofocus for lazy-loaded html.
-    $(this).find("*[autofocus]:first").each(function (index) {
-        try { this.focus(); } catch (x) { }
-        try { this.select(); } catch (x) { }
-    });
 });
 
 //#endregion
