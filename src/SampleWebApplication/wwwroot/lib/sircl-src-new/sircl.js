@@ -1113,7 +1113,7 @@ SirclRequestProcessor.prototype._render = function (req) {
         }
     } else {
         // Else, replace inner html of target and scroll to top if main target and not history navigation:
-        if ((req.method === "get" && req._historyMode !== "skip" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo(0, 0); }
+        if (req.method === "get" && req._historyMode !== "skip" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo(0, 0); }
         $realTarget.html(realResponseText);
     }
     // Make sure target is visible & proceed with next (afterRender):
