@@ -2482,11 +2482,9 @@ sircl.addContentReadyHandler("process", function () {
 
 $(document).ready(function () {
     /// Document is loaded; delay afterLoad untill all document ready handlers have run (also those in extended and other libraries):
-    setTimeout(function (t) {
-        $("BODY").addClass("sircl-content-processing");
-        sircl._afterLoad(t);
-        $("BODY").removeClass("sircl-content-processing");
-    }, 0, this);
+    setTimeout(function () {
+        sircl._afterLoad(document.body);
+    }, 0);
 });
 
 //#endregion
