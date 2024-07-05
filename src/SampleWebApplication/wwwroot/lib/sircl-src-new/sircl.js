@@ -1518,6 +1518,15 @@ sircl.addContentReadyHandler("process", function sircl_default_processHandler() 
     };
 });
 
+sircl.addContentReadyHandler("after", function sircl_default_afterHandler() {
+    // If an autofocus attribute is set, set focus to it:
+    // <* autofocus> Fix autofocus for lazy-loaded html.
+    $(this).find("*[autofocus]:first").each(function (index) {
+        try { this.focus(); } catch (x) { }
+        try { this.select(); } catch (x) { }
+    });
+});
+
 sircl_elementIdToFocus = null;
 sircl.addRequestHandler("beforeRender", function sircl_beforeRender_autoFocus(req) {
     // Store focus:
@@ -1528,15 +1537,9 @@ sircl.addRequestHandler("beforeRender", function sircl_beforeRender_autoFocus(re
 
 sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req) {
     // Try to set focus:
-    var focusSet = false;
-
     try {
-        // If an autofocus attribute is set, set focus to it:
-        // <* autofocus> Fix autofocus for lazy-loaded html.
-        req.$finalTarget.find("*[autofocus]:first").each(function (index) {
-            try { this.focus(); focusSet = true; } catch (x) { }
-            try { this.select(); focusSet = true; } catch (x) { }
-        });
+        // Identify an [autofocus] element that would get the focus by the afterHandler:
+        var focusSet = $(this).find("*[autofocus]:first").length > 0;
 
         // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
         if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
