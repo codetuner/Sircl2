@@ -1494,12 +1494,6 @@ sircl.cancelPageNavigate = function sircl_cancelPageNavigate() {
 
 //#region Default Content Ready handlers
 
-sircl_elementIdToFocus = null;
-sircl.addContentReadyHandler("before", function sircl_default_beforeHandler() {
-    /// Store focus:
-    sircl_elementIdToFocus = sircl.ext.getId(document.activeElement, false);
-});
-
 sircl.addContentReadyHandler("content", function sircl_default_contentHandler() {
     /// <* onload-copyto="selector"> Copies the content to the given selector.
     $(this).filter("[onload-copyto]").add($(this).find("*[onload-copyto]")).each(function () {
@@ -1516,37 +1510,58 @@ sircl.addContentReadyHandler("content", function sircl_default_contentHandler() 
 });
 
 sircl.addContentReadyHandler("process", function sircl_default_processHandler() {
-
-    var focusSet = false;
-
-    // If an autofocus attribute is set, set focus to it:
-    // <* autofocus> Fix autofocus for lazy-loaded html.
-    $(this).find("*[autofocus]:first").each(function (index) {
-        try { this.focus(); focusSet = true; } catch (x) { }
-        try { this.select(); focusSet = true; } catch (x) { }
-    });
-
-    // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
-    if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
-        $(this).find("#" + sircl_elementIdToFocus).each(function () {
-            this.focus();
-            focusSet = true;
-        });
-    }
-    sircl_elementIdToFocus = null;
-
-    // Final attempt, if target has .onload-autofocus, set focus on first focussable element:
-    if (focusSet === false && $(this).hasClass("onload-autofocus")) {
-        var focussables = $(this).find("INPUT:not([type='hidden']), SELECT, TEXTARA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])");
-        if (focussables.length > 0) focussables[0].focus();
-    }
-
     // Update document title:
     /// <* document-title="document title"> Sets the document title.
     var documentTitleElement = $(this).find("[document-title]");
     if (documentTitleElement.length > 0) {
         document.title = documentTitleElement[0].getAttribute("document-title");
     };
+});
+
+sircl_elementIdToFocus = null;
+sircl.addRequestHandler("beforeRender", function sircl_beforeRender_autoFocus(req) {
+    // Store focus:
+    sircl_elementIdToFocus = sircl.ext.getId(document.activeElement, false);
+    // Chain next handler:
+    this.next(req);
+});
+
+sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req) {
+    // Try to set focus:
+    var focusSet = false;
+
+    try {
+        // If an autofocus attribute is set, set focus to it:
+        // <* autofocus> Fix autofocus for lazy-loaded html.
+        req.$finalTarget.find("*[autofocus]:first").each(function (index) {
+            try { this.focus(); focusSet = true; } catch (x) { }
+            try { this.select(); focusSet = true; } catch (x) { }
+        });
+
+        // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
+        if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
+            req.$finalTarget.find("#" + sircl_elementIdToFocus).each(function () {
+                this.focus();
+                focusSet = true;
+            });
+        }
+        sircl_elementIdToFocus = null;
+
+        // Final attempt, if target has .onload-autofocus, set focus on first focussable element:
+        if (focusSet === false && req.$finalTarget.hasClass("onload-autofocus")) {
+            var focussables = req.$finalTarget.find("INPUT:not([type='hidden']), SELECT, TEXTARA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
+                .toArray();
+            while (focussables.length > 0) {
+                var next = focussables.shift();
+                if (next.checkVisibility && !next.checkVisibility()) continue;
+                next.focus();
+                break;
+            }
+        }
+    } catch (e) { }
+
+    // Chain next handler:
+    this.next(req);
 });
 
 //#endregion
