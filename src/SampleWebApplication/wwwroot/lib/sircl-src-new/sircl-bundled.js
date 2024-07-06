@@ -613,7 +613,7 @@ sircl._submitForm = function ($trigger, $form, $target, targetMethod, event, loa
         enctype: ($trigger.attr("formenctype") || $form.attr("enctype") || "application/x-www-form-urlencoded").toLowerCase(),
         charset: $form.attr("accept-charset"),
         getAttr: function (attrName) {
-            return (this.$trigger.attr(attrName) || this.$form.attr(attrName));
+            return (this.$trigger.hasAttr(attrName) ? this.$trigger.attr(attrName) : this.$form.attr(attrName));
         },
         isForeground: true
     };
@@ -2224,6 +2224,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /// <* onchange-submit="form-selector"> Triggers form submission on change.
     $(document).on("change", "[onchange-submit]", function (event) {
+        // Ignore when target is not closest .onchange-submit (in case of nested onchange-submit attributes):
+        if (event.currentTarget != $(event.target).closest(".onchange-submit")[0]) return;
+        // If not in a nosubmit region and not currently content processing, trigger form submission:
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
             if ($form.length > 0) {
