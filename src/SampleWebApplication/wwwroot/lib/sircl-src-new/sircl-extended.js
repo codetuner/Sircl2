@@ -1816,6 +1816,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if ($this.hasAttr("formmethod")) btn += "formmethod=\"" + $this.attr("formmethod") + "\" ";
             if ($this.hasAttr("formnovalidate")) btn += "formnovalidate=\"" + $this.attr("formnovalidate") + "\" ";
             if ($this.hasAttr("formtarget")) btn += "formtarget=\"" + $this.attr("formtarget") + "\" ";
+            if ($this.hasAttr("sub-target")) btn += "sub-target=\"" + $this.attr("sub-target") + "\" ";
             btn += "/>";
             $form.append(btn);
             $("#" + btnid)[0].click();
