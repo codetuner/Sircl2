@@ -458,7 +458,7 @@ sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
 sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
     // Find trigger:
     var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : null : null : null;
-    $trigger = ($trigger) ? $trigger : (form._formTrigger) ? $(form._formTrigger) : $(form);
+    $trigger = (event) ? ($trigger) ? $trigger : (event.submitter) ? $(event.submitter) : $(event.target) : $(form);
     // If trigger has onsubmit-confirm, ask confirmation:
     if ($trigger.hasAttr("onsubmit-confirm") || $(form).hasAttr("onsubmit-confirm")) {
         if (!sircl.ext.confirm(form, $trigger.attr("onsubmit-confirm") || $(form).attr("onsubmit-confirm"), event)) {
@@ -1275,20 +1275,10 @@ $(document).ready(function () {
         });
     });
 
-    /// Clicking a submit element may submit a form:
-    $(document).on("click", "form *:submit, *:submit[form]", function (event) {
-        // Check disabled:
-        if ($(this).is("[disabled]")) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-        // To not interfer with form validation, we let default behavior happen.
-        // But we want to know the form trigger element, and unfortunately there's no but a dirty way to get it...
-        var form = (this.hasAttribute("form")) ? document.getElementById(this.getAttribute("form")) : $(this).closest("FORM")[0];
-        clearTimeout(form._formTriggerTimer);
-        form._formTrigger = this;
-        form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
+    /// Clicking a submit element on a disabled form should be ignored:
+    $(document).on("click", "form *:submit[disabled], *:submit[form][disabled]", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
     });
 
     sircl.addAttributeAlias(".onclick-submit", "onclick-submit", ":form");
@@ -1307,9 +1297,6 @@ $(document).ready(function () {
         var $form = sircl.ext.$select($this, $this.attr("onclick-submit"));
         if ($form.length >= 1) {
             var form = $form[0];
-            clearTimeout(form._formTriggerTimer);
-            form._formTrigger = this;
-            form._formTriggerTimer = setTimeout(function () { form._formTrigger = null; }, 700);
             sircl.ext.submit(form, event, function () {
                 form.submit();
             });
@@ -2230,14 +2217,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /// <* onchange-submit="form-selector"> Triggers form submission on change.
     $(document).on("change", "[onchange-submit]", function (event) {
-        // Ignore when target is not closest .onchange-submit (in case of nested onchange-submit attributes):
-        if (event.currentTarget != $(event.target).closest(".onchange-submit")[0]) return;
+        // Ignore when target is not closest [onchange-submit] (in case of nested onchange-submit attributes):
+        if (event.currentTarget != $(event.target).closest("[onchange-submit]")[0]) return;
         // If not in a nosubmit region and not currently content processing, trigger form submission:
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
             if ($form.length > 0) {
-                $form[0]._formTrigger = this;
-                $form[0]._formTriggerTimer = setTimeout(function () { $form[0]._formTrigger = null; }, 700);
                 sircl.ext.submit($form[0], null, function () {
                     $form[0].submit();
                 });
