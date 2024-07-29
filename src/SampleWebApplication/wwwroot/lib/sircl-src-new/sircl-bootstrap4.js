@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (["true", "on"].indexOf($input.val().toLowerCase()) < 0) {
             $input.val("true");
-            $input.change();
+            $input.trigger("change");
         }
     });
 
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (["false", "off"].indexOf($input.val().toLowerCase()) < 0) {
             $input.val("false");
-            $input.change();
+            $input.trigger("change");
         }
     });
 

@@ -3655,13 +3655,13 @@ $$(function sircl_ext_actionEvents_processHandler() {
             var tocheck = $all.filter(":checked").length == $all.length;
             if ($this[0].checked != tocheck) {
                 $this[0].checked = tocheck;
-                $this.change();
+                $this.trigger("change");
             }
         });
         var tocheck = $all.filter(":checked").length == $all.length;
         if ($this[0].checked != tocheck) {
             $this[0].checked = tocheck;
-            $this.change();
+            $this.trigger("change");
         }
     });
 
@@ -3673,13 +3673,13 @@ $$(function sircl_ext_actionEvents_processHandler() {
             var tocheck = $any.filter(":checked").length > 0;
             if ($this[0].checked != tocheck) {
                 $this[0].checked = tocheck;
-                $this.change();
+                $this.trigger("change");
             }
         });
         var tocheck = $any.filter(":checked").length > 0;
         if ($this[0].checked != tocheck) {
             $this[0].checked = tocheck;
-            $this.change();
+            $this.trigger("change");
         }
     });
 
