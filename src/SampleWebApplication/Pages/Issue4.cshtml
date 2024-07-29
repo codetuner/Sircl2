@@ -1,0 +1,71 @@
+﻿@page
+@model SampleWebApplication.Pages.Issue4Model
+@{
+    Layout = "_Layout";
+}
+
+<script>
+
+    function x1() {
+        var thisChar = "A";
+        $('#companies').load('/Test/RequestInfo', { firstChar: thisChar }, function (companyList, status, xhr) {
+            //console.log(companyList);
+        });
+    }
+
+    function x1o() {
+        var thisChar = "A";
+        sircl_originalJqLoad.call($('#companies'), '/Test/RequestInfo', { firstChar: thisChar }, function (companyList, status, xhr) {
+            //console.log(companyList);
+        });
+    }
+
+    function x2() {
+        var thisChar = "A";
+        $.get("/Test/RequestInfo", { firstChar: thisChar }, function (companyList, status, xhr) {
+            //$('#companies')[0].innerHTML = companyList;
+            $('#companies').html(companyList);
+            //console.log(companyList);
+        }, "html");
+    }
+
+    function x3() {
+        var s = "firstChar=A";
+        $('#companies').load('/Test/RequestInfo', s, function (companyList, status, xhr) {
+            //console.log(companyList);
+        });
+    }
+
+    function x4() {
+        var fd = new FormData();
+        fd.set("firstChar", "A");
+        $('#companies').load('/Test/RequestInfo', fd, function (companyList, status, xhr) {
+            //console.log(companyList);
+        });
+    }
+
+</script>
+
+<p>
+    <button type="button" onclick="x1()">.load() by Sircl</button>
+</p>
+
+<p>
+    <button type="button" onclick="x1o()">.load() original</button>
+</p>
+
+<p>
+    <button type="button" onclick="x3()">.load(string)</button>
+</p>
+
+<p>
+    <button type="button" onclick="x4()">.load(FormData)</button>
+</p>
+
+<p>
+    <button type="button" onclick="x2()">.get() + .html()</button>
+</p>
+
+
+<p id="companies">
+</p>

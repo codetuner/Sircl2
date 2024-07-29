@@ -60,9 +60,15 @@ $.fn.load = function (url, data, callback) {
         action: url,
         method: "get",
         enctype: null,
-        formData: data,
+        formData: null,
         isForeground: false
     };
+
+    if (data != null) {
+        req.method = "post";
+        if (typeof data !== "string" && !(data instanceof FormData)) data = jQuery.param(data);
+        req.formData = data;
+    }
 
     // Process submission:
     sircl._processRequest(req, callback);

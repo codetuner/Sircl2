@@ -22,9 +22,16 @@ else
 <p>Query string: @(this.Context.Request.QueryString)</p>
 
 <h3>Form:</h3>
-@foreach(var keyPair in this.Context.Request.Form)
+@try
 {
-    <p><b>@(keyPair.Key)</b> = @(keyPair.Value)</p>
+    @foreach (var keyPair in this.Context.Request.Form)
+    {
+        <p><b>@(keyPair.Key)</b> = @(keyPair.Value)</p>
+    }
+}
+catch (Exception ex)
+{
+    <div class="alert alert-danger">An exception was raised reading request form data:<br/><pre>@ex.ToString()</pre></div>
 }
 
 @if (files != null)
@@ -35,3 +42,5 @@ else
         <p><b>@(file.FileName)</b> - @(file.ContentType) - @(file.Length)</p>
     }
 }
+
+<p hidden onload-show=":this">Processed by Sircl.</p>
