@@ -1507,8 +1507,119 @@ document.addEventListener("DOMContentLoaded", function () {
         var $target = sircl.ext.$select($(this), $(this).attr("onanimationend-scrollintoview"));
         if ($target.length > 0) $target[0].scrollIntoView();
     });
+
+    // <* onanimationstart-hide="selector"> On animationend or animationcancel hides the elements matching the given selector.
+    $(document).on("animationstart", "[onanimationstart-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onanimationstart-hide")), false, true);
+    });
+
+    // <* onanimationstart-show="selector"> On animationend or animationcancel shows the elements matching the given selector.
+    $(document).on("animationstart", "[onanimationstart-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onanimationstart-show")), true, true);
+    });
+
+    /// <* onanimationstart-removeclass="class [on selector]"> On animationend or animationcancel, removes the class.
+    $(document).on("animationstart", "[onanimationstart-removeclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("onanimationstart-removeclass"));
+    });
+
+    /// <* onanimationstart-addclass="class [on selector]"> On animationend or animationcancel, adds the class.
+    $(document).on("animationstart", "[onanimationstart-addclass]", function (event) {
+        sircl.ext.addClass($(this), $(this).attr("onanimationstart-addclass"));
+    });
 });
 
+
+// Transition event-actions:
+///////////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // <* ontransitioncancel-click="selector"> On transitioncancel, triggers a click event on the elements matching the given selector.
+    $(document).on("transitioncancel", "*[ontransitioncancel-click]", function (event) {
+        var targetSelector = $(this).attr("ontransitioncancel-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* ontransitionend-click="selector"> On transitionend, triggers a click event on the elements matching the given selector.
+    $(document).on("transitionend", "*[ontransitionend-click]", function (event) {
+        var targetSelector = $(this).attr("ontransitionend-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* ontransitionrun-click="selector"> On transitionrun, triggers a click event on the elements matching the given selector.
+    $(document).on("transitionrun", "*[ontransitionrun-click]", function (event) {
+        var targetSelector = $(this).attr("ontransitionrun-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* ontransitionstart-click="selector"> On transitionstart, triggers a click event on the elements matching the given selector.
+    $(document).on("transitionstart", "*[ontransitionstart-click]", function (event) {
+        var targetSelector = $(this).attr("ontransitionstart-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // <* ontransitionend-remove="selector"> On transitionend or transitioncancel removes the elements matching the given selector.
+    $(document).on("transitionend transitioncancel", "[ontransitionend-remove]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("ontransitionend-remove")).remove();
+    });
+
+    // <* ontransitionend-hide="selector"> On transitionend or transitioncancel hides the elements matching the given selector.
+    $(document).on("transitionend transitioncancel", "[ontransitionend-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ontransitionend-hide")), false, true);
+    });
+
+    // <* ontransitionend-show="selector"> On transitionend or transitioncancel shows the elements matching the given selector.
+    $(document).on("transitionend transitioncancel", "[ontransitionend-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ontransitionend-show")), true, true);
+    });
+
+    /// <* ontransitionend-removeclass="class [on selector]"> On transitionend or transitioncancel, removes the class.
+    $(document).on("transitionend transitioncancel", "[ontransitionend-removeclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("ontransitionend-removeclass"));
+    });
+
+    /// <* ontransitionend-addclass="class [on selector]"> On transitionend or transitioncancel, adds the class.
+    $(document).on("transitionend transitioncancel", "[ontransitionend-addclass]", function (event) {
+        sircl.ext.addClass($(this), $(this).attr("ontransitionend-addclass"));
+    });
+
+    // <* ontransitionstart-hide="selector"> On transitionend or transitioncancel hides the elements matching the given selector.
+    $(document).on("transitionstart", "[ontransitionstart-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ontransitionstart-hide")), false, true);
+    });
+
+    // <* ontransitionstart-show="selector"> On transitionend or transitioncancel shows the elements matching the given selector.
+    $(document).on("transitionstart", "[ontransitionstart-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("ontransitionstart-show")), true, true);
+    });
+
+    /// <* ontransitionstart-removeclass="class [on selector]"> On transitionend or transitioncancel, removes the class.
+    $(document).on("transitionstart", "[ontransitionstart-removeclass]", function (event) {
+        sircl.ext.removeClass($(this), $(this).attr("ontransitionstart-removeclass"));
+    });
+
+    /// <* ontransitionstart-addclass="class [on selector]"> On transitionend or transitioncancel, adds the class.
+    $(document).on("transitionstart", "[ontransitionstart-addclass]", function (event) {
+        sircl.ext.addClass($(this), $(this).attr("ontransitionstart-addclass"));
+    });
+});
 
 //#endregion
 
