@@ -2223,7 +2223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if ($(event.target).closest(".onchange-nosubmit").length == 0 && $(event.target).closest(".sircl-content-processing").length == 0) {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
             if ($form.length > 0) {
-                sircl.ext.submit($form[0], null, function () {
+                sircl.ext.submit($form[0], event, function () {
                     $form[0].submit();
                 });
 
