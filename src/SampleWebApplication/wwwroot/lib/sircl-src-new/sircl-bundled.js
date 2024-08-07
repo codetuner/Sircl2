@@ -89,6 +89,7 @@ $.fn.hasAttr = function (name) {
 // Sircl root object:
 if (typeof sircl === "undefined") sircl = {};
 sircl.version = 2.0;
+sircl.scrollMode = "instant"; // set to "smooth" for smooth scrolling
 console.info("Sircl v." + sircl.version + " running.");
 
 /**
@@ -1013,7 +1014,9 @@ SirclRequestProcessor.prototype._render = function (req) {
         var initialState = {
             url: window.location.href,
             html: (req._historyCached) ? req.$finalTarget.html() : "",
-            cached: req._historyCached
+            cached: req._historyCached,
+            scrollX: window.scrollX,
+            scrollY: window.scrollY
         };
         window.history.replaceState(initialState, window.document.title, initialState.url);
     }
@@ -1119,8 +1122,8 @@ SirclRequestProcessor.prototype._render = function (req) {
         }
     } else {
         // Else, replace inner html of target and scroll to top if main target and not history navigation:
-        if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo(0, 0); }
         $realTarget.html(realResponseText);
+        if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo({ top: 0, left: 0, behavior: sircl.scrollMode }); }
     }
     // Make sure target is visible & proceed with next (afterRender):
     var processor = this;
@@ -1157,6 +1160,11 @@ $(document).ready(function () {
     // Detect SinglePage modus:
     sircl.singlePageMode = $(sircl.mainTargetSelector$).length > 0;
     console.info("sircl.singlePageMode = " + sircl.singlePageMode + "");
+    if (sircl.singlePageMode) {
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+        }
+    }
 
     // Disable disabled hyperlinks:
     $(document).on("click", "*[href][disabled], [onclick-load][disabled]", function (event) {
@@ -1357,6 +1365,7 @@ $(document).ready(function () {
  * ContentReadyHandlers are executed before/after updating the content of a web page part.
  */
 sircl._contentReadyHandlers = {};
+sircl._contentReadyHandlers.pageinit = [];
 sircl._contentReadyHandlers.before = [];
 sircl._contentReadyHandlers.content = [];
 sircl._contentReadyHandlers.enrich = [];
@@ -1382,6 +1391,20 @@ function $$() {
     else
         sircl.addContentReadyHandler("process", arguments[0]);
 }
+
+/**
+ * To be called when initializing full page rendering
+ */
+sircl._pageInit = function (scope) {
+    // Execute all "pageinit" content ready handlers:
+    sircl._contentReadyHandlers.pageinit.forEach(function (handler) {
+        try {
+            handler.call(scope);
+        } catch (ex) {
+            sircl.handleError("S120", "Error executing a PageInit handler: " + ex, { exception: ex, fx: handler });
+        }
+    });
+};
 
 /**
  * To be called before unloading a web page part.
@@ -1660,6 +1683,13 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 callback = function () {
                     sircl._afterHistory();
+                    if (history.scrollRestoration === "manual") {
+                        window.scrollTo({
+                            top: state.scrollY || 0,
+                            left: state.scrollX || 0,
+                            behavior: sircl.scrollMode,
+                        });
+                    }
                 };
             }
             if (state.cached) {
@@ -2495,6 +2525,7 @@ sircl.addContentReadyHandler("process", function () {
 $(document).ready(function () {
     /// Document is loaded; delay afterLoad untill all document ready handlers have run (also those in extended and other libraries):
     setTimeout(function () {
+        sircl._pageInit(document.body);
         sircl._afterLoad(document.body);
     }, 0);
 });
