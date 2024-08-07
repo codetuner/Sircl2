@@ -2784,12 +2784,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-readonly="selector"> On click makes the elements matching the given selector readonly.
     $(document).on("click", "[onclick-readonly]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-readonly")).prop("readonly", true);
+        var $selection = sircl.ext.$select($(this), $(this).attr("onclick-readonly"));
+        $selection.prop("readonly", true);
+        $selection.attr("readonly", "");
     });
 
     // <* onclick-readwrite="selector"> On click makes the elements matching the given selector non-readonly.
     $(document).on("click", "[onclick-readwrite]", function (event) {
-        sircl.ext.$select($(this), $(this).attr("onclick-readwrite")).prop("readonly", false);
+        var $selection = sircl.ext.$select($(this), $(this).attr("onclick-readwrite"));
+        $selection.prop("readonly", false);
+        $selection.removeAttr("readonly");
     });
 
     // <* onclick-clearvalue="selector"> On click clears the value of the elements matching the given selector.
@@ -3199,11 +3203,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     $(document).on("change", "[ifchecked-readonly]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly")).prop("readonly", this.checked);
+        var $selection = sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly"));
+        $selection.prop("readonly", this.checked);
+        if (this.checked)
+            $selection.attr("readonly", "");
+        else
+            $selection.removeAttr("readonly");
     });
 
     $(document).on("change", "[ifchecked-readwrite]", function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
+        var $selection = sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite"));
+        $selection.prop("readonly", !this.checked);
+        if (!this.checked)
+            $selection.attr("readonly", "");
+        else
+            $selection.removeAttr("readonly");
     });
 
     $(document).on("change", "[ifchecked-removeclass]", function (event) {
@@ -3381,9 +3395,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Perform only net readwrite/readonlies:
         actions.toreadwrite.forEach(function (elem) {
             $(elem).prop("readonly", false);
+            $(elem).attr("readonly", "");
         });
         actions.toreadonly.forEach(function (elem) {
             $(elem).prop("readonly", true);
+            $(elem).removeAttr("readonly");
         });
         // Perform only net clearvalues and trigger change event:
         actions.toclearvalue.forEach(function (elem) {
@@ -3421,11 +3437,21 @@ $$(function sircl_ext_ifchecked_processHandler() {
     });
 
     $(this).find("[ifchecked-readonly]").each(function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly")).prop("readonly", this.checked);
+        var $selection = sircl.ext.$select($(this), this.getAttribute("ifchecked-readonly"));
+        $selection.prop("readonly", this.checked);
+        if (this.checked)
+            $selection.attr("readonly", "");
+        else
+            $selection.removeAttr("readonly");
     });
 
     $(this).find("[ifchecked-readwrite]").each(function (event) {
-        sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite")).prop("readonly", !this.checked);
+        var $selection = sircl.ext.$select($(this), this.getAttribute("ifchecked-readwrite"));
+        $selection.prop("readonly", !this.checked);
+        if (!this.checked)
+            $selection.attr("readonly", "");
+        else
+            $selection.removeAttr("readonly");
     });
 
     $(this).find("*[ifchecked-removeclass]").each(function (event) {
@@ -3607,9 +3633,11 @@ $$(function sircl_ext_ifchecked_processHandler() {
         // Perform only net readwrite/readonlies:
         actions.toreadwrite.forEach(function (elem) {
             $(elem).prop("readonly", false);
+            $(elem).removeAttr("readonly");
         });
         actions.toreadonly.forEach(function (elem) {
             $(elem).prop("readonly", true);
+            $(elem).attr("readonly", "");
         });
         // Perform only net clearvalues and trigger change event:
         actions.toclearvalue.forEach(function (elem) {
