@@ -1342,12 +1342,12 @@ $(document).ready(function () {
     /// I.e:
     ///   <form default-submit-button="#save-button" method="post">...</form>
     $(document).on("keydown", "FORM[default-submit-button] INPUT", function (event) {
-        if (event.keyCode == 13) {
+        if (event.key === "Enter") {
             event.preventDefault();
             var $form = $(this).closest("FORM");
             var $target = sircl.ext.$select($form, $form.attr("default-submit-button"));
             if ($target.length > 0) $target[0].click(); // See: http://goo.gl/lGftqn
-        } else if (event.keyCode == 27) {
+        } else if (event.key === "Escape") {
             event.preventDefault();
             var $form = $(this).closest("FORM");
             var $target = sircl.ext.$select($form, $form.attr("default-cancel-button"));
@@ -2398,7 +2398,7 @@ sircl.addContentReadyHandler("process", function sircl_onload_processHandler() {
     /// <FORM class="onload-submit"> Submits the form as soon as it gets loaded.
     /// I.e. to create initial output or to POST data.
     $(this).find("FORM.onload-submit").each(function () {
-        $(this).submit();
+        $(this).trigger("submit");
     });
 });
 
