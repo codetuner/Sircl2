@@ -100,7 +100,7 @@ namespace SampleWebApplication.Controllers
 
             if (fail)
             {
-                Response.Headers.Add("X-Sircl-Alert-Message", "Failed to update value.");
+                Response.Headers["X-Sircl-Alert-Message"] = "Failed to update value.";
                 return this.StatusCode(500);
             }
             else if (newValue != null)
@@ -119,7 +119,7 @@ namespace SampleWebApplication.Controllers
 
             if (fail)
             {
-                Response.Headers.Add("X-Sircl-Alert-Message", "Failed to update value.");
+                Response.Headers["X-Sircl-Alert-Message"] = "Failed to update value.";
                 return this.StatusCode(500);
             }
             else if (newValue != null)
@@ -224,8 +224,8 @@ namespace SampleWebApplication.Controllers
 
         public IActionResult TargetResult(string target, string targetMethod)
         {
-            if (target != null) Response.Headers.Add("X-Sircl-Target", target);
-            if (targetMethod != null) Response.Headers.Add("X-Sircl-Target-Method", targetMethod);
+            if (target != null) Response.Headers["X-Sircl-Target"] = target;
+            if (targetMethod != null) Response.Headers["X-Sircl-Target-Method"] = targetMethod;
             return View("TargetResult");
         }
 
