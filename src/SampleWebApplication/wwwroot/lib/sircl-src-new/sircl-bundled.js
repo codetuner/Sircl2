@@ -1011,6 +1011,7 @@ SirclRequestProcessor.prototype._process = function (req) {
 };
 
 SirclRequestProcessor.prototype._render = function (req) {
+    var processor = this;
     // If request is a "get" request on the main target and history handling is not to be skipped:
     if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
         // Store (update) the current state in history:
@@ -1130,11 +1131,34 @@ SirclRequestProcessor.prototype._render = function (req) {
         }
     } else {
         // Else, replace inner html of target and scroll to top if main target and not history navigation:
-        $realTarget.html(realResponseText);
+        if (!document.startViewTransition || !$realTarget.is("[onload-startviewtransition]")) {
+            // If viewTransitions not supported or target is has no [onload-startviewtransition] attribute:
+            $realTarget.html(realResponseText);
+        } else if ($realTarget.is(sircl.mainTargetSelector$) && req.method !== "get" ) {
+            // If main target and no get request, do not apply transitions:
+            $realTarget.html(realResponseText);
+        } else {
+            var types = [];
+            if (req.method === "get" && $realTarget.is(sircl.mainTargetSelector$)) types.push(req.navDirection || "forwards");
+            if ($realTarget.attr("onload-startviewtransition") != "") types.push($realTarget.attr("onload-startviewtransition"));
+            // Replace inner HTML using view transitions:
+            document.startViewTransition({
+                update: () => $realTarget.html(realResponseText),
+                types: types
+            }).updateCallbackDone.then(() => {
+                // Make sure target is visible & proceed with next (afterRender):
+                req.$finalTarget.each(function () { sircl.ext.visible(this, true, false, function () { processor.next(req); }); });
+            });
+            // Scroll to page top if appropriate:
+            if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo({ top: 0, left: 0, behavior: sircl.scrollMode }); }
+            // Abort here:
+            return;
+        }
+
+        // Scroll to page top if appropriate:
         if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo({ top: 0, left: 0, behavior: sircl.scrollMode }); }
     }
     // Make sure target is visible & proceed with next (afterRender):
-    var processor = this;
     req.$finalTarget.each(function () { sircl.ext.visible(this, true, false, function () { processor.next(req); }); });
 };
 
@@ -1673,6 +1697,9 @@ document.addEventListener("DOMContentLoaded", function () {
         var state = event.state;
         var callback = null;
         if (state) {
+            var navDirection = (state.historyIndex > sircl._currentHistoryIndex) ? "forwards"
+                : (state.historyIndex < sircl._currentHistoryIndex) ? "backwards"
+                    : "none";
 
             if (state.historyIndex > sircl._currentHistoryIndex)
                 console.log("History : forward");
@@ -1712,8 +1739,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             if (state.cached) {
                 // Retrieve content from cache:
-                sircl.ext.$mainTarget().html(state.html);
-                sircl._afterHistory();
+                if (!document.startViewTransition || !sircl.ext.$mainTarget().is("[onload-startviewtransition]")) {
+                    sircl.ext.$mainTarget().html(state.html);
+                    sircl._afterHistory();
+                } else {
+                    document.startViewTransition({
+                        update: () => sircl.ext.$mainTarget().html(state.html),
+                        types: [navDirection, sircl.ext.$mainTarget().attr("onload-startviewtransition")]
+                    }).updateCallbackDone.then(() => {
+                        sircl._afterHistory();
+                    });
+                }
             } else {
                 // Retrieve content by issuing a new request, skipping further history handling:
                 sircl._processRequest({
@@ -1723,6 +1759,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     action: state.url,
                     method: "get",
                     isForeground: true,
+                    navDirection: navDirection,
                     _historyMode: "skip"
                 }, callback);
             }

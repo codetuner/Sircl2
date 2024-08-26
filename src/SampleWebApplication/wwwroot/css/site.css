@@ -137,3 +137,76 @@ form.form-changed {
     border: solid 2px yellow;
     background-color: yellow;
 }
+
+
+/**********************/
+/* View transitions: */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slide-from-right {
+    from {
+        transform: translateX(100vw);
+    }
+}
+
+@keyframes slide-to-right {
+    to {
+        transform: translateX(100vw);
+    }
+}
+
+@keyframes slide-from-left {
+    from {
+        transform: translateX(-100vw);
+    }
+}
+
+@keyframes slide-to-left {
+    to {
+        transform: translateX(-100vw);
+    }
+}
+
+html:active-view-transition-type(forwards) {
+    &::view-transition-old(root) {
+        animation: 300ms ease-out both slide-to-left;
+    }
+    &::view-transition-new(root) {
+        animation: 300ms ease-out both slide-from-right;
+    }
+}
+html:active-view-transition-type(backwards) {
+    &::view-transition-old(root) {
+        animation: 300ms ease-out both slide-to-right;
+    }
+    &::view-transition-new(root) {
+        animation: 300ms ease-out both slide-from-left;
+    }
+}
+html:active-view-transition-type(no-transition) {
+    &::view-transition-old(root) {
+        display: none;
+    }
+    &::view-transition-new(root) {
+        animation: none;
+    }
+}
+html:active-view-transition-type(customviewtransition) {
+    &::view-transition-old(root) {
+        animation: 800ms ease-out both fade-out;
+    }    
+    &::view-transition-new(root) {
+        animation: 800ms ease-in both fade-in;
+    }
+}
+
