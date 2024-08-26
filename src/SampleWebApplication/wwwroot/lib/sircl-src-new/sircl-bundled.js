@@ -1701,12 +1701,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 : (state.historyIndex < sircl._currentHistoryIndex) ? "backwards"
                     : "none";
 
-            if (state.historyIndex > sircl._currentHistoryIndex)
-                console.log("History : forward");
-            else if (state.historyIndex < sircl._currentHistoryIndex)
-                console.log("History : backward");
-            else
-                console.log("History : stay");
             sircl._currentHistoryIndex = state.historyIndex;
 
             if (state.cached && sircl.ext.$mainTarget().hasClass("sircl-history-nocache-once")) {
