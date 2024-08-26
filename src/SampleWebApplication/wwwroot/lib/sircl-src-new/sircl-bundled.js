@@ -120,6 +120,11 @@ sircl.lastPageNavigationObject = null;
 
 sircl.showHideDuration = sircl.showHideDuration || 200;
 
+sircl._currentHistoryIndex = 0;
+if (history.state != null) {
+    sircl._currentHistoryIndex = history.state.historyIndex;
+}
+
 //#endregion
 
 //#region Sircl extensions library
@@ -1016,7 +1021,8 @@ SirclRequestProcessor.prototype._render = function (req) {
             html: (req._historyCached) ? req.$finalTarget.html() : "",
             cached: req._historyCached,
             scrollX: window.scrollX,
-            scrollY: window.scrollY
+            scrollY: window.scrollY,
+            historyIndex: sircl._currentHistoryIndex
         };
         window.history.replaceState(initialState, window.document.title, initialState.url);
     }
@@ -1038,9 +1044,11 @@ SirclRequestProcessor.prototype._render = function (req) {
         if (req._historyMode.indexOf("skip") >= 0) {
             // Do nothing
         } else if (req._historyMode.indexOf("replace") >= 0) {
+            finalState.historyIndex = sircl._currentHistoryIndex;
             window.history.replaceState(finalState, window.document.title, finalState.url);
             sircl._afterHistory();
         } else { // if "push":
+            finalState.historyIndex = ++sircl._currentHistoryIndex;
             window.history.pushState(finalState, window.document.title, finalState.url);
             sircl._afterHistory();
         }
@@ -1665,6 +1673,15 @@ document.addEventListener("DOMContentLoaded", function () {
         var state = event.state;
         var callback = null;
         if (state) {
+
+            if (state.historyIndex > sircl._currentHistoryIndex)
+                console.log("History : forward");
+            else if (state.historyIndex < sircl._currentHistoryIndex)
+                console.log("History : backward");
+            else
+                console.log("History : stay");
+            sircl._currentHistoryIndex = state.historyIndex;
+
             if (state.cached && sircl.ext.$mainTarget().hasClass("sircl-history-nocache-once")) {
                 // Remove "sircl-history-nocache-once" class:
                 sircl.ext.$mainTarget().removeClass("sircl-history-nocache-once");
@@ -1675,7 +1692,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     var refreshedState = {
                         url: window.location.href,
                         html: sircl.ext.$mainTarget().html(),
-                        cached: true
+                        cached: true,
+                        historyIndex: sircl._currentHistoryIndex
                     };
                     window.history.replaceState(refreshedState, document.title, refreshedState.url);
                     sircl._afterHistory();
@@ -2493,6 +2511,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var state = window.history.state;
         if (state != null) { state.url = url }
         if ($(this).closest(".hash-routed").is("[history=push]")) {
+            if (state != null) state.historyIndex = ++sircl._currentHistoryIndex;
             window.history.pushState(state, document.title, url);
         } else {
             window.history.replaceState(state, document.title, url);
