@@ -923,7 +923,7 @@ SirclRequestProcessor.prototype._send = function (req) {
             }
             // Handle response header AppId given but different from current AppId while target is *[sircl-appid]:
             if (req.method == "get" && req.$finalTarget !== null && req.$finalTarget.is("*[sircl-appid]")) {
-                if (req.$finalTarget.is("*[scirl-appmode='strict']") && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
+                if (req.$finalTarget.is("*[sircl-appmode='strict']") && req.xhr.getResponseHeader("X-Sircl-AppId") !== req.$finalTarget.attr("sircl-appid")) {
                     console.warn("The request to '" + req.action + "' is part of another application and has been re-issued as full page request. Consider using a target='_self' on the link to avoid double request.");
                     window.location.href = req.action;
                     return;
