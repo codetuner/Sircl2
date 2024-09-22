@@ -12,36 +12,42 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-serversentevents' com
 
 //#region Server-Sent Events handling
 
-document.addEventListener("DOMContentLoaded", function sircl_serverSentEvents () {
+if (typeof (EventSource) !== "undefined") {
 
-    $("[sse-url]").each(function () {
+    document.addEventListener("DOMContentLoaded", function sircl_serverSentEvents() {
 
-        // Read attributes:
-        var sseUrl = this.getAttribute("sse-url");
-        var sseDistinct = this.hasAttribute("sse-distinct");
-        var sseWithCredentials = this.hasAttribute("sse-withcredentials");
+        $("[sse-url]").each(function () {
 
-        // Construct EventSource:
-        var eventSource = new EventSource(sseUrl, { withCredentials: sseWithCredentials });
-        var lastEventId = eventSource.lastEventId || "";
+            // Read attributes:
+            var sseUrl = this.getAttribute("sse-url");
+            var sseDistinct = this.hasAttribute("sse-distinct");
+            var sseWithCredentials = this.hasAttribute("sse-withcredentials");
 
-        // Listen for "content" events:
-        var trigger = this;
-        eventSource.addEventListener("content", function (event) {
-            //console.log('SSE Sircl Content: { id: "' + event.lastEventId + '", type: "' + event.type + '", data: "' + event.data + '" }', event)
+            // Construct EventSource:
+            var eventSource = new EventSource(sseUrl, { withCredentials: sseWithCredentials });
+            var lastEventId = eventSource.lastEventId || "";
 
-            // Check for duplicate messages:
-            if (sseDistinct && event.lastEventId == lastEventId) return;
-            lastEventId = event.lastEventId;
+            // Listen for "content" events:
+            var trigger = this;
+            eventSource.addEventListener("content", function (event) {
+                //console.log('SSE Sircl Content: { id: "' + event.lastEventId + '", type: "' + event.type + '", data: "' + event.data + '" }', event)
 
-            // Process the event as a request:
-            sircl.ext.processEventRequest($(trigger), event);
+                // Check for duplicate messages:
+                if (sseDistinct && event.lastEventId == lastEventId) return;
+                lastEventId = event.lastEventId;
+
+                // Process the event as a request:
+                sircl.ext.processEventRequest($(trigger), event);
+            });
+
+            // Store reference to eventSource:
+            this.eventSource = eventSource;
         });
 
-        // Store reference to eventSource:
-        this.eventSource = eventSource;
     });
 
-});
+} else {
+    console.warn("ServerSentEvents are not supported on this browser.");
+}
 
 //#endregion
