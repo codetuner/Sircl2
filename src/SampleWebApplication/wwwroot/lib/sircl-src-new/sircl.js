@@ -552,6 +552,33 @@ sircl.ext.subtituteFields = function sircl_ext_substituteFields(url, $source, mu
     return url;
 };
 
+/**
+ * Processes an event from ServerSentEvents or from a WebWorker providing content as if it was comming from a request.
+ * @param {any} $trigger The element to be considered as the trigger of the request (if any).
+ * @param {any} event The event.
+ * @param {any} loadComplete Optional callback called after full processing.
+ */
+sircl.ext.processEventRequest = function ($trigger, event, loadComplete) {
+    if (event.data == null) {
+        sircl.handleError("S132", "Missing data on event for processing event request.", { event: event });
+        return;
+    }
+    try {
+        var data = JSON.parse(event.data);
+        if (data.content == null) {
+            sircl.handleError("S133", "Data on event to process is incomplete, missing: content", { event: event });
+            return;
+        }
+        if (data.target == null) {
+            sircl.handleError("S133", "Data on event to process is incomplete, missing: target", { event: event });
+            return;
+        }
+        sircl._submitContent($trigger, event, data.content, sircl.ext.$select($trigger, data.target), data.targetMethod, loadComplete);
+    } catch (ex) {
+        sircl.handleError("S134", "Error processing event as request: " + ex, { exception: ex, event: event });
+    }
+}
+
 //#endregion
 
 //#region Web load functions
@@ -662,6 +689,43 @@ sircl._submitForm = function ($trigger, $form, $target, targetMethod, event, loa
 };
 
 /**
+ * Processes an event providing direct content to render as if it was comming from a request.
+ * @param {any} $trigger The element to be considered as the trigger of the request (if any).
+ * @param {any} event The event.
+ * @param {any} content The content to be rendered.
+ * @param {any} $target Target selector to render the content in.
+ * @param {any} targetMethod Optional target method to apply.
+ * @param {any} loadComplete Optional callback called after full processing.
+ */
+sircl._submitContent = function ($trigger, event, content, $target, targetMethod, loadComplete) {
+
+    // Build request data:
+    var req = {
+        $trigger: $trigger,
+        $initialTarget: $target,
+        $newTarget: null,
+        targetMethod: targetMethod,
+        newTargetMethod: null,
+        event: event,
+        action: null,
+        method: null,
+        history: "skip",
+        enctype: null,
+        charset: null,
+        getAttr: function (attrName) {
+            return null;
+        },
+        isForeground: false,
+        succeeded: true,
+        status: 200,
+        responseText: content
+    };
+
+    // Process submission:
+    this._processRequest(req, loadComplete);
+}
+
+/**
  * Processes the given Ajax request.
  * @param {any} req A request data object.
  * @param {any} loadComplete Optional callback called after full processing.
@@ -687,31 +751,33 @@ sircl._processRequest = function (req, loadComplete) {
     }
 
     // Configure HTTP request object:
-    req.xhr = new XMLHttpRequest();
-    req.allResponseHeaders = [];
-    req.xhr.open(req.method, req.action);
-    if (typeof req.formData === "object") {
-        // Leave Content-Type to be set by FormData.
-    } else if (req.enctype == null && req.charset == null) {
-        req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    } else if (req.enctype == null && req.charset != null) {
-        req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded" + "; charset=" + req.charset);
-    } else if (req.enctype != null && req.charset == null) {
-        req.xhr.setRequestHeader("Content-Type", req.enctype);
-    } else {
-        req.xhr.setRequestHeader("Content-Type", req.enctype + "; charset=" + rec.charset);
+    if (req.action !== null) {
+        req.xhr = new XMLHttpRequest();
+        req.allResponseHeaders = [];
+        req.xhr.open(req.method, req.action);
+        if (typeof req.formData === "object") {
+            // Leave Content-Type to be set by FormData.
+        } else if (req.enctype == null && req.charset == null) {
+            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        } else if (req.enctype == null && req.charset != null) {
+            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded" + "; charset=" + req.charset);
+        } else if (req.enctype != null && req.charset == null) {
+            req.xhr.setRequestHeader("Content-Type", req.enctype);
+        } else {
+            req.xhr.setRequestHeader("Content-Type", req.enctype + "; charset=" + rec.charset);
+        }
+        if (cache == false) {
+            req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+            req.xhr.setRequestHeader("Pragma", "no-cache");
+        }
+        req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
+        req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+        req.appId = (req.$finalTarget.length === 1 && req.$finalTarget.is("*[sircl-appid]")) ? req.$finalTarget.attr("sircl-appid") : null;
+        if (req.appId !== null) req.xhr.setRequestHeader("X-Sircl-AppId", req.appId);
+        if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
+        if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+        req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
     }
-    if (cache == false) {
-        req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-        req.xhr.setRequestHeader("Pragma", "no-cache");
-    }
-    req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
-    req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
-    req.appId = (req.$finalTarget.length === 1 && req.$finalTarget.is("*[sircl-appid]")) ? req.$finalTarget.attr("sircl-appid") : null;
-    if (req.appId !== null) req.xhr.setRequestHeader("X-Sircl-AppId", req.appId);
-    if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
-    if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
-    req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
 
     // Start processing:
     var processor = new SirclRequestProcessor(loadComplete);
@@ -776,6 +842,13 @@ SirclRequestProcessor.prototype.render = function (value) {
 
 SirclRequestProcessor.prototype._send = function (req) {
     var processor = this;
+
+    // If no xhr, local request (i.e. from ServerSentEvents), skip sending part:
+    if (req.xhr == null) {
+        processor.next(req);
+        return;
+    }
+
     // If abort requested, set aborted and proceed with next.
     if (req.abort == true) {
         req.succeeded = false;
@@ -1058,7 +1131,8 @@ SirclRequestProcessor.prototype._render = function (req) {
     var $realTarget = req.$finalTarget;
     var realResponseText = req.responseText;
     // Apply sub-target if any:
-    var subTarget$ = req.xhr.getResponseHeader("X-Sircl-Sub-Target") || req.getAttr("sub-target");
+    var subTarget$ = null;
+    if (req != null && req.xhr != null) subTarget$ = req.xhr.getResponseHeader("X-Sircl-Sub-Target") || req.getAttr("sub-target");
     var $subTarget = req.$finalTarget.find(subTarget$);
     // If the sub-target is found in the finalTarget:
     if (subTarget$ != null && $subTarget.length > 0) {
