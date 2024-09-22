@@ -103,6 +103,10 @@ form.form-changed {
     background-color: palevioletred;
 }
 
+.red-border {
+    border: solid 2px palevioletred;
+}
+
 .action-pending {
     background-color: lightyellow;
 }

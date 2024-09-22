@@ -90,6 +90,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-touchswipe-jquery.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-touchswipe-jquery.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-qrious.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl-qrious.js"

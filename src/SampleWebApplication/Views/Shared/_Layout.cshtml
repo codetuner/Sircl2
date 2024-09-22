@@ -90,11 +90,11 @@
         </div>
 
         @* <div class="contextmenu">
-            <div class="nav flex-column nav-pills">
-                <a class="nav-link" href="javascript:alert('Hi !')">Say hi !</a>
-                <a class="nav-link" href="javascript:document.body.contentEditable='true'; document.designMode='on'; void 0">Edit this page</a>
-            </div>
-        </div> *@
+                <div class="nav flex-column nav-pills">
+                    <a class="nav-link" href="javascript:alert('Hi !')">Say hi !</a>
+                    <a class="nav-link" href="javascript:document.body.contentEditable='true'; document.designMode='on'; void 0">Edit this page</a>
+                </div>
+            </div> *@
 
         <div>
             <progress class="main-download-progress float-right" hidden></progress>
@@ -162,7 +162,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@@undecaf/zbar-wasm@@0.9.15/dist/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@undecaf/barcode-detector-polyfill@@0.9.20/dist/index.js"></script>
     <script>
-        if (!('BarcodeDetector' in window)) { 
+        if (!('BarcodeDetector' in window)) {
             window['BarcodeDetector'] = barcodeDetectorPolyfill.BarcodeDetectorPolyfill
         }
     </script>
@@ -175,6 +175,7 @@
     <script src="~/lib/font-awesome/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js" integrity="sha512-pUhApVQtLbnpLtJn6DuzDD5o2xtmLJnJ7oBoMsBnzOkVkpqofGLGPaBJ6ayD2zQe3lCgCibhJBi4cj5wAxwVKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="~/lib/jquery.touchswipe/jquery.touchSwipe.js"></script>
     @if (minified)
     {
         <script src="~/lib/sircl-src-new/sircl-bundled.min.js"></script>
@@ -185,6 +186,8 @@
         <script src="~/lib/sircl-src-new/sircl-sortable.min.js"></script>
         <script src="~/lib/sircl-src-new/sircl-qrious.min.js"></script>
         <script src="~/lib/sircl-src-new/sircl-vue.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-serversentevents.min.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-touchswipe-jquery.min.js"></script>
     }
     else
     {
@@ -199,6 +202,8 @@
         <script src="~/lib/sircl-src-new/sircl-sortable.js"></script>
         <script src="~/lib/sircl-src-new/sircl-qrious.js"></script>
         <script src="~/lib/sircl-src-new/sircl-vue.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-serversentevents.js"></script>
+        <script src="~/lib/sircl-src-new/sircl-touchswipe-jquery.js"></script>
         @*<script src="~/lib/sircl-src-new/sircl-debugging.js"></script>*@
     }
 
@@ -206,14 +211,14 @@
     @RenderSection("Scripts", required: false)
     @*<script src="~/lib/sircl-src-new/sircl-samples-extensibility.js"></script>*@
     <script>
-        $$(function() {
+        $$(function () {
             $("[data-bs-toggle='popover']").popover({ container: "body" });
             $("[data-toggle='tooltip']").tooltip({ boundary: "window" });
         });
     </script>
     <script>
 
-        sircl.addErrorHandler(function(code, message, data) {
+        sircl.addErrorHandler(function (code, message, data) {
             alert(code + ": " + message);
         });
         //sircl.addRequestHandler("onError", function (req) {
@@ -222,7 +227,7 @@
         //    req.succeeded = true;
         //    this.next(req);
         //});
-        sircl.addRequestHandler("onError", function(req) {
+        sircl.addRequestHandler("onError", function (req) {
             if (req.method === "get") {
                 // Re-issue the request by the browser, to render the error page:
                 //window.location.href = req.action

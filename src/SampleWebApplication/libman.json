@@ -5,6 +5,10 @@
     {
       "library": "font-awesome@5.15.2",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "jquery.touchswipe@1.6.19",
+      "destination": "wwwroot/lib/jquery.touchswipe/"
     }
   ]
 }

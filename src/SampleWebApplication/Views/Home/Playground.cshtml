@@ -4,6 +4,18 @@
 
 <hr />
 
+<h5>Swipe &amp; Tap</h5>
+
+<p>Swipe to the left to delete; longtap to highlight; doubletap to shadow</p>
+<div class="card" style="width: 24rem;" id="swipeAndTapCards">
+    <ul class="list-group list-group-flush" swipe-threshold="50" doubletap-threshold="500">
+        <li class="list-group-item animate" onswipeleft-click=">SPAN" onlongtap-click=">I" ondoubletap-click=">B">Item One  <span class="float-right" onclick-hide="<LI">&times</span><i hidden onclick-toggleclass="highlighted on <LI"></i><b hidden onclick-toggleclass="red-border on <LI"></b></li>
+        <li class="list-group-item animate" onswipeleft-click=">SPAN" onlongtap-click=">I" ondoubletap-click=">B">Item Two  <span class="float-right" onclick-hide="<LI">&times</span><i hidden onclick-toggleclass="highlighted on <LI"></i><b hidden onclick-toggleclass="red-border on <LI"></b></li>
+        <li class="list-group-item animate" onswipeleft-click=">SPAN" onlongtap-click=">I" ondoubletap-click=">B">Item Three<span class="float-right" onclick-hide="<LI">&times</span><i hidden onclick-toggleclass="highlighted on <LI"></i><b hidden onclick-toggleclass="red-border on <LI"></b></li>
+    </ul>
+</div>
+
+<a href="/Home/Playground" target=" BODY" sub-target="#swipeAndTapCards">Reload</a>
 
 <hr />
 
@@ -56,12 +68,12 @@
 <hr />
 
 <style>
-    @@keyframes no-animation { }
+    @@keyframes no-animation {
+    }
 
     .wait-2s {
         animation: no-animation 2s;
     }
-
 </style>
 
 <a href="" onclick-addclass="wait-2s" onanimationend-show="#sdqd56465qs65">Click and wait for 2 seconds</a>
@@ -88,7 +100,7 @@
     }
 </style>
 
-<p id="newitemsq5d4" 
+<p id="newitemsq5d4"
    onanimationstart-click="#newitemsq5d4s"
    onanimationend-hide="#newitemsq5d4b"
    onanimationend-removeclass="bg-fade-blue-to-none-animation">New item</p>
@@ -210,7 +222,9 @@
 
 <div class="octoast" data-toastr-type="success" data-toastr-title="Copied to clipboard" hidden>  The data has been copied to the clipboard.</div>
 
-<template class="octoast" data-toastr-type="warning" data-toastr-title="Confidentiality">  Data in the clipboard may contain confidential info!</template>
+<template class="octoast" data-toastr-type="warning" data-toastr-title="Confidentiality">
+    Data in the clipboard may contain confidential info!
+</template>
 
 <hr />
 
@@ -379,7 +393,9 @@
 
     <button type="button" onclick-click="<DIV|>TEMPLATE">Replace by copy</button>
 
-    <template onclick-copyto="<DIV|>H1">Copy</template>
+    <template onclick-copyto="<DIV|>H1">
+        Copy
+    </template>
 
 </div>
 
@@ -677,10 +693,10 @@
 
 <fieldset onchange-action="/Query" target="#caout2">
     <legend>Delivery mode</legend>
-    <input type="radio" name="Mode" value="LND" /> Over land <br/>
-    <input type="radio" name="Mode" value="SEA" /> Over sea <br/>
-    <input type="radio" name="Mode" value="AIR" /> In the air <br/>
-    <input type="checkbox" name="Options" value="Refr" /> Refrigerated <br/>
+    <input type="radio" name="Mode" value="LND" /> Over land <br />
+    <input type="radio" name="Mode" value="SEA" /> Over sea <br />
+    <input type="radio" name="Mode" value="AIR" /> In the air <br />
+    <input type="checkbox" name="Options" value="Refr" /> Refrigerated <br />
     <input type="checkbox" name="Options" value="Expr" /> Express delivery
 </fieldset>
 
