@@ -1321,6 +1321,8 @@ $(document).ready(function () {
                 sircl.ext.$mainTarget().addClass("sircl-history-nocache-once");
                 window.history.back();
             }
+        } else if (href === "history:forward") {
+            window.history.forward();
         } else if (href === "history:reload" || href === "history:refresh") {
             // Perform page navigation preparation:
             sircl._onPageNavigate(event, $(this));
