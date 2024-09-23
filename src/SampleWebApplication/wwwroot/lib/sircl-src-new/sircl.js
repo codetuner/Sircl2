@@ -553,12 +553,29 @@ sircl.ext.subtituteFields = function sircl_ext_substituteFields(url, $source, mu
 };
 
 /**
- * Processes an event from ServerSentEvents or from a WebWorker providing content as if it was comming from a request.
+ * Processes content as if it was comming from a request.
  * @param {any} $trigger The element to be considered as the trigger of the request (if any).
- * @param {any} event The event.
+ * @param {any} event The event triggering the request.
+ * @param {any} content Html content to inject.
+ * @param {any} $target Target element to inject content in.
+ * @param {any} targetMethod Injection method to apply.
  * @param {any} loadComplete Optional callback called after full processing.
  */
-sircl.ext.processEventRequest = function ($trigger, event, loadComplete) {
+sircl.ext.processContentRequest = function ($trigger, event, content, $target, targetMethod, loadComplete) {
+    try {
+        sircl._submitContent($trigger, event, content, $target, targetMethod, loadComplete);
+    } catch (ex) {
+        sircl.handleError("S134", "Error processing event as request: " + ex, { exception: ex, event: event });
+    }
+}
+
+/**
+ * Processes an event from ServerSentEvents or from a WebWorker providing content as if it was comming from a request.
+ * @param {any} $trigger The element to be considered as the trigger of the request (if any).
+ * @param {any} event The event triggering the request.
+ * @param {any} loadComplete Optional callback called after full processing.
+ */
+sircl.ext.processDataEventRequest = function ($trigger, event, loadComplete) {
     if (event.data == null) {
         sircl.handleError("S132", "Missing data on event for processing event request.", { event: event });
         return;
@@ -1208,7 +1225,7 @@ SirclRequestProcessor.prototype._render = function (req) {
         if (!document.startViewTransition || !$realTarget.is("[onload-startviewtransition]")) {
             // If viewTransitions not supported or target is has no [onload-startviewtransition] attribute:
             $realTarget.html(realResponseText);
-        } else if ($realTarget.is(sircl.mainTargetSelector$) && req.method !== "get" ) {
+        } else if ($realTarget.is(sircl.mainTargetSelector$) && req.method !== "get") {
             // If main target and no get request, do not apply transitions:
             $realTarget.html(realResponseText);
         } else {

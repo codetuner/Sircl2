@@ -14,30 +14,58 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-serversentevents' com
 
 if (typeof (EventSource) !== "undefined") {
 
-    document.addEventListener("DOMContentLoaded", function sircl_serverSentEvents() {
+    $$("before", function () {
 
-        $("[sse-url]").each(function () {
+        $(this).find("[sse-url]").each(function () {
+            this.eventSource.close();
+        });
+
+    });
+
+    $$("process", function () {
+
+        $(this).find("[sse-url]").each(function () {
 
             // Read attributes:
             var sseUrl = this.getAttribute("sse-url");
-            var sseDistinct = this.hasAttribute("sse-distinct");
-            var sseWithCredentials = this.hasAttribute("sse-withcredentials");
+            var sseDistinct = $(this).closest("[sse-distinct]").length > 0;
+            var sseWithCredentials = $(this).closest("[sse-withcredentials]").length > 0;
 
             // Construct EventSource:
             var eventSource = new EventSource(sseUrl, { withCredentials: sseWithCredentials });
-            var lastEventId = eventSource.lastEventId || "";
 
             // Listen for "content" events:
-            var trigger = this;
-            eventSource.addEventListener("content", function (event) {
-                //console.log('SSE Sircl Content: { id: "' + event.lastEventId + '", type: "' + event.type + '", data: "' + event.data + '" }', event)
+            if (this.hasAttribute("sse-dispatch")) {
+                if (sseDistinct) this.__sse_lastEventId = eventSource.lastEventId || "";
+                var eventName = this.getAttribute("sse-dispatch") || "content";
+                var contentTrigger = this;
+                eventSource.addEventListener(eventName, function (event) {
 
-                // Check for duplicate messages:
-                if (sseDistinct && event.lastEventId == lastEventId) return;
-                lastEventId = event.lastEventId;
+                    // Check for duplicate messages:
+                    if (sseDistinct && event.lastEventId == contentTrigger.__sse_lastEventId) return;
+                    contentTrigger.__sse_lastEventId = event.lastEventId;
 
-                // Process the event as a request:
-                sircl.ext.processEventRequest($(trigger), event);
+                    // Process the event as a request:
+                    sircl.ext.processDataEventRequest($(contentTrigger), event);
+                });
+            }
+
+            // Listen for custom events based on the [sse-event] attribute:
+            $(this).find("[sse-event]").each(function () {
+                if (sseDistinct) this.__sse_lastEventId = eventSource.lastEventId || "";
+                var eventNames = this.getAttribute("sse-event").split(" ");
+                var eventTrigger = this;
+                for (var i = 0; i < eventNames.length; i++) {
+                    eventSource.addEventListener(eventNames[i], function (event) {
+
+                        // Check for duplicate messages:
+                        if (sseDistinct && event.lastEventId == eventTrigger.__sse_lastEventId) return;
+                        eventTrigger.__sse_lastEventId = event.lastEventId;
+
+                        // Process the given content as a request:
+                        sircl.ext.processContentRequest($(eventTrigger), event, event.data, $(eventTrigger), eventTrigger.getAttribute("target-method") || "content");
+                    });
+                }
             });
 
             // Store reference to eventSource:
