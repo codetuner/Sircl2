@@ -1693,7 +1693,7 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
 
         // Final attempt, if target has .onload-autofocus, set focus on first focussable element:
         if (focusSet === false && req.$finalTarget.hasClass("onload-autofocus")) {
-            var focussables = req.$finalTarget.find("INPUT:not([type='hidden']), SELECT, TEXTARA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
+            var focussables = req.$finalTarget.find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
                 .toArray();
             while (focussables.length > 0) {
                 var next = focussables.shift();
