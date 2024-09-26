@@ -73,12 +73,16 @@ $$("enrich", function sircl_debugging_enrichHandler() {
 });
 
 // Process handler adds a temporary border to loaded parts:
-$$(function sircl_debugging_processHandler() {
+$$("process", function sircl_debugging_processHandler() {
     console.log("Sircl-Debugging: load.process", this);
     var initialBorder = "";
     try { initialBorder = $(this).css("border"); } catch (ex) { };
     $(this).css("border", "solid 1px blue");
     window.setTimeout(function ($this, initialBorder) { $this.css("border", initialBorder); }, 500, $(this), initialBorder);
+});
+
+$$("after", function sircl_debugging_enrichHandler() {
+    console.log("Sircl-Debugging: load.after", this);
 });
 
 //#endregion
