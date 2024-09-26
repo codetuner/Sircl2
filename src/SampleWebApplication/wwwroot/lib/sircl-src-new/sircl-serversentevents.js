@@ -28,7 +28,8 @@ if (typeof (EventSource) !== "undefined") {
 
             // Read attributes:
             var sseUrl = this.getAttribute("sse-url");
-            var sseDistinct = $(this).closest("[sse-distinct]").length > 0;
+            var sseDistinctModeNode = $(this).closest("[sse-distinct]");
+            var sseDistinctMode = (sseDistinctModeNode.length > 0) ? sseDistinctModeNode[0].getAttribute("sse-distinct") : null;
             var sseWithCredentials = $(this).closest("[sse-withcredentials]").length > 0;
 
             // Construct EventSource:
@@ -36,13 +37,14 @@ if (typeof (EventSource) !== "undefined") {
 
             // Listen for "content" events:
             if (this.hasAttribute("sse-dispatch")) {
-                if (sseDistinct) this.__sse_lastEventId = eventSource.lastEventId || "";
+                if (sseDistinctMode != null) this.__sse_lastEventId = eventSource.lastEventId || "";
                 var eventName = this.getAttribute("sse-dispatch") || "content";
                 var contentTrigger = this;
                 eventSource.addEventListener(eventName, function (event) {
 
                     // Check for duplicate messages:
-                    if (sseDistinct && event.lastEventId == contentTrigger.__sse_lastEventId) return;
+                    if (sseDistinctMode == "last" && event.lastEventId == contentTrigger.__sse_lastEventId) return;
+                    if (sseDistinctMode == "sequential" && event.lastEventId <= contentTrigger.__sse_lastEventId) return;
                     contentTrigger.__sse_lastEventId = event.lastEventId;
 
                     // Process the event as a request:
@@ -51,15 +53,16 @@ if (typeof (EventSource) !== "undefined") {
             }
 
             // Listen for custom events based on the [sse-event] attribute:
-            $(this).find("[sse-event]").each(function () {
-                if (sseDistinct) this.__sse_lastEventId = eventSource.lastEventId || "";
+            $(this).filter("[sse-event]").add($(this).find("[sse-event]")).each(function () {
+                if (sseDistinctMode != null) this.__sse_lastEventId = eventSource.lastEventId || "";
                 var eventNames = this.getAttribute("sse-event").split(" ");
                 var eventTrigger = this;
                 for (var i = 0; i < eventNames.length; i++) {
                     eventSource.addEventListener(eventNames[i], function (event) {
 
                         // Check for duplicate messages:
-                        if (sseDistinct && event.lastEventId == eventTrigger.__sse_lastEventId) return;
+                        if (sseDistinctMode == "last" && event.lastEventId == eventTrigger.__sse_lastEventId) return;
+                        if (sseDistinctMode == "sequential" && event.lastEventId <= eventTrigger.__sse_lastEventId) return;
                         eventTrigger.__sse_lastEventId = event.lastEventId;
 
                         // Process the given content as a request:
