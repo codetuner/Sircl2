@@ -8,9 +8,9 @@ if (typeof Vue === "undefined") console.warn("The 'sircl-vue' component should b
 sircl.vue = sircl.vue || {};
 sircl.vue.createHandlers = sircl.vue.createHandlers || [];
 //sircl.vue.createHandlers.push(function (el, rootComponent) { console.log("Vue: Creating", el, appObj); });
-sircl.vue.mountHandlers = sircl.vue.createHandlers || [];
+sircl.vue.mountHandlers = sircl.vue.mountHandlers || [];
 //sircl.vue.mountHandlers.push(function (el, app) { console.log("Vue: Mounting", el, app); });
-sircl.vue.unmountHandlers = sircl.vue.createHandlers || [];
+sircl.vue.unmountHandlers = sircl.vue.unmountHandlers || [];
 //sircl.vue.unmountHandlers.push(function (el, app) { console.log("Vue: Unmounting", el, app); });
 
 // Unmount Vue apps before removing HTML part:
