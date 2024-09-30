@@ -463,7 +463,7 @@ sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
  */
 sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
     // Find trigger:
-    var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : null : null : null;
+    var $trigger = (event) ? (event.originalEvent) ? (event.originalEvent.submitter) ? $(event.originalEvent.submitter) : $(event.currentTarget) : $(event.currentTarget) : null;
     $trigger = (event) ? ($trigger) ? $trigger : (event.submitter) ? $(event.submitter) : $(event.currentTarget) : $(form);
     // If trigger has onsubmit-confirm, ask confirmation:
     if ($trigger.hasAttr("onsubmit-confirm") || $(form).hasAttr("onsubmit-confirm")) {
