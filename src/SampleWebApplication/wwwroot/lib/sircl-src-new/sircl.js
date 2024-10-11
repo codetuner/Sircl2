@@ -2024,7 +2024,7 @@ sircl.addRequestHandler("afterSend", function sircl_overlay_afterSend_requestHan
 
 sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_requestHandler(req) {
     // Set classes to loading state:
-    $(document).addClass("body-loading");
+    $("BODY").addClass("body-loading");
     req.$initialTarget.addClass("loading");
     // Move to next handler:
     this.next(req);
@@ -2032,7 +2032,7 @@ sircl.addRequestHandler("beforeSend", function sircl_loadingStatus_beforeSend_re
 
 sircl.addRequestHandler("afterSend", function sircl_loadingStatus_afterSend_requestHandler(req) {
     // Reset classes to loading state:
-    $(document).removeClass("body-loading");
+    $("BODY").removeClass("body-loading");
     req.$initialTarget.removeClass("loading");
     // Move to next handler:
     this.next(req);
@@ -2041,7 +2041,7 @@ sircl.addRequestHandler("afterSend", function sircl_loadingStatus_afterSend_requ
 $(document).ready(function () {
     $(window).on("beforeunload", function (event) {
         // Ensure load status items are shown:
-        $(document).addClass("body-loading");
+        $("BODY").addClass("body-loading");
     });
 });
 
