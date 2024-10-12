@@ -16,9 +16,107 @@
 
         <hr />
 
+        <section>
 
-        <hr />
+            <main>
+                <div id="tpic" class="tpic" onload-load="/media/img1.html">
+                    Load image here
+                </div>
+                <a href="/media/img1.html" target="#tpic">Image 1</a>
+                <a href="/media/img2.html" target="#tpic">Image 2</a>
+            </main>
 
+            <hr />
+
+            <main>
+                <div id="tpic1" class="tpic" onload-load="/media/img1.html" onload-startviewtransition>
+                    Load image here
+                </div>
+                <a href="/media/img1.html" target="#tpic1">Image 1</a>
+                <a href="/media/img2.html" target="#tpic1">Image 2</a>
+            </main>
+            @*<style>
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 1s;
+            }
+        </style>*@
+
+            <hr />
+
+            <main>
+                <div id="tpic2" class="tpic" onload-load="/media/img1.html" onload-startviewtransition="mytransition">
+                    Load image here
+                </div>
+                <a href="/media/img1.html" target="#tpic2">Image 1</a>
+                <a href="/media/img2.html" target="#tpic2">Image 2</a>
+            </main>
+            <style>
+
+                @@keyframes fade-in {
+                    from {
+                        opacity: 0;
+                    }
+
+                    to {
+                        width: 0;
+                    }
+                }
+
+                @@keyframes fade-out {
+                    from {
+                        width: 0;
+                    }
+
+                    to {
+                        opacity: 0;
+                    }
+                }
+
+                @@keyframes slide-to-left {
+                    to {
+                        transform: translateX(-100vw);
+                    }
+                }
+
+                @@keyframes slide-from-right {
+                    from {
+                        transform: translateX(100vw);
+                    }
+                }
+
+                #tpic2 {
+                    view-transition-name: transpic;
+                }
+
+                ::view-transition-group(root) {
+                    animation-duration: 500ms;
+                }
+
+                :active-view-transition-type(mytransition) {
+                    &::view-transition-old(root) {
+                        animation: 500ms ease-out both fade-out;
+                    }
+    
+                    &::view-transition-new(root) {
+                        animation: 500ms ease-out both fade-in;
+                    }
+    
+                    &::view-transition-old(transpic) {
+                        animation: 500ms ease-out both slide-to-left;
+                    }
+    
+                    &::view-transition-new(transpic) {
+                        animation: 500ms ease-out both slide-from-right;
+                    }
+                }
+            </style>
+
+            <p>
+                @DateTime.Now
+            </p>
+
+        </section>
         <hr />
 
         <h5>Swipe &amp; Tap</h5>
