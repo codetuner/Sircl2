@@ -2569,11 +2569,11 @@ sircl.addContentReadyHandler("after", function sircl_formState_processHandler() 
 
 // When loading part of a form, if response has header "X-Sircl-Form-Changed", set form changed:
 sircl.addRequestHandler("afterRender", function (req) {
-    // If response has "X-Sircl-Form-Changed" header "true", mark closest form changed:
+    // If response has "X-Sircl-Form-Changed" header "true", mark closest form or contained forms changed:
     if (req != null && req.xhr != null) {
         var reloadSection = req.xhr.getResponseHeader("X-Sircl-Form-Changed");
         if (reloadSection !== null && reloadSection.toLowerCase() === "true") {
-            req.$finalTarget.closest("FORM[onchange-set]").each(function () {
+            req.$finalTarget.closest("FORM[onchange-set]").add(req.$finalTarget.find("FORM[onchange-set]")).each(function () {
                 $(this).addClass("form-changed");
                 $(this).trigger("change");
                 var $input = $(this).find("INPUT[name='" + $(this).attr("onchange-set") + "']");
