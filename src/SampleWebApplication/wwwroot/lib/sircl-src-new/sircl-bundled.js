@@ -875,6 +875,9 @@ SirclRequestProcessor.prototype._send = function (req) {
     }
     // Otherwise, add after-send event handlers:
     req.xhr.addEventListener("abort", function (e) {
+        // Removed pending request:
+        if (req.$initialTarget != null && req.$initialTarget.length == 1 && req.$initialTarget[0].__pendingReq != null)
+            req.$initialTarget[0].__pendingReq = null;
         // Keep track of the event and response on the req object:
         req.loadEvent = e;
         req.status = req.xhr.status;
@@ -886,6 +889,9 @@ SirclRequestProcessor.prototype._send = function (req) {
         processor.next(req);
     });
     req.xhr.addEventListener("error", function (e) {
+        // Removed pending request:
+        if (req.$initialTarget != null && req.$initialTarget.length == 1 && req.$initialTarget[0].__pendingReq != null)
+            req.$initialTarget[0].__pendingReq = null;
         // Keep track of the event and response on the req object:
         req.loadEvent = e;
         req.status = req.xhr.status;
@@ -897,6 +903,9 @@ SirclRequestProcessor.prototype._send = function (req) {
         processor.next(req);
     });
     req.xhr.addEventListener("load", function (e) {
+        // Removed pending request:
+        if (req.$initialTarget != null && req.$initialTarget.length == 1 && req.$initialTarget[0].__pendingReq != null)
+            req.$initialTarget[0].__pendingReq = null;
         // Keep track of the event and response on the req object:
         req.loadEvent = e;
         req.status = req.xhr.status;
@@ -1051,6 +1060,17 @@ SirclRequestProcessor.prototype._send = function (req) {
             }
         }
     });
+
+    // If a request already exists, abort it:
+    if (req.$initialTarget != null && req.$initialTarget.length == 1) {
+        if (req.$initialTarget[0].__pendingReq != null) {
+            if (req.$initialTarget[0].__pendingReq.xhr != null && req.$initialTarget[0].__pendingReq.xhr.readyState != 4) {
+                req.$initialTarget[0].__pendingReq.xhr.abort();
+            }
+        }
+        req.$initialTarget[0].__pendingReq = req;
+    }
+
     // Send the request:
     req.xhr.send(req.formData);
 };
