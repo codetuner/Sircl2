@@ -730,3 +730,92 @@ $$(function sircl_bs5_offcanvas_processHandler() {
 });
 
 //#endregion
+
+//#region Handling Bootstrap Themes ("dark-mode")
+
+sircl.bs_system_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+$$(function sircl_bs5_themes_processHandler() {
+
+    // Checks the item having [ifchecked-setbstheme=current theme name (or 'auto')]
+    // (to support lists of radios):
+    $(this).find("[ifchecked-setbstheme]").each(function () {
+        var $themeElement = $($(this).closest("[data-bs-theme='" + $(this).attr("ifchecked-setbstheme") + "']"));
+        if ($themeElement.length > 0 || ($themeElement.length == 0 && $(this).attr("ifchecked-setbstheme") == "auto")) {
+            if ($(this).prop("checked") == false) {
+                $(this).prop("checked", true);
+                $(this).trigger("change");
+            }
+        }
+    });
+
+    // Substitutes "auto" theme into "light" or "dark":
+    $(this).closest("[data-bs-theme='auto']").add($(this).find("[data-bs-theme='auto']")).each(function () {
+        this.setAttribute("data-bs-theme", sircl.bs_system_theme);
+    });
+
+    // Checks the item having [ifchecked-setbstheme=current theme name after substituting "auto" for either "dark" or "light"]
+    // provided it also has a [ifunchecked - setbstheme] attribute (to support simple light/dark checkbox switch):
+    $(this).find("[ifchecked-setbstheme][ifunchecked-setbstheme]").each(function () {
+        var $themeElement = $($(this).closest("[data-bs-theme='" + $(this).attr("ifchecked-setbstheme") + "']"));
+        if ($themeElement.length > 0 || ($themeElement.length == 0 && $(this).attr("ifchecked-setbstheme") == "auto")) {
+            if ($(this).prop("checked") == false) {
+                $(this).prop("checked", true);
+                $(this).trigger("change");
+            }
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // OnClick sets the Bootstrap Theme to the given value:
+    $(document).on("click", "[onclick-setbstheme]", function (event) {
+        // Change Bootstrap theme:
+        var theme = $(this).attr("onclick-setbstheme");
+        if (theme == "auto") theme = sircl.bs_system_theme;
+        var target$ = $(this).closest("[onclick-setbstheme-target]").attr("onclick-setbstheme-target");
+        var $target = (target$ != null) ? $target = sircl.ext.$select($(this).closest("[onclick-setbstheme-target]"), target$) : $(this).closest("[data-bs-theme]");
+        if ($target.length == 0) $target = $("BODY");
+        $target.attr("data-bs-theme", theme);
+        // Also check an [ifchecked-setbstheme] in scope if matching theme:
+        $target.find("[ifchecked-setbstheme='" + $(this).attr("onclick-setbstheme") + "']").each(function () {
+            if ($(this).prop("checked") == false) {
+                $(this).prop("checked", true);
+                $(this).trigger("change");
+            }
+        });
+        // And uncheck an [ifunchecked-setbstheme] in scope if matching theme:
+        $target.find("[ifunchecked-setbstheme='" + $(this).attr("onclick-setbstheme") + "']").each(function () {
+            if ($(this).prop("checked") == true) {
+                $(this).prop("checked", false);
+                $(this).trigger("change");
+            }
+        });
+
+    });
+
+    $(document).on("change", "[ifchecked-setbstheme]", function (event) {
+        // Ignore if content processing:
+        if ($(this).closest(".sircl-content-processing").length > 0) return;
+        // Set theme accorinding to checked state:
+        if (this.checked) {
+            var theme = $(this).attr("ifchecked-setbstheme");
+            if (theme == "auto") theme = sircl.bs_system_theme;
+            var target$ = $(this).closest("[ifchecked-setbstheme-target]").attr("ifchecked-setbstheme-target");
+            var $target = (target$ != null) ? $target = sircl.ext.$select($(this).closest("[ifchecked-setbstheme-target]"), target$) : $(this).closest("[data-bs-theme]");
+            if ($target.length == 0) $target = $("HTML");
+            $target.attr("data-bs-theme", theme);
+        } else if (this.hasAttribute("ifunchecked-setbstheme")) {
+            var theme = $(this).attr("ifunchecked-setbstheme");
+            if (theme == "auto") theme = sircl.bs_system_theme;
+            var target$ = $(this).closest("[ifchecked-setbstheme-target]").attr("ifchecked-setbstheme-target");
+            var $target = (target$ != null) ? $target = sircl.ext.$select($(this).closest("[ifchecked-setbstheme-target]"), target$) : $(this).closest("[data-bs-theme]");
+            if ($target.length == 0) $target = $("HTML");
+            $target.attr("data-bs-theme", theme);
+        }
+    });
+
+});
+
+//#endregion
