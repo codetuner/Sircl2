@@ -755,7 +755,7 @@ $$(function sircl_bs5_themes_processHandler() {
     });
 
     // Checks the item having [ifchecked-setbstheme=current theme name after substituting "auto" for either "dark" or "light"]
-    // provided it also has a [ifunchecked - setbstheme] attribute (to support simple light/dark checkbox switch):
+    // provided it also has a [ifunchecked-setbstheme] attribute (to support simple light/dark checkbox switch):
     $(this).find("[ifchecked-setbstheme][ifunchecked-setbstheme]").each(function () {
         var $themeElement = $($(this).closest("[data-bs-theme='" + $(this).attr("ifchecked-setbstheme") + "']"));
         if ($themeElement.length > 0 || ($themeElement.length == 0 && $(this).attr("ifchecked-setbstheme") == "auto")) {
