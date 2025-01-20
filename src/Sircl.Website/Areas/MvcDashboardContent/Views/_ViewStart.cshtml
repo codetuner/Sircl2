@@ -1,9 +1,0 @@
-﻿@*@if (this.Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")*@
-@if (this.Context.Request.Headers["X-Sircl-Request-Type"] == "Partial")
-{
-Layout = "_PartLayout";
-}
-else
-{
-Layout = "_PageLayout";
-}

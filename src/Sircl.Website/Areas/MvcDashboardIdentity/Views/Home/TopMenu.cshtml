@@ -1,8 +1,0 @@
-﻿@model TopMenuModel 
-
-<li class="nav-item" ifroute-setactive="\/Users(\/|$)">
-    <a class="nav-link" asp-area="MvcDashboardIdentity" asp-controller="Users" asp-action="Index"><i class="fas fa-user"></i> Users <span class="badge bg-secondary">@Model.UserCount</span></a>
-</li>
-<li class="nav-item" ifroute-setactive="\/Roles(\/|$)">
-    <a class="nav-link" asp-area="MvcDashboardIdentity" asp-controller="Roles" asp-action="Index"><i class="fas fa-theater-masks"></i> Roles <span class="badge bg-secondary">@Model.RoleCount</span></a>
-</li>

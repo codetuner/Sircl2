@@ -1,6 +1,0 @@
-﻿@model String
-<label for="@Html.IdFor(m => m)" class="form-label">
-    <input id="@Html.IdFor(m => m)" name="@Html.NameFor(m => m)" type="checkbox" checked="@(("true".Equals(Model, StringComparison.OrdinalIgnoreCase)) ? "checked" : null)" value="True" />
-    @ViewBag.Name
-    <input name="@Html.NameFor(m => m)" type="hidden" value="False" />
-</label>
