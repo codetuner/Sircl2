@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +11,13 @@ namespace SampleWebApplication.Controllers
 {
     public class TestController : Controller
     {
+        public IActionResult Echo(string msg)
+        {
+            msg = msg.Replace("{time}", DateTime.Now.ToString("HH:mm:ss"));
+            msg = msg.Replace("{url}", Request.Path);
+            return Content(msg);
+        }
+
         public IActionResult ChangeSucceed()
         {
             Debug.WriteLine($"{DateTime.Now:HH:mm:ss} ChangeSucceeded: {Request.QueryString}");

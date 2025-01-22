@@ -459,17 +459,15 @@ sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
 
 /**
  * Submits a form.
+ * @param {any} form Form to be submitted.
+ * @param {any} trigger Element initiating the submit request.
  * @param {any} event Event initiating the submit request.
+ * @param {any} fallback Optional expression to be called if the submit is not handled (because not requiring an AJAX request).
  */
-sircl.ext.submit = function sircl_ext_submit(form, event, fallback) {
+sircl.ext.submit = function sircl_ext_submit(form, trigger, event, fallback) {
     // Find trigger:
-    var $trigger = null;
-    if (event != null) {
-        var evnt = (event.originalEvent || event);
-        $trigger = $(evnt.submitter || event.target || evnt.currentTarget);
-    } else {
-        $trigger = $(form);
-    }
+    var $trigger = $(trigger || form);
+
     // If trigger has onsubmit-confirm, ask confirmation:
     if ($trigger.hasAttr("onsubmit-confirm") || $(form).hasAttr("onsubmit-confirm")) {
         if (!sircl.ext.confirm(form, $trigger.attr("onsubmit-confirm") || $(form).attr("onsubmit-confirm"), event)) {
@@ -1455,7 +1453,7 @@ $(document).ready(function () {
         var $form = sircl.ext.$select($this, $this.attr("onclick-submit"));
         if ($form.length >= 1) {
             var form = $form[0];
-            sircl.ext.submit(form, event, function () {
+            sircl.ext.submit(form, this, event, function () {
                 form.submit();
             });
         }
@@ -1463,7 +1461,7 @@ $(document).ready(function () {
 
     /// Submitting a form:
     $(document).on("submit", "form:not([download]):not([method=dialog])", function (event) {
-        sircl.ext.submit(this, event);
+        sircl.ext.submit(this, (event.originalEvent || event).submitter || (event.originalEvent || event).target, event);
     });
 
     /// Handle onkeyenter-click:
@@ -2421,7 +2419,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var $form = sircl.ext.$select($(this), $(this).attr("onchange-submit"));
             if ($form.length > 0) {
                 setTimeout(function () {
-                    sircl.ext.submit($form[0], event, function () {
+                    sircl.ext.submit($form[0], event.target, event, function () {
                         $form[0].submit();
                     });
                 }, 0);

@@ -1,10 +1,35 @@
 ﻿
 <hr />
 
+
+<hr />
+
+<h5>Identifying target of submit</h5>
+
+<p>Clicking on the image should set change the content of <b>C</b>.</p>
+
+<div>
+
+    <form action="/Test/Echo?msg={time}%20Content%20for%20A" method="post" target="#tqsfd745423w-a">
+        <div class="onclick-submit" formaction="/Test/Echo?msg={time}%20Content%20for%20B" formtarget="#tqsfd745423w-b">
+            <div class="onclick-submit" formaction="/Test/Echo?msg={time}%20Content%20for%20C" formtarget="#tqsfd745423w-c">
+                <img src="~/image/satisfaction-seal-gold.png" width="48" />
+            </div>
+        </div>
+    </form>
+
+    <p id="tqsfd745423w-a">A</p>
+    <p id="tqsfd745423w-b">B</p>
+    <p id="tqsfd745423w-c">C</p>
+
+</div>
+
+<hr />
+
 <h5>No content</h5>
 
 <div>
-    <a href="null"  onclick-clear="<DIV|>P">Click to clear the content</a>
+    <a href="null" onclick-clear="<DIV|>P">Click to clear the content</a>
     <p>
         (Content to be erased>)
     </p>
