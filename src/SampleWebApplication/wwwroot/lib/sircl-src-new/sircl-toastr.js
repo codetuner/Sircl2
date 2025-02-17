@@ -12,6 +12,8 @@ if (typeof sircl === "undefined") console.warn("The 'sircl-toastr' component sho
 if (typeof toastr === "undefined") console.warn("The 'sircl-toastr' component requires the 'toastr.js' component. See https://github.com/CodeSeven/toastr");
 if (typeof jQuery !== "undefined" && $.isFunction($.fn.fadeIn) == false) console.warn("The 'sircl-toastr' component requires the full edition of jQuery. The slim edition is not sufficient.");
 
+const sircl_toaster_header_regex = /(?:^|,\s*)(?<type>info|success|warning|error)\|/ug;
+
 // Disables Toasts if "slim" edition of jQuery is loaded:
 if ($.fn.fadeIn) {
 
@@ -20,11 +22,13 @@ if ($.fn.fadeIn) {
         if (req.allResponseHeaders != null) {
             req.allResponseHeaders.forEach(function sircl_toastr_afterSend_requestHandler_each(rh) {
                 if (rh[0] == "x-sircl-toastr") {
-                    if (rh.length > 1 && rh[1].indexOf("|") > 1) {
-                        var toastrHeaderParts = rh[1].split("|");
-                        var toastrType = toastrHeaderParts[0];
-                        toastrHeaderParts.splice(0, 1);
-                        toastr[toastrType].apply(null, toastrHeaderParts);
+                    if (rh.length > 1) {
+                        const toasts = rh[1].split(sircl_toaster_header_regex);
+                        for (var i = 1; i < toasts.length; i += 2) {
+                            var toastrType = toasts[i];
+                            var toastrHeaderParts = toasts[i + 1].split("|");
+                            toastr[toastrType].apply(null, toastrHeaderParts);
+                        }
                     }
                 }
             });

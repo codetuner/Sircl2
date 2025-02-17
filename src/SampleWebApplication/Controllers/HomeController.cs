@@ -177,6 +177,17 @@ namespace SampleWebApplication.Controllers
             return View("PlaygroundBs5");
         }
 
+        public IActionResult MultiToasts()
+        {
+            Response.Headers.Append("X-Sircl-Toastr", "This is a default message, it should appear as info.");
+            Response.Headers.Append("X-Sircl-Toastr", "success|This is a success message|All succeeded!");
+            Response.Headers.Append("X-Sircl-Toastr", "info|This is an info message, for information, or more...");
+            Response.Headers.Append("X-Sircl-Toastr", "warning|This is a warning message, to warn");
+            Response.Headers.Append("X-Sircl-Toastr", "error|This is an error message. Something's wrong!|Error!");
+
+            return NoContent();
+        }
+
         public IActionResult Media()
         {
             return View("Media");
