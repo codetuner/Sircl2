@@ -20,6 +20,34 @@
 
         <hr />
 
+        <h5>Relative CSS Selectors in Bootstrap</h5>
+
+        <div class="section">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="<.section|>.modal">
+                Launch demo modal
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr />
+
         <h5>Bootstrap Themes (5.3.3)</h5>
 
         <p>
@@ -69,11 +97,11 @@
                 <a href="/media/img2.html" target="#tpic1">Image 2</a>
             </main>
             @*<style>
-            ::view-transition-old(root),
-            ::view-transition-new(root) {
-                animation-duration: 1s;
-            }
-        </style>*@
+                ::view-transition-old(root),
+                ::view-transition-new(root) {
+                    animation-duration: 1s;
+                }
+            </style>*@
 
             <hr />
 
@@ -127,21 +155,23 @@
                 }
 
                 :active-view-transition-type(mytransition) {
-                    &::view-transition-old(root) {
-                        animation: 500ms ease-out both fade-out;
-                    }
-    
-                    &::view-transition-new(root) {
-                        animation: 500ms ease-out both fade-in;
-                    }
-    
-                    &::view-transition-old(transpic) {
-                        animation: 500ms ease-out both slide-to-left;
-                    }
-    
-                    &::view-transition-new(transpic) {
-                        animation: 500ms ease-out both slide-from-right;
-                    }
+                    &::view-transition-old(root)
+
+                {
+                    animation: 500ms ease-out both fade-out;
+                }
+
+                &::view-transition-new(root) {
+                    animation: 500ms ease-out both fade-in;
+                }
+
+                &::view-transition-old(transpic) {
+                    animation: 500ms ease-out both slide-to-left;
+                }
+
+                &::view-transition-new(transpic) {
+                    animation: 500ms ease-out both slide-from-right;
+                }
                 }
             </style>
 

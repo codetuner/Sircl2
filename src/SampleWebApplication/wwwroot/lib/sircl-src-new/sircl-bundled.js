@@ -2687,6 +2687,36 @@ sircl.addContentReadyHandler("process", function () {
 
 //#endregion
 
+//#region Relative CSS Selectors everywhere
+
+sircl.relativeCssSelectorHandlers = [];
+
+sircl.handleRelativeCssSelectorsIn = function (elementSelector$, attributeName) {
+    // Register a new relativeCssSelectorHandler:
+    const attributeFilter = "[" + attributeName + "]";
+    sircl.relativeCssSelectorHandlers.push(function ($scope) {
+        $scope.find(elementSelector$).filter(attributeFilter).each(function () {
+            var selectorExpression$ = this.getAttribute(attributeName);
+            if (selectorExpression$.startsWith("#")) return;
+            var matches = sircl.ext.$select(this, selectorExpression$);
+            var targetExpr = (matches.length === 0)
+                ? "#notfound"
+                : "#" + sircl.ext.getId(matches[0], true);
+            this.setAttribute(attributeName, targetExpr);
+        });
+    });
+};
+
+$$("enrich", function () {
+    // Invoke all registered relaticeCssSelectorHandlers for the current scope:
+    var $scope = $(this);
+    sircl.relativeCssSelectorHandlers.forEach(function (handler) {
+        handler($scope);
+    });
+});
+
+//#endregion
+
 //#region Document ready handler executing initial afterLoad
 
 $(document).ready(function () {

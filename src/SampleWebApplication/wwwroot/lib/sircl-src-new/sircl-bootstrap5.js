@@ -22,6 +22,13 @@ if (typeof bootstrap === "undefined") console.warn("The 'sircl-bootstrap5' compo
 // Use a Bootstrap spinner:
 sircl.html_spinner = '<span class="sircl-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
 
+//#region Handle relative CSS selectors
+
+sircl.handleRelativeCssSelectorsIn(":not([data-bs-target^='#'])", "data-bs-target");
+sircl.handleRelativeCssSelectorsIn(":not([data-bs-parent^='#'])", "data-bs-parent");
+
+//#endregion
+
 //#region Hide or dispose elements before unloading their container
 
 $$("before", function sircl_bs5_init_beforeHandler() {
