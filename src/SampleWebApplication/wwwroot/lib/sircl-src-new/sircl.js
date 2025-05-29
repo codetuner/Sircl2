@@ -1703,7 +1703,7 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
     // Try to set focus:
     try {
         // Identify an [autofocus] element that would get the focus by the afterHandler:
-        var focusSet = $(this).find("*[autofocus]:first").length > 0;
+        var focusSet = req.$finalTarget.find("*[autofocus]:first").length > 0;
 
         // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
         if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {

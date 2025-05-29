@@ -78,6 +78,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/sircl-src-new/sircl-longpressevent.min.js",
+    "inputFiles": [
+      "wwwroot/lib/sircl-src-new/sircl-longpressevent.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/sircl-src-new/sircl-sortable.min.js",
     "inputFiles": [
       "wwwroot/lib/sircl-src-new/sircl-sortable.js"

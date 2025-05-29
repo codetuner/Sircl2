@@ -1703,7 +1703,7 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
     // Try to set focus:
     try {
         // Identify an [autofocus] element that would get the focus by the afterHandler:
-        var focusSet = $(this).find("*[autofocus]:first").length > 0;
+        var focusSet = req.$finalTarget.find("*[autofocus]:first").length > 0;
 
         // Else, if no focus set, try to restore focus on element with same id as before replacing the content:
         if (focusSet === false && sircl_elementIdToFocus !== null && sircl_elementIdToFocus !== '') {
@@ -4088,7 +4088,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     $(document).on("change", ".onfocus-select", function (event) {
         // If we get a change on the active element, it's probably an autofill (unless it has an oninput-changeafter attribute), we then reselect all content:
-        if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not(.onfocus-noselect):not([oninput-changeafter])")) {
+        if (event.target === document.activeElement && $(event.target).is("INPUT:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=date]):not([type=datetime]):not([type=datetime-local]):not(.onfocus-noselect):not([oninput-changeafter])")) {
             event.target.select();
         }
     });
