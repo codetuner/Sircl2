@@ -97,11 +97,17 @@ console.info("Sircl v." + sircl.version + " running.");
  * @param {any} aliasClass$ The class that is the alias.
  * @param {any} attributeName The attribute name.
  * @param {any} attributeValue The default attribute value.
+ * @param {boolean} append Whether to append the value to the existing attribute (if any), or to replace it.
  */
-sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue) {
+sircl.addAttributeAlias = function (aliasClass$, attributeName, attributeValue, append) {
     sircl.addContentReadyHandler("enrich", function sircl_addAttributeAlias() {
         $(this).find(aliasClass$).each(function () {
-            $(this).attr(attributeName, attributeValue);
+            var $this = $(this);
+            if (!$this.hasAttr(attributeName)) {
+                $this.attr(attributeName, attributeValue);
+            } else if (append === true) {
+                $this.attr(attributeName, $this.attr(attributeName) + " " + attributeValue);
+            }
         });
     });
 };
@@ -2691,7 +2697,13 @@ sircl.addContentReadyHandler("process", function () {
 
 sircl.relativeCssSelectorHandlers = [];
 
-sircl.handleRelativeCssSelectorsIn = function (elementSelector$, attributeName) {
+/**
+ * Declares an attribute which value could hold a relative CSS selector.
+ * @param {any} elementSelector$ The elements holding such an attribute.
+ * @param {any} attributeName The attribute name.
+ * @param {boolean} multiple If true, the relative CSS selector can match multiple elements.
+ */
+sircl.handleRelativeCssSelectorsIn = function (elementSelector$, attributeName, multiple) {
     // Register a new relativeCssSelectorHandler:
     const attributeFilter = "[" + attributeName + "]";
     sircl.relativeCssSelectorHandlers.push(function ($scope) {
@@ -2699,9 +2711,19 @@ sircl.handleRelativeCssSelectorsIn = function (elementSelector$, attributeName) 
             var selectorExpression$ = this.getAttribute(attributeName);
             if (selectorExpression$.startsWith("#")) return;
             var matches = sircl.ext.$select(this, selectorExpression$);
-            var targetExpr = (matches.length === 0)
-                ? "#notfound"
-                : "#" + sircl.ext.getId(matches[0], true);
+            var targetExpr;
+            if (matches.length === 0) {
+                targetExpr = "#notfound";
+            } else if (multiple !== true) {
+                targetExpr = "#" + sircl.ext.getId(matches[0], true);
+            } else {
+                var sep = "";
+                targetExpr = "";
+                for (var i = 0; i < matches.length; i++) {
+                    targetExpr += sep + "#" + sircl.ext.getId(matches[i], true);
+                    sep = ",";
+                }
+            }
             this.setAttribute(attributeName, targetExpr);
         });
     });
