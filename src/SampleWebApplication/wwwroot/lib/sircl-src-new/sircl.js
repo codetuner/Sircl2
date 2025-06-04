@@ -1947,6 +1947,23 @@ sircl.addPageNavigateHandler("cancel", function sircl_disable_cancelPageNavigate
 
 //#region Spinner handling
 
+document.addEventListener("DOMContentLoaded", function () {
+    // <* class="onclick-spin"> Starts a spinner for 500ms on click.
+    // The element must already contain a spinner (i.e. "<i class="spinner"></i>") as immediate child.
+    $(document).on("click", ".onclick-spin", function (event) {
+        // Display spinner:
+        var $spinners = $(this).find("> .spinner");
+        if ($spinners.length > 0) {
+            var $trigger = $(this);
+            var _spinner_to_restore = $trigger[0].innerHTML;
+            setTimeout(function () {
+                $trigger[0].innerHTML = _spinner_to_restore;
+            }, 500);
+            $spinners[0].outerHTML = sircl.html_spinner;
+        }
+    });
+});
+
 sircl.addRequestHandler("beforeSend", function sircl_spinner_beforeSend_requestHandler(req) {
     // Show spinner if any:
     if (req.$trigger != null && req.$trigger.length == 1 && req.$trigger[0].tagName != "FORM") {
