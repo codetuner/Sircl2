@@ -320,7 +320,7 @@ $$(function sircl_bs5_tabs_processHandler() {
 
 //#region Handling Bootstrap Toasts
 
-$$(function sircl_bs5_toasts_processHandler() {
+$$("after", function sircl_bs5_toasts_afterHandler() {
     // Automatically show toasts with .onload-showtoast on init:
     $(this).find(".toast.onload-showtoast").each(function () {
         new bootstrap.Toast(this).show();
@@ -332,6 +332,39 @@ $$(function sircl_bs5_toasts_processHandler() {
 //#region Handling Bootstrap Collapse
 
 document.addEventListener("DOMContentLoaded", function () {
+
+    // OnExpand, perform a click:
+    $(document.body).on("show.bs.collapse", ".collapse[onexpand-click]", function (event) {
+        var targetSelector = $(this).attr("onexpand-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
+    // OnExpanded, perform a click:
+    $(document.body).on("shown.bs.collapse", ".collapse[onexpanded-click]", function (event) {
+        var targetSelector = $(this).attr("onexpanded-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
+    // OnCollapse, perform a click:
+    $(document.body).on("hide.bs.collapse", ".collapse[oncollapse-click]", function (event) {
+        var targetSelector = $(this).attr("oncollapse-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
+    // OnCollapsed, perform a click:
+    $(document.body).on("hidden.bs.collapse", ".collapse[oncollapsed-click]", function (event) {
+        var targetSelector = $(this).attr("oncollapsed-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
     // On check checkbox, expand, else collapse:
     $(document.body).on("change", "INPUT[type=checkbox][ifchecked-expand]", function (event) {
         var $this = $(this);
@@ -446,6 +479,115 @@ $$(function sircl_bs5_collapse_processHandler() {
         $(this).load(url);
     });
 });
+
+//#endregion
+
+//#region Handling Bootstrap Popovers and Tooltips
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // On closing Popover, perform a click:
+    $(document.body).on("hidden.bs.popover", "[onhiddenpopover-click]", function (event) {
+        var targetSelector = $(this).attr("onclosepopover-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+    });
+
+    // On click, hide popovers:
+    $(document.body).on("click", "[onclick-hidepopover]", function (event) {
+        var targetSelector = $(this).attr("onclick-hidepopover");
+        const subSelector = "[data-bs-toggle='popover'], [data-toggle='popover']";
+        sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
+            var delay = 0;
+            var delayattr = this.getAttribute("data-bs-delay");
+            if (delayattr !== null) {
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).hide;
+                }
+            }
+            setTimeout(function (popover) {
+                try {
+                    bootstrap.Popover.getInstance(popover).hide();
+                } catch { }
+            }, delay, this);
+        });
+    });
+
+    // On click, show other popovers:
+    $(document.body).on("click", "[onclick-showpopover]", function (event) {
+        var targetSelector = $(this).attr("onclick-showpopover");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            var delay = 0;
+            var delayattr = this.getAttribute("data-bs-delay");
+            if (delayattr !== null) {
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).show;
+                }
+            }
+            setTimeout(function (popover) {
+                try {
+                    // Only show popover if element is visible:
+                    if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                        bootstrap.Popover.getOrCreateInstance(popover).show();
+                    }
+                } catch { }
+            }, delay, this);
+        });
+    });
+
+    // On show Popover, hide other popovers:
+    $(document.body).on("show.bs.popover", "[onshowpopover-hidepopover]", function (event) {
+        var targetSelector = $(this).attr("onshowpopover-hidepopover");
+        const subSelector = "[data-bs-toggle='popover'], [data-toggle='popover']";
+        sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
+            try {
+                bootstrap.Popover.getInstance(this).hide();
+            } catch { }
+        });
+    });
+
+    // On hidden Popover, show other popovers:
+    $(document.body).on("hidden.bs.popover", "[onhiddenpopover-showpopover]", function (event) {
+        var targetSelector = $(this).attr("onhiddenpopover-showpopover");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            // Only show popover if element is visible:
+            if (this.checkVisibility != undefined && this.checkVisibility() == true) {
+                bootstrap.Popover.getOrCreateInstance(this).show();
+            }
+        });
+    });
+});
+
+$$("after", function sircl_bs5_popover_afterHandler() {
+
+    // On load, show Popover:
+    $(this).find("[onload-showpopover]").each(function () {
+        var targetSelector = $(this).attr("onload-showpopover");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            var delay = 800;
+            var delayattr = this.getAttribute("data-bs-delay");
+            if (delayattr !== null) {
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).show;
+                }
+            }
+            setTimeout(function (popover) {
+                try {
+                    // Only show popover if element is visible:
+                    if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                        bootstrap.Popover.getOrCreateInstance(popover).show();
+                    }
+                } catch { }
+            }, delay, this);
+        });
+    });
+});
+
+sircl.addAttributeAlias(".onload-showpopover", "onload-showpopover", ":this");
 
 //#endregion
 

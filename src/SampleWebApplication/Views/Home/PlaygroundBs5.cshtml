@@ -8,33 +8,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sircl Starter Template for Bootstrap 5</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet" />
     <link href="~/lib/sircl-src-new/sircl.css" rel="stylesheet" />
     <style>
         [data-bs-theme=auto] {
-            display:none;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
 
+
+        <hr />
+
+        <div>
+
+            <button type="button" class="btn btn-lg btn-primary onload-showpopover onclick-spin"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="manual"
+                    data-bs-title="Start"
+                    data-bs-content="This is the initial step."
+                    data-bs-delay='{"show":2000,"hide":500}'
+                    onclick-toggleclass="btn-primary btn-secondary on :this, <DIV|.step2"
+                    onclick-showpopover="<DIV|>.step2"
+                    onclick-disable=":this"
+                    xxonclick-hidepopover=":this">
+                <i class="bi bi-1-circle spinner"></i>
+                Step 1
+            </button>
+
+            <button type="button" class="btn btn-lg btn-secondary step2 onclick-spin"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="manual"
+                    data-bs-title="Proceed"
+                    data-bs-content="This is the middle step."
+                    data-bs-delay='{"show":500,"hide":500}'
+                    onclick-toggleclass="btn-primary btn-secondary on :this, <DIV|.step3"
+                    onshowpopover-hidepopover="<DIV"
+                    onclick-showpopover="<DIV|>.step3">
+                <i class="bi bi-2-circle spinner"></i>
+                Step 2
+            </button>
+
+            <button type="button" class="btn btn-lg btn-secondary step3 onclick-spin"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="manual"
+                    data-bs-title="Finalize"
+                    data-bs-content="This is the last step."
+                    data-bs-delay='{"show":500,"hide":500}'
+                    onshowpopover-hidepopover="<DIV"
+                    onclick-toggleclass="btn-primary btn-secondary"
+                    onclick-hidepopover=":this"
+                    xxonclick-alert="Well done!">
+                <i class="bi bi-3-circle spinner"></i>
+                Step 3
+            </button>
+
+            <p>
+                <a href="/Time" target="<DIV">Remove me</a>
+            </p>
+
+        </div>
         <hr />
 
         <h5>Relative CSS Selectors in Bootstrap</h5>
 
         <div class="section">
 
-            <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="<.section|>.collapse">
                 Expand some collapse
             </button>
 
-            <!-- Modal -->
-
-            <div class="collapse">
+            <div class="collapse" onexpanded-click="<.section|>input[type=checkbox], <.section|>button.cmd">
                 <div class="card card-body">
                     Some collapse
                 </div>
+            </div>
+
+            <div>
+                <input type="checkbox" /> Expanded
+
+                <button type="button" class="cmd" onclick-alert="Just expanded!" hidden>&nbsp;</button>
             </div>
 
         </div>
@@ -768,12 +823,18 @@
 
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="~/lib/jquery.touchswipe/jquery.touchSwipe.js"></script>
     <script src="~/lib/sircl-src-new/sircl.js"></script>
     <script src="~/lib/sircl-src-new/sircl-extended.js"></script>
     <script src="~/lib/sircl-src-new/sircl-changeactions.js"></script>
     <script src="~/lib/sircl-src-new/sircl-bootstrap5.js"></script>
     <script src="~/lib/sircl-src-new/sircl-touchswipe-jquery.js"></script>
+    <script>
+        $$(function () {
+            $(this).find("[data-bs-toggle='popover']").each(function () { new bootstrap.Popover(this, { container: "body" }); });
+            $(this).find("[data-bs-toggle='tooltip']").each(function () { new bootstrap.Tooltip(this, { boundary: document.body }); });
+        });
+    </script>
 </body>
 </html>
