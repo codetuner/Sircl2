@@ -136,6 +136,7 @@ if (history.state != null) {
 //#region Sircl extensions library
 
 sircl.ext = {};
+sircl.ext._idseed = 0;
 
 /**
  * Returns the first element of the given array, or null if array undefined or empty.
@@ -243,7 +244,7 @@ sircl.ext.getId = function sircl_ext_getId(elementOrSelector, createIdIfMissing)
     if ($elements.length > 0) {
         var id = $elements[0].id;
         if ((id === "" || id === undefined) && createIdIfMissing === true) {
-            id = $elements[0].id = "id-" + new Date().getTime();
+            id = $elements[0].id = "id-" + (sircl.ext._idseed++) + "-" + new Date().getTime();
         }
         return id;
     } else {
