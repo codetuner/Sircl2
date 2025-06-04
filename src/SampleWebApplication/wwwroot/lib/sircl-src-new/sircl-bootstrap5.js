@@ -498,19 +498,19 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document.body).on("click", "[onclick-hidepopover]", function (event) {
         var targetSelector = $(this).attr("onclick-hidepopover");
         const subSelector = "[data-bs-toggle='popover'], [data-toggle='popover']";
-        sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
+        sircl.ext.$select($(this), targetselector).find(subselector).addback(subselector).each(function () {
             var delay = 0;
-            var delayattr = this.getAttribute("data-bs-delay");
+            var delayattr = this.getattribute("data-bs-delay");
             if (delayattr !== null) {
-                delay = parseInt(delayattr);
-                if (isNaN(delay)) {
-                    delay = JSON.parse(delayattr).hide;
+                delay = parseint(delayattr);
+                if (isnan(delay)) {
+                    delay = json.parse(delayattr).hide;
                 }
             }
-            setTimeout(function (popover) {
+            settimeout(function (popover) {
                 try {
-                    bootstrap.Popover.getInstance(popover).hide();
-                } catch { }
+                    bootstrap.popover.getinstance(popover).hide();
+                } catch (x) { }
             }, delay, this);
         });
     });
@@ -533,7 +533,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
                         bootstrap.Popover.getOrCreateInstance(popover).show();
                     }
-                } catch { }
+                } catch (x) { }
             }, delay, this);
         });
     });
@@ -545,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function () {
         sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
             try {
                 bootstrap.Popover.getInstance(this).hide();
-            } catch { }
+            } catch (x) { }
         });
     });
 
@@ -581,7 +581,7 @@ $$("after", function sircl_bs5_popover_afterHandler() {
                     if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
                         bootstrap.Popover.getOrCreateInstance(popover).show();
                     }
-                } catch { }
+                } catch (x) { }
             }, delay, this);
         });
     });
