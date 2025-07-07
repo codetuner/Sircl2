@@ -1822,7 +1822,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /// Allow dragging file:
     /// <* ondropfile-set="form-input">...</*>
     $(document.body).on("dragover", "[ondropfile-set]", function (event) {
-        if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
+        if (event.originalEvent.dataTransfer == null || (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types.includes("Files"))) {
             // Allow by preventing default browser behavior:
             event.preventDefault();
             // If has [ondragover-addclass], add class:
@@ -1850,7 +1850,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /// Disallow dragging file:
     /// <* class="ondropfile-ignore">...</*>
     $(document).on("dragover", ".ondropfile-ignore", function (event) {
-        if (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types[0] == "Files") {
+        if (event.originalEvent.dataTransfer == null || (event.originalEvent.dataTransfer.types.length > 0 && event.originalEvent.dataTransfer.types.includes("Files"))) {
             // Override default browser behavior:
             event.preventDefault();
         }
