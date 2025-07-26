@@ -41,14 +41,15 @@ $$("before", function sircl_bs5_init_beforeHandler() {
         }
     });
 
-    // Hide all tooltips in scope:
-    $(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").each(function () {
-        try {
-            bootstrap.Tooltip.getInstance(this).dispose();
-        } catch (ex) {
-            console.warn("Error trying to dispose Bootstrap 5 tooltip in scope.", ex, "sircl_bs5_init_beforeHandler", this);
-        }
-    });
+    // (commented out as gives errors...)
+    //// Hide all tooltips in scope:
+    //$(this).find("[data-bs-toggle='tooltip'], [data-toggle='tooltip']").each(function () {
+    //    try {
+    //        bootstrap.Tooltip.getInstance(this).dispose();
+    //    } catch (ex) {
+    //        console.warn("Error trying to dispose Bootstrap 5 tooltip in scope.", ex, "sircl_bs5_init_beforeHandler", this);
+    //    }
+    //});
 });
 
 //#endregion
