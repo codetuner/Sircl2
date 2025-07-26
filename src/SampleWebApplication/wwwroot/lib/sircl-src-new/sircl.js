@@ -453,18 +453,6 @@ sircl.ext.confirm = function sircl_ext_confirm(subject, message, event) {
 };
 
 /**
- * Retrieves the value of the named querystring parameter.
- * @param {any} name Name of the querystring parameter.
- */
-sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
-    // Note: in v3 replace this by URLSearchParams (not supported by MSIE).
-    name = name.replace(/[\[]/g, '\\[').replace(/[\]]/g, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-};
-
-/**
  * Submits a form.
  * @param {any} form Form to be submitted.
  * @param {any} trigger Element initiating the submit request.

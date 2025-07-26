@@ -453,18 +453,6 @@ sircl.ext.confirm = function sircl_ext_confirm(subject, message, event) {
 };
 
 /**
- * Retrieves the value of the named querystring parameter.
- * @param {any} name Name of the querystring parameter.
- */
-sircl.ext.getUrlParameter = function sircl_ext_getUrlParameter(name) {
-    // Note: in v3 replace this by URLSearchParams (not supported by MSIE).
-    name = name.replace(/[\[]/g, '\\[').replace(/[\]]/g, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-};
-
-/**
  * Submits a form.
  * @param {any} form Form to be submitted.
  * @param {any} trigger Element initiating the submit request.
@@ -2864,10 +2852,29 @@ $$(function sircl_ext_onload_processHandler() {
     });
 
     /// <input onload-setvaluefromquery="age"> Sets the value of the input to the named querystring parameter.
-    $(this).find("[onload-setvaluefromquery]").each(function () {
-        $(this).attr("value", sircl.ext.getUrlParameter($(this).attr("onload-setvaluefromquery")));
-        $(this).trigger("change");
-    });
+    var onloadSetvaluefromquery = $(this).find("[onload-setvaluefromquery]");
+    if (onloadSetvaluefromquery.length > 0) {
+        var usp = new URLSearchParams(location.search);
+        onloadSetvaluefromquery.each(function () {
+            var $this = $(this);
+            if ($this.is("INPUT[type=radio][name][value],INPUT[type=checkbox][name][value]")) {
+                if (this.checked != usp.has($this.attr("name"), $this.attr("value"))) {
+                    this.checked = !this.checked;
+                    $this.trigger("change")
+                }
+            } else if ($this.is("INPUT[name],TEXTAREA[name]")) {
+                if (this.value != usp.get($this.attr("name"))) {
+                    this.value = usp.get($this.attr("name"))
+                    $this.trigger("change")
+                }
+            } else if ($this.is("SELECT[name]")) {
+                for (var i = 0; i < this.options.length; i++) {
+                    this.options[i].selected = usp.has($this.attr("name"), this.options[i].value);
+                }
+                $this.trigger("change")
+            }
+        });
+    }
 
     // <* onclick-scrollintoview="selector"> On click scrolls the (first) match of the selector into the view.
     $(this).find(".onload-scrollintoview").each(function () {
