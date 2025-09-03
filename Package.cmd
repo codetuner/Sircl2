@@ -2,7 +2,9 @@
 SETLOCAL
 
 IF "%~1"=="" (
-   SET /P Version=Version ^(x.y.z^): 
+   ECHO Existing versions:
+   DIR dist /a:d /o:n /b
+   SET /P Version=New Version ^(x.y.z^): 
 ) ELSE (
    SET Version=%~1
 )
