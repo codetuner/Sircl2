@@ -3986,6 +3986,20 @@ $$(function sircl_ext_actionEvents_processHandler() {
         }
     });
 
+    /// <* disable-ifexists="selection"> If all of the selection exists, disable, else enable this.
+    $(this).find("[disable-ifexists]").each(function () {
+        var $this = $(this);
+        var exists = sircl.ext.$select($this, $this.attr("disable-ifexists")).length > 0;
+        sircl.ext.enabled($this, !exists);
+    });
+
+    /// <* enable-ifexists="selection"> If any of the selection exists, enable, else disable this.
+    $(this).find("[enable-ifexists]").each(function () {
+        var $this = $(this);
+        var exists = sircl.ext.$select($this, $this.attr("enable-ifexists")).length > 0;
+        sircl.ext.enabled($this, exists);
+    });
+
     /// <* enable-ifallchecked="selection"> If all of the selection is checked, enable, else disable this.
     $(this).find("[enable-ifallchecked]").each(function () {
         var $this = $(this);
@@ -4148,6 +4162,45 @@ document.addEventListener("DOMContentLoaded", function () {
             event.target.value = (event.target.value + "").trim()
         }
     });
+
+    /// <* onfocus[in|out]-click="selector"> Clicks the given element when this element gets focus.
+    /// Can be used for event chaining, i.e. to open a dropdown when focusing an input field.
+    $(document).on("focusin", "[onfocusin-click]", function () {
+        var targetSelector = $(this).attr("onfocusin-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+    $(document).on("focusout", "[onfocusout-click]", function () {
+        var targetSelector = $(this).attr("onfocusout-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    /// <* onfocus[|in|out]-[add|remove]class="class"> Adds or removes classes on focus in/out.
+    /// Note: the onfocus-addclass adds classes on focus in, and removes them on focus out.
+    $(document).on("focusout", "[onfocusout-removeclass]", function () {
+        sircl.ext.removeClass($(this), $(this).attr("onfocusout-removeclass"));
+    });
+    $(document).on("focusin", "[onfocusin-removeclass]", function () {
+        sircl.ext.removeClass($(this), $(this).attr("onfocusin-removeclass"));
+    });
+    $(document).on("focusout", "[onfocus-addclass]", function () {
+        sircl.ext.removeClass($(this), $(this).attr("onfocus-addclass"));
+    });
+    $(document).on("focusin", "[onfocus-addclass]", function () {
+        sircl.ext.addClass($(this), $(this).attr("onfocus-addclass"));
+    });
+    $(document).on("focusin", "[onfocusin-addclass]", function () {
+        sircl.ext.addClass($(this), $(this).attr("onfocusin-addclass"));
+    });
+    $(document).on("focusout", "[onfocusout-addclass]", function () {
+        sircl.ext.addClass($(this), $(this).attr("onfocusout-addclass"));
+    });
+
 });
 
 /// Scroll/Viewport event-actions:
