@@ -2639,12 +2639,15 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document.body).on("click", "*[href]:not(.onunloadchanged-allow):not([download])", function (event) {
         // Find any form having [onunloadchanged-confirm] and being changed, anywhere in the page:
         var $changedForm = $("FORM.form-changed[onunloadchanged-confirm]");
-        if ($changedForm.length > 0) {
-            var confirmMessage = $changedForm[0].getAttribute("onunloadchanged-confirm");
-            if (!sircl.ext.confirm(this, confirmMessage, event)) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
+        // If no changes, ignore:
+        if ($changedForm.length === 0) return;
+        // If target is set to a new or other window or tab, ignore:
+        if (this.hasAttribute("target") && sircl.ext.isExternalTarget(this.getAttribute("target")) && (this.getAttribute("target") !== "_self") && (this.getAttribute("target") !== "_top")) return;
+        // Request confirmation:
+        var confirmMessage = $changedForm[0].getAttribute("onunloadchanged-confirm");
+        if (!sircl.ext.confirm(this, confirmMessage, event)) {
+            event.stopPropagation();
+            event.preventDefault();
         }
     });
 
