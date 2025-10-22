@@ -499,18 +499,18 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document.body).on("click", "[onclick-hidepopover]", function (event) {
         var targetSelector = $(this).attr("onclick-hidepopover");
         const subSelector = "[data-bs-toggle='popover'], [data-toggle='popover']";
-        sircl.ext.$select($(this), targetselector).find(subselector).addback(subselector).each(function () {
+        sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
             var delay = 0;
-            var delayattr = this.getattribute("data-bs-delay");
+            var delayattr = this.getAttribute("data-bs-delay");
             if (delayattr !== null) {
-                delay = parseint(delayattr);
-                if (isnan(delay)) {
-                    delay = json.parse(delayattr).hide;
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).hide;
                 }
             }
-            settimeout(function (popover) {
+            setTimeout(function (popover) {
                 try {
-                    bootstrap.popover.getinstance(popover).hide();
+                    bootstrap.popover.getInstance(popover).hide();
                 } catch (x) { }
             }, delay, this);
         });
