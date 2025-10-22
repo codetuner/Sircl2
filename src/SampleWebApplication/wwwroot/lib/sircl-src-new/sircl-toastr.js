@@ -26,7 +26,7 @@ if ($.fn.fadeIn) {
                         const toasts = rh[1].split(sircl_toaster_header_regex);
                         for (var i = 1; i < toasts.length; i += 2) {
                             var toastrType = toasts[i];
-                            var toastrHeaderParts = toasts[i + 1].split("|");
+                            var toastrHeaderParts = toasts[i + 1].split("|").map(p => decodeURIComponent(p));
                             toastr[toastrType].apply(null, toastrHeaderParts);
                         }
                     }
