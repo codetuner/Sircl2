@@ -358,7 +358,7 @@ $$(function sircl_changeActions_processHandler () {
  */
 sircl.addChangeActionHandler("afterSend", function (req) {
     var alertMessage = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
-    if (alertMessage) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), alertMessage, null);
+    if (alertMessage) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), decodeURIComponent(alertMessage), null);
 });
 
 /**

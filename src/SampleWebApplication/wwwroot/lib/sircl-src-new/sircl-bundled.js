@@ -1031,11 +1031,11 @@ SirclRequestProcessor.prototype._send = function (req) {
                 }
             }
             // Then for document title:
-            req.documentTitle = req.xhr.getResponseHeader("X-Sircl-Document-Title");
+            if (req.xhr.getResponseHeader("X-Sircl-Document-Title") !== null) req.documentTitle = decodeURIComponent(req.xhr.getResponseHeader("X-Sircl-Document-Title"));
             // Then for document language:
             req.documentLanguage = req.xhr.getResponseHeader("X-Sircl-Document-Language");
             // Then for alert message header:
-            req.alertMsg = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
+            if (req.xhr.getResponseHeader("X-Sircl-Alert-Message") !== null) req.alertMsg = decodeURIComponent(req.xhr.getResponseHeader("X-Sircl-Alert-Message"));
             // Then for target method:
             if (req.newTargetMethod !== null) {
                 req.targetMethod = req.newTargetMethod;
@@ -5211,7 +5211,7 @@ $$(function sircl_changeActions_processHandler () {
  */
 sircl.addChangeActionHandler("afterSend", function (req) {
     var alertMessage = req.xhr.getResponseHeader("X-Sircl-Alert-Message");
-    if (alertMessage) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), alertMessage, null);
+    if (alertMessage) sircl.ext.alert(sircl.ext.firstOrNull(req.$trigger), decodeURIComponent(alertMessage), null);
 });
 
 /**
