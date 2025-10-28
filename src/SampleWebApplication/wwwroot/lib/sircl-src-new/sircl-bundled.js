@@ -1144,7 +1144,6 @@ SirclRequestProcessor.prototype._render = function (req) {
         $("HTML").attr("lang", req.documentLanguage);
     }
     // Push or replace new state in history:
-    var runAfterHistoryHandlers = false;
     if (req._historyMode) {
         var finalState = {
             url: req.action,
@@ -1156,11 +1155,11 @@ SirclRequestProcessor.prototype._render = function (req) {
         } else if (req._historyMode.indexOf("replace") >= 0) {
             finalState.historyIndex = sircl._currentHistoryIndex;
             window.history.replaceState(finalState, window.document.title, finalState.url);
-            runAfterHistoryHandlers = true;
+            sircl._afterHistory();
         } else { // if "push":
             finalState.historyIndex = ++sircl._currentHistoryIndex;
             window.history.pushState(finalState, window.document.title, finalState.url);
-            runAfterHistoryHandlers = true;
+            sircl._afterHistory();
         }
     }
     // Retrieve target and responseText:
@@ -1194,11 +1193,7 @@ SirclRequestProcessor.prototype._render = function (req) {
             }
             // Proceed with next (afterRender) and abort:
             if (subTargetSucceeded) {
-                // Run history handlers:
-                if (runAfterHistoryHandlers === true) sircl._afterHistory();
-                // Proceed with next (afterRender):
                 this.next(req);
-                // Abort:
                 return;
             }
         }
@@ -1265,16 +1260,13 @@ SirclRequestProcessor.prototype._render = function (req) {
             });
             // Scroll to page top if appropriate:
             if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo({ top: 0, left: 0, behavior: sircl.scrollMode }); }
-            // Run history handlers then abort:
-            if (runAfterHistoryHandlers === true) sircl._afterHistory();
+            // Abort here:
             return;
         }
 
         // Scroll to page top if appropriate:
         if (req.method === "get" && req._historyMode !== "skip" && req._historyMode !== "replace" && $realTarget.is(sircl.mainTargetSelector$)) { window.scrollTo({ top: 0, left: 0, behavior: sircl.scrollMode }); }
     }
-    // Run history handlers:
-    if (runAfterHistoryHandlers === true) sircl._afterHistory();
     // Make sure target is visible & proceed with next (afterRender):
     req.$finalTarget.each(function () { sircl.ext.visible(this, true, false, function () { processor.next(req); }); });
 };

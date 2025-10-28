@@ -675,6 +675,17 @@ sircl.addAfterHistoryHandler(function sircl_bs5_activeRoute_afterHistoryHandler(
     });
 });
 
+sircl.addContentReadyHandler("enrich", function () {
+    $(this).find("[ifroute-setactive]").each(function () {
+        var regex = new RegExp($(this).attr("ifroute-setactive"), "i");
+        if (regex.exec(location.pathname) !== null) {
+            $(this).addClass("active");
+        } else {
+            $(this).removeClass("active");
+        }
+    });
+});
+
 //#endregion
 
 //#region Handling Bootstrap Offcanvas
