@@ -1189,6 +1189,7 @@ SirclRequestProcessor.prototype._render = function (req) {
                 if (r >= $responseSubTargets.length) {
                     // No matching substitution was found:
                     subTargetSucceeded = false;
+                    break;
                 }
             }
             // Proceed with next (afterRender) and abort:
