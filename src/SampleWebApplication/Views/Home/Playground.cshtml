@@ -1,6 +1,21 @@
 ﻿
 <hr />
 
+<h5>Failure</h5>
+
+<div class="mb-3">
+    <form asp-action="ChangeFailed" asp-controller="Test" method="post" target=":this">
+        <button class="btn btn-danger">Get Error 500</button>
+    </form>
+</div>
+<div class="mb-3">
+    <form asp-action="ChangeFailed" asp-controller="Test" method="post" target=":this" accept-status="500">
+        <button class="btn btn-success">Get Error 500</button>
+    </form>
+</div>
+
+<hr />
+
 <h5>ImageMap</h5>
 
 <div>

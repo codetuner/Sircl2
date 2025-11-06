@@ -231,14 +231,14 @@
         //    this.next(req);
         //});
         sircl.addRequestHandler("onError", function (req) {
-            if (req.method === "get") {
+//            if (req.method === "get") {
                 // Re-issue the request by the browser, to render the error page:
                 //window.location.href = req.action
                 //req.succeeded = true;
                 //} else {
                 // If no get request, we can not re-issue, then inform user:
                 alert("An error has occured.");
-            }
+//            }
             //console.log(req);
             //console.log(JSON.stringify(req));
             this.next(req);

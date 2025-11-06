@@ -757,6 +757,9 @@ sircl._processRequest = function (req, loadComplete) {
         };
     }
 
+    // Accepted response-codes:
+    req.acceptStatus = (req.getAttr("accept-status") || "").split(" ").map(Number);
+
     // Retrieve caching info:
     var cache = false;
     if (req.$trigger != null && req.$trigger.attr("browser-cache") != null) {
@@ -1045,7 +1048,7 @@ SirclRequestProcessor.prototype._send = function (req) {
             // Then for history-replace header:
             req.historyReplace = req.xhr.getResponseHeader("X-Sircl-History-Replace");
             // Then, if successful:
-            if (req.xhr.status <= 299) {
+            if (req.xhr.status <= 299 || req.acceptStatus.indexOf(req.xhr.status) >= 0) {
                 // Proceed with next (afterSend):
                 req.aborted = false;
                 req.succeeded = true;
