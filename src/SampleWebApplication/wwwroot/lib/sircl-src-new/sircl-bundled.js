@@ -4080,6 +4080,7 @@ sircl.ext.isValid = function ($scope) {
         } else {
             var $validatables = $($scope[i]).find(validatable$);
             for (var j = 0; j < $validatables.length; j++) {
+                if ($validatables[j].disabled) continue;
                 if (!$validatables[j].validity.valid) return false;
             }
         }
