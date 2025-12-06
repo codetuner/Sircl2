@@ -2520,6 +2520,26 @@ sircl.addPageNavigateHandler("cancel", function sircl_submit_cancelPageNavigate_
     }
 });
 
+// <FORM onsubmit-removeclass="class [on selector]"> On submit, removes the class.
+$(document).on("submit", "[onsubmit-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onsubmit-removeclass"));
+});
+
+// <FORM onsubmit-addclass="class [on selector]"> On submit, adds the class.
+$(document).on("submit", "[onsubmit-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onsubmit-addclass"));
+});
+
+// <FORM onsubmit-hide="selector"> On submit hides the elements matching the given selector.
+$(document).on("submit", "[onsubmit-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onsubmit-hide")), false, true);
+});
+
+// <FORM onsubmit-show="selector"> On submit shows the elements matching the given selector.
+$(document).on("submit", "[onsubmit-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onsubmit-show")), true, true);
+});
+
 /// Propagate event-actions:
 ////////////////////////////
 
