@@ -269,6 +269,122 @@ $$(function sircl_bs5_modal_processHandler() {
 
 });
 
+// <DIV class="modal" onshowmodal-click="selector"> On show modal, click the elements.
+$(document).on("show.bs.modal", ".modal[onshowmodal-click]", function (event) {
+    var targetSelector = $(this).attr("onshowmodal-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="modal" onshowmodal-removeclass="class [on selector]"> On show modal, removes the class.
+$(document).on("show.bs.modal", ".modal[onshowmodal-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onshowmodal-removeclass"));
+});
+
+// <DIV class="modal" onshowmodal-addclass="class [on selector]"> On show modal, adds the class.
+$(document).on("show.bs.modal", ".modal[onshowmodal-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onshowmodal-addclass"));
+});
+
+// <DIV class="modal" onshowmodal-hide="selector"> On show modal hides the elements matching the given selector.
+$(document).on("show.bs.modal", ".modal[onshowmodal-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshowmodal-hide")), false, true);
+});
+
+// <DIV class="modal" onshowmodal-show="selector"> On show modal shows the elements matching the given selector.
+$(document).on("show.bs.modal", ".modal[onshowmodal-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshowmodal-show")), true, true);
+});
+
+// <DIV class="modal" onshownmodal-click="selector"> On modal shown, click the elements.
+$(document).on("shown.bs.modal", ".modal[onshownmodal-click]", function (event) {
+    var targetSelector = $(this).attr("onshownmodal-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="modal" onshownmodal-removeclass="class [on selector]"> On modal shown, removes the class.
+$(document).on("shown.bs.modal", ".modal[onshownmodal-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onshownmodal-removeclass"));
+});
+
+// <DIV class="modal" onshownmodal-addclass="class [on selector]"> On modal shown, adds the class.
+$(document).on("shown.bs.modal", ".modal[onshownmodal-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onshownmodal-addclass"));
+});
+
+// <DIV class="modal" onshownmodal-hide="selector"> On modal shown hides the elements matching the given selector.
+$(document).on("shown.bs.modal", ".modal[onshownmodal-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshownmodal-hide")), false, true);
+});
+
+// <DIV class="modal" onshownmodal-show="selector"> On modal shown shows the elements matching the given selector.
+$(document).on("shown.bs.modal", ".modal[onshownmodal-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshownmodal-show")), true, true);
+});
+
+// <DIV class="modal" onhidemodal-click="selector"> On hide modal, click the elements.
+$(document).on("hide.bs.modal", ".modal[onhidemodal-click]", function (event) {
+    var targetSelector = $(this).attr("onhidemodal-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="modal" onhidemodal-removeclass="class [on selector]"> On hide modal, removes the class.
+$(document).on("hide.bs.modal", ".modal[onhidemodal-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onhidemodal-removeclass"));
+});
+
+// <DIV class="modal" onhidemodal-addclass="class [on selector]"> On hide modal, adds the class.
+$(document).on("hide.bs.modal", ".modal[onhidemodal-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onhidemodal-addclass"));
+});
+
+// <DIV class="modal" onhidemodal-hide="selector"> On hide modal hides the elements matching the given selector.
+$(document).on("hide.bs.modal", ".modal[onhidemodal-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhidemodal-hide")), false, true);
+});
+
+// <DIV class="modal" onhidemodal-show="selector"> On hide modal shows the elements matching the given selector.
+$(document).on("hide.bs.modal", ".modal[onhidemodal-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhidemodal-show")), true, true);
+});
+
+// <DIV class="modal" onhiddenmodal-click="selector"> On modal hidden, click the elements.
+$(document).on("hidden.bs.modal", ".modal[onhiddenmodal-click]", function (event) {
+    var targetSelector = $(this).attr("onhiddenmodal-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="modal" onhiddenmodal-removeclass="class [on selector]"> On modal hidden, removes the class.
+$(document).on("hidden.bs.modal", ".modal[onhiddenmodal-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onhiddenmodal-removeclass"));
+});
+
+// <DIV class="modal" onhiddenmodal-addclass="class [on selector]"> On modal hidden, adds the class.
+$(document).on("hidden.bs.modal", ".modal[onhiddenmodal-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onhiddenmodal-addclass"));
+});
+
+// <DIV class="modal" onhiddenmodal-hide="selector"> On modal hidden hides the elements matching the given selector.
+$(document).on("hidden.bs.modal", ".modal[onhiddenmodal-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhiddenmodal-hide")), false, true);
+});
+
+// <DIV class="modal" onhiddenmodal-show="selector"> On modal hidden shows the elements matching the given selector.
+$(document).on("hidden.bs.modal", ".modal[onhiddenmodal-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhiddenmodal-show")), true, true);
+});
+
 //#endregion
 
 //#region Handling Bootstrap Tab & Pill navs
@@ -888,6 +1004,122 @@ $$(function sircl_bs5_offcanvas_processHandler() {
         }, 1000 * delay, offcanvas);
     }
 
+});
+
+// <DIV class="offcanvas" onshowoffcanvas-click="selector"> On show offcanvas, click the elements.
+$(document).on("show.bs.offcanvas", ".offcanvas[onshowoffcanvas-click]", function (event) {
+    var targetSelector = $(this).attr("onshowoffcanvas-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="offcanvas" onshowoffcanvas-removeclass="class [on selector]"> On show offcanvas, removes the class.
+$(document).on("show.bs.offcanvas", ".offcanvas[onshowoffcanvas-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onshowoffcanvas-removeclass"));
+});
+
+// <DIV class="offcanvas" onshowoffcanvas-addclass="class [on selector]"> On show offcanvas, adds the class.
+$(document).on("show.bs.offcanvas", ".offcanvas[onshowoffcanvas-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onshowoffcanvas-addclass"));
+});
+
+// <DIV class="offcanvas" onshowoffcanvas-hide="selector"> On show offcanvas hides the elements matching the given selector.
+$(document).on("show.bs.offcanvas", ".offcanvas[onshowoffcanvas-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshowoffcanvas-hide")), false, true);
+});
+
+// <DIV class="offcanvas" onshowoffcanvas-show="selector"> On show offcanvas shows the elements matching the given selector.
+$(document).on("show.bs.offcanvas", ".offcanvas[onshowoffcanvas-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshowoffcanvas-show")), true, true);
+});
+
+// <DIV class="offcanvas" onshownoffcanvas-click="selector"> On offcanvas shown, click the elements.
+$(document).on("shown.bs.offcanvas", ".offcanvas[onshownoffcanvas-click]", function (event) {
+    var targetSelector = $(this).attr("onshownoffcanvas-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="offcanvas" onshownoffcanvas-removeclass="class [on selector]"> On offcanvas shown, removes the class.
+$(document).on("shown.bs.offcanvas", ".offcanvas[onshownoffcanvas-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onshownoffcanvas-removeclass"));
+});
+
+// <DIV class="offcanvas" onshownoffcanvas-addclass="class [on selector]"> On offcanvas shown, adds the class.
+$(document).on("shown.bs.offcanvas", ".offcanvas[onshownoffcanvas-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onshownoffcanvas-addclass"));
+});
+
+// <DIV class="offcanvas" onshownoffcanvas-hide="selector"> On offcanvas shown hides the elements matching the given selector.
+$(document).on("shown.bs.offcanvas", ".offcanvas[onshownoffcanvas-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshownoffcanvas-hide")), false, true);
+});
+
+// <DIV class="offcanvas" onshownoffcanvas-show="selector"> On offcanvas shown shows the elements matching the given selector.
+$(document).on("shown.bs.offcanvas", ".offcanvas[onshownoffcanvas-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onshownoffcanvas-show")), true, true);
+});
+
+// <DIV class="offcanvas" onhideoffcanvas-click="selector"> On hide offcanvas, click the elements.
+$(document).on("hide.bs.offcanvas", ".offcanvas[onhideoffcanvas-click]", function (event) {
+    var targetSelector = $(this).attr("onhideoffcanvas-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="offcanvas" onhideoffcanvas-removeclass="class [on selector]"> On hide offcanvas, removes the class.
+$(document).on("hide.bs.offcanvas", ".offcanvas[onhideoffcanvas-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onhideoffcanvas-removeclass"));
+});
+
+// <DIV class="offcanvas" onhideoffcanvas-addclass="class [on selector]"> On hide offcanvas, adds the class.
+$(document).on("hide.bs.offcanvas", ".offcanvas[onhideoffcanvas-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onhideoffcanvas-addclass"));
+});
+
+// <DIV class="offcanvas" onhideoffcanvas-hide="selector"> On hide offcanvas hides the elements matching the given selector.
+$(document).on("hide.bs.offcanvas", ".offcanvas[onhideoffcanvas-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhideoffcanvas-hide")), false, true);
+});
+
+// <DIV class="offcanvas" onhideoffcanvas-show="selector"> On hide offcanvas shows the elements matching the given selector.
+$(document).on("hide.bs.offcanvas", ".offcanvas[onhideoffcanvas-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhideoffcanvas-show")), true, true);
+});
+
+// <DIV class="offcanvas" onhiddenoffcanvas-click="selector"> On offcanvas hidden, click the elements.
+$(document).on("hidden.bs.offcanvas", ".offcanvas[onhiddenoffcanvas-click]", function (event) {
+    var targetSelector = $(this).attr("onhiddenoffcanvas-click");
+    sircl.ext.$select($(this), targetSelector).each(function () {
+        this.click(); // See: http://goo.gl/lGftqn
+    });
+    //event.preventDefault();
+});
+
+// <DIV class="offcanvas" onhiddenoffcanvas-removeclass="class [on selector]"> On offcanvas hidden, removes the class.
+$(document).on("hidden.bs.offcanvas", ".offcanvas[onhiddenoffcanvas-removeclass]", function (event) {
+    sircl.ext.removeClass($(this), $(this).attr("onhiddenoffcanvas-removeclass"));
+});
+
+// <DIV class="offcanvas" onhiddenoffcanvas-addclass="class [on selector]"> On offcanvas hidden, adds the class.
+$(document).on("hidden.bs.offcanvas", ".offcanvas[onhiddenoffcanvas-addclass]", function (event) {
+    sircl.ext.addClass($(this), $(this).attr("onhiddenoffcanvas-addclass"));
+});
+
+// <DIV class="offcanvas" onhiddenoffcanvas-hide="selector"> On offcanvas hidden hides the elements matching the given selector.
+$(document).on("hidden.bs.offcanvas", ".offcanvas[onhiddenoffcanvas-hide]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhiddenoffcanvas-hide")), false, true);
+});
+
+// <DIV class="offcanvas" onhiddenoffcanvas-show="selector"> On offcanvas hidden shows the elements matching the given selector.
+$(document).on("hidden.bs.offcanvas", ".offcanvas[onhiddenoffcanvas-show]", function (event) {
+    sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onhiddenoffcanvas-show")), true, true);
 });
 
 //#endregion
