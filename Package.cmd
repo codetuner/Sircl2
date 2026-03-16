@@ -17,16 +17,16 @@ COPY "%~dp0src\SampleWebApplication\wwwroot\lib\sircl-src-new\*.*" "%~dp0dist\si
 
 :: Create "package.json" file in version-specific folder, and copy to latest folder:
 ECHO {^
- "name": "sircl",^
- "version": "%version%",^
- "description": "Serverside Rendering Coding Library",^
- "author": "Codetuner",^
- "main": "sircl-bundled.min.js",^
- "repository": {^
- "type": "git",^
- "url": "https://github.com/codetuner/Sircl2"^
- },^
- "license": "MIT"^
+"name":"sircl",^
+"version":"%version%",^
+"description":"Serverside Rendering Coding Library",^
+"author":"Codetuner",^
+"main":"sircl-bundled.min.js",^
+"repository":{^
+"type":"git",^
+"url":"git+https://github.com/codetuner/Sircl2.git"^
+},^
+"license": "MIT"^
 }>"%~dp0dist\sircl-%version%\package.json"
 COPY "%~dp0dist\sircl-%version%\package.json" "%~dp0dist\sircl-latest\package.json"
 
@@ -43,7 +43,9 @@ PAUSE
 
 PUSHD "%~dp0dist\sircl-%Version%"
 
-CALL NPM login
+ECHO Make sure to have an up-to-date access token in %HOMEDRIVE%%HOMEPATH%\.npmrc
+ECHO Make or update the token on: https://www.npmjs.com/settings/codetuner/tokens/
+::CALL NPM login
 CALL NPM publish
 
 POPD

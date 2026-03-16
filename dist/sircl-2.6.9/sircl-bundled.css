@@ -1,0 +1,76 @@
+/* Sircl 2.x stylesheets */
+/* Copyright (c) 2019-2021 Rudi Breedenraedt */
+/* www.getsircl.com */
+
+/* Hidden attribute */
+[hidden] {
+    display: none !important;
+}
+
+[href][disabled] {
+    cursor: default;
+}
+
+/* Overlay */
+.with-overlay {
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.33);
+    border-radius: 5px;
+    z-index: 1100;
+}
+
+/* Spinning spinner:
+   https://jsfiddle.net/8au3vsrc/ */
+
+.sircl-spinning {
+    display: inline-block;
+    border: 0.1em solid rgba(52, 152, 219, 1);
+    border-radius: 50%;
+    border-top: 0.1em solid rgba(255, 255, 255, 0);
+    width: 0.8em;
+    height: 0.8em;
+    -webkit-animation: sircl-spinning-spin 2s linear infinite; /* Safari */
+    animation: sircl-spinning-spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes sircl-spinning-spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes sircl-spinning-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sircl 2.x stylesheets */
+/* Copyright (c) 2019-2021 Rudi Breedenraedt */
+/* www.getsircl.com */
+
+/* Contextmenus */
+
+.contextmenu {
+    display: none;
+    position: fixed;
+    z-index: 1100;
+    background-color: lightgray;
+}
