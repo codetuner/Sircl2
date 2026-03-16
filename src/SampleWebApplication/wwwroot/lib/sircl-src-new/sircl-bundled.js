@@ -1713,9 +1713,9 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
         }
         sircl_elementIdToFocus = null;
 
-        // Final attempt, if target has .onload-autofocus, set focus on first focussable element:
-        if (focusSet === false && req.$finalTarget.hasClass("onload-autofocus")) {
-            var focussables = req.$finalTarget.find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
+        // Final attempt, if target content has .onload-autofocus, set focus on first focussable element:
+        if (focusSet === false && req.$finalTarget.find(".onload-autofocus").length > 0) {
+            var focussables = req.$finalTarget.find(".onload-autofocus").find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
                 .toArray();
             while (focussables.length > 0) {
                 var next = focussables.shift();
