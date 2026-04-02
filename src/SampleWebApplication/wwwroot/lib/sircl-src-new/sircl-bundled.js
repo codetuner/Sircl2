@@ -1701,6 +1701,16 @@ sircl.addRequestHandler("beforeRender", function sircl_beforeRender_autoFocus(re
 sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req) {
     // Try to set focus:
     try {
+        // If req.action contains a hash pointing to the Id of an element, skip setting focus
+        if (req.action.indexOf('#') >= 0) {
+            var hash = req.action.split(/\#|:~:/g)[1]; // Take part between # and optional :~: (see https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment/Text_fragments)
+            var elem = document.getElementById(hash);
+            if (elem !== null) {
+                elem.focus();
+                return;
+            }
+        }
+
         // Identify an [autofocus] element that would get the focus by the afterHandler:
         var focusSet = req.$finalTarget.find("*[autofocus]:first").length > 0;
 
@@ -1715,7 +1725,7 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
 
         // Final attempt, if target content has .onload-autofocus, set focus on first focussable element:
         if (focusSet === false && req.$finalTarget.find(".onload-autofocus").length > 0) {
-            var focussables = req.$finalTarget.find(".onload-autofocus").find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1'])")
+            var focussables = req.$finalTarget.find(".onload-autofocus").find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1']):not(BUTTON:empty):not([readonly])")
                 .toArray();
             while (focussables.length > 0) {
                 var next = focussables.shift();
