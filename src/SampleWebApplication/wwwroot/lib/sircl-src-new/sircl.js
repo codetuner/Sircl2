@@ -604,6 +604,7 @@ sircl.urlParser = /^(.*?)(\?.*?)?(\#.*)?$/;
  * Request pipeline handler arrays.
  */
 sircl._requestHandlers = {};
+sircl._requestHandlers.beforeInitialize = [];
 sircl._requestHandlers.beforeSend = [];
 sircl._requestHandlers.afterSend = [];
 sircl._requestHandlers.onError = [];
@@ -611,7 +612,7 @@ sircl._requestHandlers.beforeRender = [];
 sircl._requestHandlers.afterRender = [];
 
 /**
- * Add a request pipeline handler for "beforeSend", "afterSend", "onError", "beforeRender" or "afterRender".
+ * Add a request pipeline handler for "beforeInitialize", "beforeSend", "afterSend", "onError", "beforeRender" or "afterRender".
  */
 sircl.addRequestHandler = function (phase, handler) {
     this._requestHandlers[phase].push(handler);
@@ -760,43 +761,6 @@ sircl._processRequest = function (req, loadComplete) {
     // Accepted response-codes:
     req.acceptStatus = (req.getAttr("accept-status") || "").split(" ").map(Number);
 
-    // Retrieve caching info:
-    var cache = false;
-    if (req.$trigger != null && req.$trigger.attr("browser-cache") != null) {
-        cache = (req.$trigger.attr("browser-cache").toLowerCase() == "on");
-    } else if (req.$form != null && req.$form.attr("browser-cache") != null) {
-        cache = (req.$form.attr("browser-cache").toLowerCase() == "on");
-    }
-
-    // Configure HTTP request object:
-    if (req.action !== null) {
-        req.xhr = new XMLHttpRequest();
-        req.allResponseHeaders = [];
-        req.xhr.open(req.method, req.action);
-        if (typeof req.formData === "object") {
-            // Leave Content-Type to be set by FormData.
-        } else if (req.enctype == null && req.charset == null) {
-            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        } else if (req.enctype == null && req.charset != null) {
-            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded" + "; charset=" + req.charset);
-        } else if (req.enctype != null && req.charset == null) {
-            req.xhr.setRequestHeader("Content-Type", req.enctype);
-        } else {
-            req.xhr.setRequestHeader("Content-Type", req.enctype + "; charset=" + rec.charset);
-        }
-        if (cache == false) {
-            req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-            req.xhr.setRequestHeader("Pragma", "no-cache");
-        }
-        req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
-        req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
-        req.appId = (req.$finalTarget.length === 1 && req.$finalTarget.is("*[sircl-appid]")) ? req.$finalTarget.attr("sircl-appid") : null;
-        if (req.appId !== null) req.xhr.setRequestHeader("X-Sircl-AppId", req.appId);
-        if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
-        if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
-        req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
-    }
-
     // Start processing:
     var processor = new SirclRequestProcessor(loadComplete);
     processor.next(req);
@@ -808,6 +772,9 @@ sircl._processRequest = function (req, loadComplete) {
  */
 function SirclRequestProcessor(loadComplete) {
     this._steps = [];
+    this._steps = this._steps.concat(sircl._requestHandlers.beforeInitialize);
+    this._initializeIndex = this._steps.length;
+    this._steps.push(this._initialize);
     this._steps = this._steps.concat(sircl._requestHandlers.beforeSend);
     this._sendIndex = this._steps.length;
     this._steps.push(this._send);
@@ -819,6 +786,18 @@ function SirclRequestProcessor(loadComplete) {
     this._steps.push(this._render);
     this._steps = this._steps.concat(sircl._requestHandlers.afterRender);
     this._loadComplete = loadComplete; // Callback of the load() method.
+};
+
+/**
+ * Get or set the initialize function. Allows overwriting the regular initialize function
+ * @param {any} value If given, new initialize function, of not, returns the current initialize function.
+ */
+SirclRequestProcessor.prototype.initialize = function (value) {
+    if (arguments.length == 0) {
+        return this._steps[this._initializeIndex];
+    } else {
+        this._steps[this._initializeIndex] = value;
+    }
 };
 
 /**
@@ -858,7 +837,50 @@ SirclRequestProcessor.prototype.render = function (value) {
     }
 };
 
-SirclRequestProcessor.prototype._send = function (req) {
+SirclRequestProcessor.prototype._initialize = function sircl_requestProcessor_initialize(req) {
+    var processor = this;
+
+    // Retrieve caching info:
+    var cache = false;
+    if (req.$trigger != null && req.$trigger.attr("browser-cache") != null) {
+        cache = (req.$trigger.attr("browser-cache").toLowerCase() == "on");
+    } else if (req.$form != null && req.$form.attr("browser-cache") != null) {
+        cache = (req.$form.attr("browser-cache").toLowerCase() == "on");
+    }
+
+    // Configure HTTP request object:
+    if (req.action !== null) {
+        req.xhr = new XMLHttpRequest();
+        req.allResponseHeaders = [];
+        req.xhr.open(req.method, req.action);
+        if (typeof req.formData === "object") {
+            // Leave Content-Type to be set by FormData.
+        } else if (req.enctype == null && req.charset == null) {
+            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        } else if (req.enctype == null && req.charset != null) {
+            req.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded" + "; charset=" + req.charset);
+        } else if (req.enctype != null && req.charset == null) {
+            req.xhr.setRequestHeader("Content-Type", req.enctype);
+        } else {
+            req.xhr.setRequestHeader("Content-Type", req.enctype + "; charset=" + rec.charset);
+        }
+        if (cache == false) {
+            req.xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+            req.xhr.setRequestHeader("Pragma", "no-cache");
+        }
+        req.xhr.setRequestHeader("Accept", (req.accept) ? req.accept : "text/html");
+        req.xhr.setRequestHeader("X-Sircl-Request-Type", "Partial");
+        req.appId = (req.$finalTarget.length === 1 && req.$finalTarget.is("*[sircl-appid]")) ? req.$finalTarget.attr("sircl-appid") : null;
+        if (req.appId !== null) req.xhr.setRequestHeader("X-Sircl-AppId", req.appId);
+        if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
+        if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+        req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
+    }
+
+    processor.next(req);
+};
+
+SirclRequestProcessor.prototype._send = function sircl_requestProcessor_send(req) {
     var processor = this;
 
     // If no xhr, local request (i.e. from ServerSentEvents), skip sending part:
@@ -1076,7 +1098,7 @@ SirclRequestProcessor.prototype._send = function (req) {
     req.xhr.send(req.formData);
 };
 
-SirclRequestProcessor.prototype._process = function (req) {
+SirclRequestProcessor.prototype._process = function sircl_requestProcessor_process(req) {
     // Handle 'History-Replace' header if any:
     if (req.historyReplace) {
         var state = window.history.state;
@@ -1121,7 +1143,7 @@ SirclRequestProcessor.prototype._process = function (req) {
     }
 };
 
-SirclRequestProcessor.prototype._render = function (req) {
+SirclRequestProcessor.prototype._render = function sircl_requestProcessor_render(req) {
     var processor = this;
     // If request is a "get" request on the main target and history handling is not to be skipped:
     if (req._historyMode != "skip" && req.method === "get" && req.$finalTarget.is(sircl.ext.$mainTarget())) {
