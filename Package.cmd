@@ -16,19 +16,12 @@ DEL "%~dp0dist\sircl-latest\*.*" /q
 COPY "%~dp0src\SampleWebApplication\wwwroot\lib\sircl-src-new\*.*" "%~dp0dist\sircl-latest\"
 
 :: Create "package.json" file in version-specific folder, and copy to latest folder:
-ECHO {^
-"name":"sircl",^
-"version":"%version%",^
-"description":"Serverside Rendering Coding Library",^
-"author":"Codetuner",^
-"main":"sircl-bundled.min.js",^
-"repository":{^
-"type":"git",^
-"url":"git+https://github.com/codetuner/Sircl2.git"^
-},^
-"license": "MIT"^
-}>"%~dp0dist\sircl-%version%\package.json"
+ECHO {"name":"sircl","version":"%version%","description":"Serverside Rendering Coding Library","author":"Codetuner","main":"sircl-bundled.min.js","repository":{"type":"git","url":"git+https://github.com/codetuner/Sircl2.git"},"license": "MIT"}>"%~dp0dist\sircl-%version%\package.json"
 COPY "%~dp0dist\sircl-%version%\package.json" "%~dp0dist\sircl-latest\package.json"
+
+ECHO ----
+TYPE  "%~dp0dist\sircl-latest\package.json"
+ECHO ----
 
 :: Create a ZIP file of version-specific folder:
 PUSHD "%~dp0dist\sircl-%version%"
