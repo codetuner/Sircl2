@@ -126,6 +126,10 @@ sircl.lastPageNavigationObject = null;
 
 sircl.showHideDuration = sircl.showHideDuration || 200;
 
+sircl.onloadAutofocusFilter = sircl.onloadAutofocusFilter || "INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]";
+
+sircl.onloadAutofocusFilterExclusions = sircl.onloadAutofocusFilterExclusions || ":not([disabled]):not([tabindex='-1']):not(BUTTON:empty):not([readonly])";
+
 sircl._currentHistoryIndex = 0;
 if (history.state != null) {
     sircl._currentHistoryIndex = history.state.historyIndex;
@@ -1747,7 +1751,7 @@ sircl.addRequestHandler("afterRender", function sircl_afterRender_autoFocus(req)
 
         // Final attempt, if target content has .onload-autofocus, set focus on first focussable element:
         if (focusSet === false && req.$finalTarget.find(".onload-autofocus").length > 0) {
-            var focussables = req.$finalTarget.find(".onload-autofocus").find("INPUT:not([type='hidden']), SELECT, TEXTAREA, BUTTON, [tabindex]").filter(":not([disabled]):not([tabindex='-1']):not(BUTTON:empty):not([readonly])")
+            var focussables = req.$finalTarget.find(".onload-autofocus").find(sircl.onloadAutofocusFilter).filter(sircl.onloadAutofocusFilterExclusions)
                 .toArray();
             while (focussables.length > 0) {
                 var next = focussables.shift();
