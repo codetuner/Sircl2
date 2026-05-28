@@ -1041,6 +1041,29 @@ SirclRequestProcessor.prototype._send = function sircl_requestProcessor_send(req
                 req.targetMethod = null;
                 req.targetHasChanged = true;
             }
+            // Handle onfail settings:
+            if (req.xhr.status > 299 && (req.acceptStatus.length == 0 || req.acceptStatus.indexOf(req.xhr.status) < 0)) {
+                if (req.$trigger.hasAttr("onfail-ignore")) {
+                    req.aborted = true;
+                    req.succeeded = false;
+                    processor.next(req);
+                    return;
+                } else if (req.$trigger.hasAttr("onfail-alert")) {
+                    req.aborted = true;
+                    req.succeeded = false;
+                    processor.next(req);
+                    sircl.ext.alert(req.$trigger.attr("title"), req.$trigger.attr("onfail-alert"));
+                    return;
+                } else if (req.$trigger.hasAttr("onfail-click")) {
+                    req.aborted = true;
+                    req.succeeded = false;
+                    processor.next(req);
+                    sircl.ext.$select(req.$trigger, req.$trigger.attr("onfail-click")).each(function () {
+                        this.click(); // See: http://goo.gl/lGftqn
+                    });
+                    return;
+                }
+            }
             // Handle full-page response:
             if (req.method == "get" && req.responseText != null && req.responseText.length > 1024 && req.responseText.substr(0, 1024).indexOf("<html") >= 0) {
                 console.warn("The request to '" + req.action + "' returned a full page and has been re-issued to handle as full page. Consider returning a partial page or set target='_self' on the link to avoid double request.");
