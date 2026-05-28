@@ -2242,6 +2242,30 @@ sircl.addRequestHandler("afterSend", function sircl_diffcheck_afterSend_requestH
 
 //#endregion
 
+//#region Apply onload-restore
+
+sircl.addRequestHandler("beforeRender", function sircl_onloadRestore_beforeRender_requestHandler(req) {
+    if (req.$finalTarget) {
+        var $restores = req.$finalTarget.find("[id].onload-restore");
+        if ($restores.length > 0) {
+            var $response = $("<div/>").append(req.responseText);
+            for (var i = 0; i < $restores.length; i++) {
+                var $trg = $response.find("#" + $restores[i].id);
+                for (var j = 0; j < $trg.length; j++) {
+                    $trg[j].innerHTML = ($restores[i].innerHTML);
+                    $trg[j].removeAttribute("onload-load");
+                }
+            }
+            req.responseText = $response.html();
+        }
+
+    }
+    // Move to next handler:
+    this.next(req);
+});
+
+//#endregion
+
 //#region Reload by server
 
 sircl.addRequestHandler("afterRender", function sircl_reloadAfter_afterRender_requestHandler(req) {
