@@ -37,6 +37,25 @@ if ($.fn.fadeIn) {
         this.next(req);
     });
 
+    // X-Sircl-Toastr response header support with change actions:
+    if (sircl.addChangeActionHandler) {
+        sircl.addChangeActionHandler("afterSend", function sircl_toastr_afterSend_changeActionHandler(req) {
+            req.xhr.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach(function (line) {
+                var rh = line.split(": ");
+                if (rh[0] == "x-sircl-toastr") {
+                    if (rh.length > 1) {
+                        const toasts = rh[1].split(sircl_toaster_header_regex);
+                        for (var i = 1; i < toasts.length; i += 2) {
+                            var toastrType = toasts[i];
+                            var toastrHeaderParts = toasts[i + 1].split("|").map(p => decodeURIComponent(p));
+                            toastr[toastrType].apply(null, toastrHeaderParts);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
     // .onload-showtoastr shows toasts based on following definition:
     // <div class="onload-showtoastr" hidden data-toastr-type="info" data-toastr-title="Welcome!">
     //   You are on the <b>Products</b> page.
