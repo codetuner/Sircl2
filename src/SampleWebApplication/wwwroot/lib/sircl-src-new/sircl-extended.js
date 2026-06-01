@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-appendto="selector"> On click appends the content of the current element to the target.
     $(document).on("click", "[onclick-appendto]", function () {
-        var $target = $($(this).attr("onclick-appendto"));
+        var $target = sircl.ext.$select($(this), $(this).attr("onclick-appendto"));
         // Append HTML and force afterLoad:
         var initialLength = $target.children().length;
         $target.append($(this).html());
@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // <* onclick-prependto="selector"> On click prepends the content of the current element to the target.
     $(document).on("click", "[onclick-prependto]", function () {
-        var $target = $($(this).attr("onclick-prependto"));
+        var $target = sircl.ext.$select($(this), $(this).attr("onclick-prependto"));
         // Prepend HTML and force afterLoad:
         var initialLength = $target.children().length;
         $target.prepend($(this).html());
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // <* onclick-replaceto="selector"> On click replaces the target by the current element.
     // If original element had no id and only single element replaced, keep id.
     $(document).on("click", "[onclick-replaceto]", function () {
-        var $target = $($(this).attr("onclick-replaceto"));
+        var $target = sircl.ext.$select($(this), $(this).attr("onclick-replaceto"));
         // Replace HTML and force afterLoad:
         var targetId = ($target.length == 1) ? sircl.ext.getId($target[0], false) : null;
         var $targetParent = $target.parent();

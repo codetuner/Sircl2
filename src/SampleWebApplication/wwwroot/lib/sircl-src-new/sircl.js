@@ -2676,7 +2676,7 @@ sircl.addContentReadyHandler("process", function sircl_onload_processHandler() {
 
     /// <* onload-reload="selector"> Instructs the matches of the selector to reload their content (provided they have an [onload-load] attribute).
     $(this).find("[onload-reload]").each(function () {
-        $($(this).attr("onload-reload")).filter("[onload-load]").each(function () {
+        sircl.ext.$select($(this), $(this).attr("onload-reload")).filter("[onload-load]").each(function () {
             var url = $(this).attr("onload-load") + "";
             $(this).load(url.replace("{rnd}", Math.random()));
         });

@@ -25,7 +25,7 @@ $$(function contextMenu_processHandler () {
     // Add handler on parent of a .contextmenu element to show/hide context menu:
     $(this).find(".contextmenu").each(function () {
         var cm = $(this);
-        var target = $($(this).attr("contextmenu-for"));
+        var target = sircl.ext.$select($(this), $(this).attr("contextmenu-for"));
         if (target.length == 0) target = $(this).parent();
         target.on("contextmenu", function (event) {
             // Hides any currently visible context menu:
