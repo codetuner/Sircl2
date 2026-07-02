@@ -879,6 +879,7 @@ SirclRequestProcessor.prototype._initialize = function sircl_requestProcessor_in
         if (req.$finalTarget.length === 1 && req.$finalTarget[0].id !== '') req.xhr.setRequestHeader("X-Sircl-Target", "#" + req.$finalTarget[0].id);
         if (Intl) req.xhr.setRequestHeader("X-Sircl-Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
         req.xhr.setRequestHeader("X-Sircl-Timezone-Offset", new Date().getTimezoneOffset());
+        if (req.confirmed) req.xhr.setRequestHeader("X-Sircl-Confirmed", req.confirmed);
     }
 
     processor.next(req);
@@ -933,6 +934,26 @@ SirclRequestProcessor.prototype._send = function sircl_requestProcessor_send(req
         // Removed pending request:
         if (req.$initialTarget != null && req.$initialTarget.length == 1 && req.$initialTarget[0].__pendingReq != null)
             req.$initialTarget[0].__pendingReq = null;
+
+        var newLocation = req.xhr.getResponseHeader("Location"); // Redirect
+        var confirmRequest = req.xhr.getResponseHeader("X-Sircl-Confirm"); // Confirmation
+        if (confirmRequest != null) {
+            if (sircl.ext.confirm(req.$trigger, decodeURIComponent(confirmRequest), e)) {
+                // If confirmed, abort current request:
+                req.aborted = true;
+                req.succeeded = false;
+                processor.next(req);
+                // And re-issue request with "X-Sircl-Confirmed" header:
+                processor = new SirclRequestProcessor(processor._loadComplete);
+                if (newLocation != null) req.action = newLocation;
+                req.confirmed = confirmRequest;
+                processor.next(req);
+                return;
+            } else {
+                // Proceed
+            }
+        }
+
         // Keep track of the event and response on the req object:
         req.loadEvent = e;
         req.status = req.xhr.status;
@@ -969,7 +990,6 @@ SirclRequestProcessor.prototype._send = function sircl_requestProcessor_send(req
             }
         }
         // If a Location header is given, redirect to that location:
-        var newLocation = req.xhr.getResponseHeader("Location"); // Redirect
         if (newLocation !== null) {
             // If a "_self" target is given, let browser window load the new location:
             if (req.xhr.getResponseHeader("X-Sircl-Target") == "_self") {
