@@ -236,7 +236,7 @@
 
 <hr />
 
-<button type="submit" class="btn btn-link" onclick-share=":this" data-share-text=""><i class="fas fa-solid fa-share-alt spinner"></i> Share this page</button>
+<button type="submit" class="btn btn-link" onclick-share=":this" data-share-text="" onsuccess-alert="Done!"><i class="fas fa-solid fa-share-alt spinner"></i> Share this page</button>
 
 <hr />
 
@@ -315,7 +315,12 @@
     <input type="text" name="TimeZone" onload-setvalue="Intl.DateTimeFormat().resolvedOptions().timeZone" /><br />
     <input type="text" onload-setvalue="5+3" /><br />
     <br />
-    <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copytext="FooBar!"><i class="fas fa-solid fa-clipboard spinner"></i> FooBar!</button>
+    <button type="button" class="btn btn-primary" 
+            onsuccess-alert="Done"
+            onsuccess-showtoastr=".octoast"
+            onclick-copytext="FooBar!">
+        <i class="fas fa-solid fa-clipboard spinner"></i> FooBar!
+    </button>
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyvalue="[name=TimeZone]"><i class="fas fa-solid fa-clipboard spinner"></i> Value</button>
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyinnertext="<DIV|>P"><i class="fas fa-solid fa-clipboard spinner"></i> Text</button>
     <button type="button" class="btn btn-primary" onclick-showtoastr=".octoast" onclick-copyinnerhtml="<DIV"><i class="fas fa-solid fa-clipboard spinner"></i> HTML</button>

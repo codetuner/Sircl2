@@ -87,5 +87,21 @@ if ($.fn.fadeIn) {
             //event.preventDefault();
         });
 
+        // <* onsuccess-showtoastr="selector"> On success, shows the toaster(s) pointed by the selector.
+        $(document).on("success", "*[onsuccess-showtoastr]", function (event) {
+            var targetSelector = $(this).attr("onsuccess-showtoastr");
+            var timeout = 0;
+            sircl.ext.$select($(this), targetSelector).each(function () {
+                setTimeout(function ($toastr) {
+                    var toastrType = $toastr.data("toastr-type") || "info";
+                    var toastrArgs = [$toastr.html()];
+                    if ($toastr.data("toastr-title") != null) toastrArgs.push($toastr.data("toastr-title"));
+                    toastr[toastrType].apply(null, toastrArgs);
+                }, timeout, $(this));
+                timeout += 200;
+            });
+            //event.preventDefault();
+        });
+
     });
 }
