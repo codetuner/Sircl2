@@ -2812,7 +2812,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Support links to elements when no (partial) page loading occures:
     $(window).on("hashchange", function (event) {
-        var $target = $(document).find(".hash-routed[href=\\" + location.hash + "]");
+        var $target = $(document).find(".hash-routed[href=" + sircl.ext.cssEscape(location.hash) + "]");
         if ($target.length > 0) {
             event.preventDefault();
             $target.each(function () { this.click(); });
@@ -2825,7 +2825,7 @@ sircl.addContentReadyHandler("process", function () {
         $(this).addClass("hash-routed");
     });
     if (location.hash != null && location.hash.length > 0) {
-        $(this).find(".hash-routed[href=\\" + location.hash + "]").each(function () { this.click(); });
+        $(this).find(".hash-routed[href=" + sircl.ext.cssEscape(location.hash) + "]").each(function () { this.click(); });
     }
 });
 
