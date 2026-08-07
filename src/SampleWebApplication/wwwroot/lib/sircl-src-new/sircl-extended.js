@@ -422,6 +422,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get & copy to clipboard:
         var text = this.getAttribute("onclick-copytext");
         navigator.clipboard.writeText(text);
+        // Dispatch 'success' event:
+        setTimeout(function (elem) { elem.dispatchEvent(new CustomEvent("success", { bubbles: true, cancelable: false, detail: { source: "clipboard" } })); }, 0, this);
         // Display spinner:
         var $spinners = $(this).find("> .spinner");
         if ($spinners.length > 0) {
@@ -439,6 +441,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get & copy to clipboard:
         var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnertext")).text();
         navigator.clipboard.writeText(text);
+        // Dispatch 'success' event:
+        setTimeout(function (elem) { elem.dispatchEvent(new CustomEvent("success", { bubbles: true, cancelable: false, detail: { source: "clipboard" } })); }, 0, this);
         // Display spinner:
         var $spinners = $(this).find("> .spinner");
         if ($spinners.length > 0) {
@@ -456,6 +460,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get & copy to clipboard:
         var text = sircl.ext.$select($(this), $(this).attr("onclick-copyinnerhtml")).html();
         navigator.clipboard.writeText(text);
+        // Dispatch 'success' event:
+        setTimeout(function (elem) { elem.dispatchEvent(new CustomEvent("success", { bubbles: true, cancelable: false, detail: { source: "clipboard" } })); }, 0, this);
         // Display spinner:
         var $spinners = $(this).find("> .spinner");
         if ($spinners.length > 0) {
@@ -475,6 +481,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Get & copy to clipboard:
             var text = sircl.ext.effectiveValue($elem[0]);
             navigator.clipboard.writeText(text);
+            // Dispatch 'success' event:
+            setTimeout(function (elem) { elem.dispatchEvent(new CustomEvent("success", { bubbles: true, cancelable: false, detail: { source: "clipboard" } })); }, 0, this);
             // Display spinner:
             var $spinners = $(this).find("> .spinner");
             if ($spinners.length > 0) {
@@ -1720,6 +1728,45 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("transitionstart", "[ontransitionstart-addclass]", function (event) {
         sircl.ext.addClass($(this), $(this).attr("ontransitionstart-addclass"));
     });
+});
+
+
+// Success event-actions:
+///////////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // <* onsuccess-click="selector"> On success, triggers a click event on the elements matching the given selector.
+    $(document).on("success", "*[onsuccess-click]", function (event) {
+        var targetSelector = $(this).attr("onsuccess-click");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            this.click(); // See: http://goo.gl/lGftqn
+        });
+        //event.preventDefault();
+    });
+
+    // <* onsuccess-hide="selector"> On success hides the elements matching the given selector.
+    $(document).on("success", "[onsuccess-hide]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onsuccess-hide")), false, true);
+    });
+
+    // <* onsuccess-show="selector"> On success shows the elements matching the given selector.
+    $(document).on("success", "[onsuccess-show]", function (event) {
+        sircl.ext.visible(sircl.ext.$select($(this), $(this).attr("onsuccess-show")), true, true);
+    });
+
+    // <* onsuccess-toggleshow="selector"> On success shows/hides the elements matching the given selector.
+    $(document).on("success", "[onsuccess-toggleshow]", function (event) {
+        sircl.ext.$select($(this), $(this).attr("onsuccess-toggleshow")).each(function () {
+            sircl.ext.visible($(this), !sircl.ext.visible($(this)), true);
+        });
+    });
+
+    // <* onsuccess-alert="selector"> On success shows/hides the elements matching the given selector.
+    $(document).on("success", "[onsuccess-alert]", function (event) {
+        sircl.ext.alert(this, $(this).attr("onsuccess-alert"), event);
+    });
+
 });
 
 //#endregion
