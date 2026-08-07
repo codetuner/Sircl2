@@ -50,9 +50,19 @@ namespace SampleWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // A simple serverside confirmation dialogue with a single question:
+                // For a complex confirmation dialogue (multiple questions), see the ProductsController.Update method.
+                if (model.Item.Id == 0 && model.Item.Name != null && model.Item.Name.Length <= 2 && "".Equals(Request.Headers["X-Sircl-Confirmed"].ToString()))
+                {
+                    Response.Headers["X-Sircl-Confirm"] = "The name is very short. Are you sure you want to save this name ?";
+                    return NoContent();
+                }
+
+                // Update & save:
                 Context.Update(model.Item);
                 Context.SaveChanges();
 
+                // Return back:
                 return Back(false);
             }
             else
