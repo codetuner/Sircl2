@@ -603,6 +603,43 @@ $$(function sircl_bs5_collapse_processHandler() {
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    // <* onsuccess-showpopover="selector"> On success shows a popover.
+    $(document).on("success", "[onsuccess-showpopover]", function (event) {
+        var targetSelector = $(this).attr("onsuccess-showpopover");
+        sircl.ext.$select($(this), targetSelector).each(function () {
+            var delay = 0;
+            var autohide;
+            var delayattr = this.getAttribute("data-bs-delay");
+            if (delayattr !== null) {
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).show || 0;
+                    autohide = JSON.parse(delayattr).autohide;
+                }
+            }
+            if (delay != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only show popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).show();
+                        }
+                    } catch (x) { }
+                }, delay, this);
+            }
+            if (autohide != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only hide popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).hide();
+                        }
+                    } catch (x) { }
+                }, autohide, this);
+            }
+        });
+    });
+
     // On closing Popover, perform a click:
     $(document.body).on("hidden.bs.popover", "[onhiddenpopover-click]", function (event) {
         var targetSelector = $(this).attr("onclosepopover-click");
@@ -626,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             setTimeout(function (popover) {
                 try {
-                    bootstrap.popover.getInstance(popover).hide();
+                    bootstrap.Popover.getOrCreateInstance(popover).hide();
                 } catch (x) { }
             }, delay, this);
         });
@@ -637,21 +674,35 @@ document.addEventListener("DOMContentLoaded", function () {
         var targetSelector = $(this).attr("onclick-showpopover");
         sircl.ext.$select($(this), targetSelector).each(function () {
             var delay = 0;
+            var autohide;
             var delayattr = this.getAttribute("data-bs-delay");
             if (delayattr !== null) {
                 delay = parseInt(delayattr);
                 if (isNaN(delay)) {
-                    delay = JSON.parse(delayattr).show;
+                    delay = JSON.parse(delayattr).show || 0;
+                    autohide = JSON.parse(delayattr).autohide;
                 }
             }
-            setTimeout(function (popover) {
-                try {
-                    // Only show popover if element is visible:
-                    if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
-                        bootstrap.Popover.getOrCreateInstance(popover).show();
-                    }
-                } catch (x) { }
-            }, delay, this);
+            if (delay != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only show popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).show();
+                        }
+                    } catch (x) { }
+                }, delay, this);
+            }
+            if (autohide != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only hide popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).hide();
+                        }
+                    } catch (x) { }
+                }, autohide, this);
+            }
         });
     });
 
@@ -661,7 +712,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const subSelector = "[data-bs-toggle='popover'], [data-toggle='popover']";
         sircl.ext.$select($(this), targetSelector).find(subSelector).addBack(subSelector).each(function () {
             try {
-                bootstrap.Popover.getInstance(this).hide();
+                bootstrap.Popover.getOrCreateInstance(this).hide();
             } catch (x) { }
         });
     });
@@ -670,11 +721,36 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document.body).on("hidden.bs.popover", "[onhiddenpopover-showpopover]", function (event) {
         var targetSelector = $(this).attr("onhiddenpopover-showpopover");
         sircl.ext.$select($(this), targetSelector).each(function () {
-            // Only show popover if element is visible:
-            if (this.checkVisibility != undefined && this.checkVisibility() == true) {
-                bootstrap.Popover.getOrCreateInstance(this).show();
+            var delay = 0;
+            var autohide;
+            var delayattr = this.getAttribute("data-bs-delay");
+            if (delayattr !== null) {
+                delay = parseInt(delayattr);
+                if (isNaN(delay)) {
+                    delay = JSON.parse(delayattr).show || 0;
+                    autohide = JSON.parse(delayattr).autohide;
+                }
             }
-        });
+            if (delay != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only show popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).show();
+                        }
+                    } catch (x) { }
+                }, delay, this);
+            }
+            if (autohide != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only hide popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).hide();
+                        }
+                    } catch (x) { }
+                }, autohide, this);
+            }        });
     });
 });
 
@@ -684,22 +760,36 @@ $$("after", function sircl_bs5_popover_afterHandler() {
     $(this).find("[onload-showpopover]").each(function () {
         var targetSelector = $(this).attr("onload-showpopover");
         sircl.ext.$select($(this), targetSelector).each(function () {
-            var delay = 800;
+            var delay = 0;
+            var autohide;
             var delayattr = this.getAttribute("data-bs-delay");
             if (delayattr !== null) {
                 delay = parseInt(delayattr);
                 if (isNaN(delay)) {
-                    delay = JSON.parse(delayattr).show;
+                    delay = JSON.parse(delayattr).show || 800;
+                    autohide = JSON.parse(delayattr).autohide;
                 }
             }
-            setTimeout(function (popover) {
-                try {
-                    // Only show popover if element is visible:
-                    if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
-                        bootstrap.Popover.getOrCreateInstance(popover).show();
-                    }
-                } catch (x) { }
-            }, delay, this);
+            if (delay != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only show popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).show();
+                        }
+                    } catch (x) { }
+                }, delay, this);
+            }
+            if (autohide != null) {
+                setTimeout(function (popover) {
+                    try {
+                        // Only hide popover if element is visible:
+                        if (popover.checkVisibility != undefined && popover.checkVisibility() == true) {
+                            bootstrap.Popover.getOrCreateInstance(popover).hide();
+                        }
+                    } catch (x) { }
+                }, autohide, this);
+            }
         });
     });
 });

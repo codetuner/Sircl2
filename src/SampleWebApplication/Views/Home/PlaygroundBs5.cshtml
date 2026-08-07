@@ -70,6 +70,20 @@
             </p>
 
         </div>
+
+        <div>
+            <button type="button" class="btn btn-primary"
+                    onsuccess-showpopover=":this"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="manual"
+                    data-bs-content="Value copied"
+                    data-bs-placement="bottom"
+                    data-bs-delay='{"show":100,"autohide":900}'
+                    onclick-copytext="Sircl rocks!">
+                <i class="fas fa-solid fa-clipboard spinner"></i> Copy to clipboard
+            </button>
+        </div>
+
         <hr />
 
         <h5>Relative CSS Selectors in Bootstrap</h5>
