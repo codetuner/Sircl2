@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32825.248
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12023.21 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApplication", "SampleWebApplication\SampleWebApplication.csproj", "{9B1AA762-6523-4FAB-9087-610C0479DA76}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{074A7B6B-36B0-4D22-9507-8085AFD9C03E}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\Package.cmd = ..\Package.cmd
+		..\PublishOnly.cmd = ..\PublishOnly.cmd
+		..\README.md = ..\README.md
+		..\SirclDocs-Graphical Assets.pptx = ..\SirclDocs-Graphical Assets.pptx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
