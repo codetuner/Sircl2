@@ -90,7 +90,7 @@ For a **quick tryout**, use the CodePen playground on:
 - [`src/`](src) — Sircl source code, including a sample ASP.NET web application ([`src/SampleWebApplication`](src/SampleWebApplication)) demonstrating Sircl in a real server-rendered app.
 - [`dist/`](dist) — versioned, ready-to-use distributable builds (bundled and modular `.js`/`.css`, minified and unminified).
 
-The source code of the Sircl v2 libary is in [`src\SampleWebApplication\wwwroot\lib\sircl-src-new`](src\SampleWebApplication\wwwroot\lib\sircl-src-new).
+The source code of the Sircl v2 library is in [`src/SampleWebApplication/wwwroot/lib/sircl-src-new`](src/SampleWebApplication/wwwroot/lib/sircl-src-new).
 
 ## License
 
