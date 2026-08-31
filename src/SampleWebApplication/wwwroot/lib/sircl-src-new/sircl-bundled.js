@@ -4669,7 +4669,8 @@ document.addEventListener("DOMContentLoaded", function () {
     /// Checkboxes can have a change confirm dialog:
     /// <input type="checkbox" onchange-confirm="Are you sure ?" />
     $(document.body).on("change", "INPUT[onchange-confirm][type='checkbox']", function (event) {
-        var confirmMessage = $(this).attr("onchange-confirm");
+        var $this = $(this);
+        var confirmMessage = $this.attr("onchange-confirm");
         if (confirmMessage) {
             if (!sircl.ext.confirm(this, confirmMessage, event)) {
                 $this.prop("checked", !$this.prop("checked"));
