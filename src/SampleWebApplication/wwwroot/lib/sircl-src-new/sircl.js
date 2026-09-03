@@ -2812,10 +2812,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Support links to elements when no (partial) page loading occures:
     $(window).on("hashchange", function (event) {
-        var $target = $(document).find(".hash-routed[href=" + sircl.ext.cssEscape(location.hash) + "]");
-        if ($target.length > 0) {
-            event.preventDefault();
-            $target.each(function () { this.click(); });
+        var hash = sircl.ext.cssEscape(location.hash);
+        if (hash != "") {
+            var $target = $(document).find(".hash-routed[href=" + hash + "]");
+            if ($target.length > 0) {
+                event.preventDefault();
+                $target.each(function () { this.click(); });
+            }
         }
     });
 });
